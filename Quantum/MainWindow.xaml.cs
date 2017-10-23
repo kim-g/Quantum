@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using WinForms = System.Windows.Forms;
 
 namespace Quantum
 {
@@ -79,7 +79,45 @@ namespace Quantum
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            
+            string Folder = Get_Directory(Dir_text.Text);
+            if (Folder != null)
+            {
+                Dir_text.Text = Folder;
+            }
+        }
+
+        private string Get_Directory(string Selected = "")
+        {
+            WinForms.FolderBrowserDialog folderBrowser = new WinForms.FolderBrowserDialog();
+
+            folderBrowser.SelectedPath = Selected;
+
+            WinForms.DialogResult result = folderBrowser.ShowDialog();
+
+            if (!string.IsNullOrWhiteSpace(folderBrowser.SelectedPath))
+            {
+                return folderBrowser.SelectedPath;
+            }
+            return null;
+        }
+
+        private void button_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            string Old = Project_text.Text == "" ? Dir_text.Text : Project_text.Text;
+            string Folder = Get_Directory(Old);
+            if (Folder != null)
+            {
+                Project_text.Text = Folder.Replace(Dir_text.Text, "").TrimStart('\\');
+            }
+        }
+
+        private void button_Copy1_Click(object sender, RoutedEventArgs e)
+        {
+            string Folder = Get_Directory(TemplateDir.Text);
+            if (Folder != null)
+            {
+                TemplateDir.Text = Folder;
+            }
         }
     }
 }

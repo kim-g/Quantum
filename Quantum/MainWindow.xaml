@@ -19,10 +19,10 @@
         <Button x:Name="button" Content="..." Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="453,27,0,0" VerticalAlignment="Top" Width="31" Click="button_Click"/>
         <Label x:Name="label_Copy" Content="Проект" Grid.Column="1" HorizontalAlignment="Left" Margin="0,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="50"/>
         <TextBox x:Name="Project_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="361"/>
-        <Button x:Name="button_Copy" Content="..." Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="453,68,0,0" VerticalAlignment="Top" Width="31"/>
+        <Button x:Name="button_Copy" Content="..." Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="453,68,0,0" VerticalAlignment="Top" Width="31" Click="button_Copy_Click"/>
         <Label x:Name="label_Copy1" Content="Шаблоны" Grid.Column="1" HorizontalAlignment="Left" Margin="0,109,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="63"/>
         <TextBox x:Name="TemplateDir" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,111,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="361"/>
-        <Button x:Name="button_Copy1" Content="..." Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="453,111,0,0" VerticalAlignment="Top" Width="31"/>
+        <Button x:Name="button_Copy1" Content="..." Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="453,111,0,0" VerticalAlignment="Top" Width="31" Click="button_Copy1_Click"/>
         <Label x:Name="label_Copy2" Content="Подпапки от" Grid.Column="1" HorizontalAlignment="Left" Margin="0,154,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="80"/>
         <TextBox x:Name="from_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52"/>
         <Label x:Name="label_Copy3" Content="до" Grid.Column="1" HorizontalAlignment="Left" Margin="150,155,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="24"/>
