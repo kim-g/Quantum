@@ -22,10 +22,21 @@ namespace Quantum
     /// </summary>
     public partial class MainWindow : Window
     {
+        SQLiteDataBase Config;
+
         public MainWindow()
         {
             InitializeComponent();
+            Config = SQLiteDataBase.Open("config.db");
+
+            Dir_text.Text = Config.GetConfigValue("work_dir");
+            Project_text.Text = Config.GetConfigValue("project_dir");
+            TemplateDir.Text = Config.GetConfigValue("template_dir");
+            from_text.Text = Config.GetConfigValue("from");
+            to_text.Text = Config.GetConfigValue("to");
         }
+
+
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
@@ -86,6 +97,10 @@ namespace Quantum
             }
         }
 
+
+        /// <summary>
+        /// Показывает диалоговое окно выбора директории
+        /// </summary>
         private string Get_Directory(string Selected = "")
         {
             WinForms.FolderBrowserDialog folderBrowser = new WinForms.FolderBrowserDialog();
@@ -118,6 +133,31 @@ namespace Quantum
             {
                 TemplateDir.Text = Folder;
             }
+        }
+
+        private void Dir_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("work_dir", Dir_text.Text);
+        }
+
+        private void Project_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("project_dir", Project_text.Text);
+        }
+
+        private void TemplateDir_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("template_dir", TemplateDir.Text);
+        }
+
+        private void from_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("from", from_text.Text);
+        }
+
+        private void to_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("to", to_text.Text);
         }
     }
 }
