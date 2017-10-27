@@ -34,6 +34,7 @@ namespace Quantum
             TemplateDir.Text = Config.GetConfigValue("template_dir");
             from_text.Text = Config.GetConfigValue("from");
             to_text.Text = Config.GetConfigValue("to");
+            Additional.Text = Config.GetConfigValue("additional");
         }
 
 
@@ -79,8 +80,15 @@ namespace Quantum
                 // И записывает туда изменённые файлы
                 for (int j=0; j<Templates.Count; j++)
                 {
-                    File.WriteAllText(System.IO.Path.Combine(CurAddress, TemplateNames[j]),
-                        Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir));
+                    string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir);
+                    string[] Add_Rep = Additional.Text.Split(';');
+                    foreach (string Rep in Add_Rep)
+                    {
+                        string[] ReplaceText = Rep.Trim().Split('=');
+                        if (ReplaceText.Length > 1)
+                            TextOut = TextOut.Replace(ReplaceText[0], ReplaceText[1]);
+                    }
+                    File.WriteAllText(System.IO.Path.Combine(CurAddress, TemplateNames[j]), TextOut);
                 }
               
             }
@@ -118,7 +126,7 @@ namespace Quantum
 
         private void button_Copy_Click(object sender, RoutedEventArgs e)
         {
-            string Old = Project_text.Text == "" ? Dir_text.Text : Project_text.Text;
+            string Old = Project_text.Text == "" ? Dir_text.Text : Dir_text.Text + "\\" + Project_text.Text;
             string Folder = Get_Directory(Old);
             if (Folder != null)
             {
@@ -158,6 +166,11 @@ namespace Quantum
         private void to_text_TextChanged(object sender, TextChangedEventArgs e)
         {
             Config.SetConfigValue("to", to_text.Text);
+        }
+
+        private void Additional_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("additional", Additional.Text);
         }
     }
 }

@@ -160,18 +160,21 @@ namespace Quantum
         public string GetConfigValue(string name)
         {
             DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
+            if (Conf.Rows.Count == 0) return "";
             return Conf.Rows[0].ItemArray[0].ToString();
         }
 
         public int GetConfigValueInt(string name)
         {
             DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
+            if (Conf.Rows.Count == 0) return 0;
             return Convert.ToInt32(Conf.Rows[0].ItemArray[0].ToString());
         }
 
         public bool GetConfigValueBool(string name)
         {
             DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
+            if (Conf.Rows.Count == 0) return false;
             return Conf.Rows[0].ItemArray[0].ToString() == "1";
         }
 
@@ -180,18 +183,27 @@ namespace Quantum
 
         public bool SetConfigValue(string name, string value)
         {
-            return Execute("UPDATE `config` SET `value`='" + value + "' WHERE `name`='" + name + "'");
+            if (GetCount("config", "`name`='" + name + "'") > 0)
+                return Execute("UPDATE `config` SET `value`='" + value + "' WHERE `name`='" + name + "';");
+            else
+                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + value + "');");
         }
 
         public bool SetConfigValue(string name, int value)
         {
-            return Execute("UPDATE `config` SET `value`='" + value.ToString() + "' WHERE `name`='" + name + "'");
+            if (GetCount("config", "`name`='" + name + "'") > 0)
+                return Execute("UPDATE `config` SET `value`='" + value.ToString() + "' WHERE `name`='" + name + "'");
+            else
+                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + value.ToString() + "');");
         }
 
         public bool SetConfigValue(string name, bool value)
         {
             string val = value ? "1" : "0";
-            return Execute("UPDATE `config` SET `value`='" + val + "' WHERE `name`='" + name + "'");
+            if (GetCount("config", "`name`='" + name + "'") > 0)
+                return Execute("UPDATE `config` SET `value`='" + val + "' WHERE `name`='" + name + "'");
+            else
+                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + val + "');");
         }
     }
 }
