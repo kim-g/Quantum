@@ -35,6 +35,10 @@ namespace Quantum
             from_text.Text = Config.GetConfigValue("from");
             to_text.Text = Config.GetConfigValue("to");
             Additional.Text = Config.GetConfigValue("additional");
+            List_text.Text = Config.GetConfigValue("list_text");
+
+            RB_Diap.IsChecked = !Config.GetConfigValueBool("list");
+            RB_List.IsChecked = Config.GetConfigValueBool("list");
         }
 
 
@@ -51,49 +55,68 @@ namespace Quantum
                 TemplateNames.Add(System.IO.Path.GetFileName(file));
             }
 
-            // Получаем значения от и до
-            int From;
-            int To;
-            try
-            { From = Convert.ToInt32(from_text.Text); }
-            catch
-            { MessageBox.Show("Введите число в поле От","Ошибка"); return; }
-            try
-            { To = Convert.ToInt32(to_text.Text); }
-            catch
-            { MessageBox.Show("Введите число в поле До", "Ошибка"); return; }
-
             // получаем рабочую директорию
             string WorkDirectory = System.IO.Path.Combine(Dir_text.Text, Project_text.Text);
 
-            // И проходим по всем внутренним директориям
-            for (int i= From; i <= To; i++)
+            if (RB_Diap.IsChecked == true)
             {
-                // Формируем название
-                string CurDir = i.ToString("D2");
-                string CurAddress = System.IO.Path.Combine(WorkDirectory, CurDir);
-                string CurDirLocalUnix = System.IO.Path.Combine(Project_text.Text, CurDir).Replace('\\','/');
+                // Получаем значения от и до
+                int From;
+                int To;
+                try
+                { From = Convert.ToInt32(from_text.Text); }
+                catch
+                { MessageBox.Show("Введите число в поле От", "Ошибка"); return; }
+                try
+                { To = Convert.ToInt32(to_text.Text); }
+                catch
+                { MessageBox.Show("Введите число в поле До", "Ошибка"); return; }
 
-                // Создаём соответствующую директорию
-                Directory.CreateDirectory(CurAddress);
-
-                // И записывает туда изменённые файлы
-                for (int j=0; j<Templates.Count; j++)
+                // И проходим по всем внутренним директориям
+                for (int i = From; i <= To; i++)
                 {
-                    string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir);
-                    string[] Add_Rep = Additional.Text.Split(';');
-                    foreach (string Rep in Add_Rep)
-                    {
-                        string[] ReplaceText = Rep.Trim().Split('=');
-                        if (ReplaceText.Length > 1)
-                            TextOut = TextOut.Replace(ReplaceText[0], ReplaceText[1]);
-                    }
-                    File.WriteAllText(System.IO.Path.Combine(CurAddress, TemplateNames[j]), TextOut);
+                    CreateProject(Templates, TemplateNames, WorkDirectory, i.ToString("D2"));
                 }
-              
+            }
+            else
+            {
+                // Получаем список
+                string[] DirList = List_text.Text.Split(';');
+
+                // И проходим его
+                foreach (string Dir in DirList)
+                {
+                    string CurDir = Dir.Trim();
+                    if (String.IsNullOrWhiteSpace(CurDir)) continue;
+                    CreateProject(Templates, TemplateNames, WorkDirectory, CurDir);
+                }
             }
 
             MessageBox.Show("Файлы созданы успешно", "Работа завершена");
+        }
+
+        private void CreateProject(List<string> Templates, List<string> TemplateNames, string WorkDirectory, string CurDir)
+        {
+            // Формируем название
+            string CurAddress = System.IO.Path.Combine(WorkDirectory, CurDir);
+            string CurDirLocalUnix = System.IO.Path.Combine(Project_text.Text, CurDir).Replace('\\', '/');
+
+            // Создаём соответствующую директорию
+            Directory.CreateDirectory(CurAddress);
+
+            // И записывает туда изменённые файлы
+            for (int j = 0; j < Templates.Count; j++)
+            {
+                string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir);
+                string[] Add_Rep = Additional.Text.Split(';');
+                foreach (string Rep in Add_Rep)
+                {
+                    string[] ReplaceText = Rep.Trim().Split('=');
+                    if (ReplaceText.Length > 1)
+                        TextOut = TextOut.Replace(ReplaceText[0], ReplaceText[1]);
+                }
+                File.WriteAllText(System.IO.Path.Combine(CurAddress, TemplateNames[j]), TextOut);
+            }
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -171,6 +194,25 @@ namespace Quantum
         private void Additional_TextChanged(object sender, TextChangedEventArgs e)
         {
             Config.SetConfigValue("additional", Additional.Text);
+        }
+
+        private void RB_Diap_Checked(object sender, RoutedEventArgs e)
+        {
+            Diap.Visibility = Visibility.Visible;
+            List_Grid.Visibility = Visibility.Collapsed;
+            if (Config != null) Config.SetConfigValue("list", false);
+        }
+
+        private void RB_List_Checked(object sender, RoutedEventArgs e)
+        {
+            Diap.Visibility = Visibility.Collapsed;
+            List_Grid.Visibility = Visibility.Visible;
+            if (Config != null) Config.SetConfigValue("list", true);
+        }
+
+        private void List_text_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue("list_text", List_text.Text);
         }
     }
 }

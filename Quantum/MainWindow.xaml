@@ -4,33 +4,96 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
-        mc:Ignorable="d" Height="308.693" Width="536.994" Title="Quantum – формирование расчётных проектов" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
-    <Window.Effect>
-        <DropShadowEffect Opacity="0.2"/>
-    </Window.Effect>
-    <Grid Margin="0,0,0,2">
+        mc:Ignorable="d" Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" Width="541" d:DesignHeight="297" Height="300">
+    <Window.Resources>
+        <Style x:Key="Grid">
+            <Setter Property="Control.Margin" Value="0,0,0,10" />
+        </Style>
+        <Style x:Key="BrowseButton">
+            <Setter Property="Control.Margin" Value="10,0,0,0" />
+            <Setter Property="Control.HorizontalAlignment" Value="Right" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.Width" Value="31" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="StartLabel">
+            <Setter Property="Control.Margin" Value="0,0,10,0" />
+            <Setter Property="Control.HorizontalAlignment" Value="Left" />
+            <Setter Property="Control.Height" Value="26" />
+            <Setter Property="Control.Width" Value="101" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="Control.RenderTransformOrigin" Value="0.392,0.639" />
+        </Style>
+        <Style x:Key="TextBoxMiddle">
+            <Setter Property="Control.Margin" Value="111,0,41,0" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="TextBoxRight">
+            <Setter Property="Control.Margin" Value="111,0,0,0" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10,10,10,0" Height="281" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="17*"/>
-            <ColumnDefinition Width="414*"/>
-            <ColumnDefinition Width="89*"/>
-            <ColumnDefinition Width="11*"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="label" Content="Директория" Grid.Column="1" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="77"/>
-        <TextBox x:Name="Dir_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="361" TextChanged="Dir_text_TextChanged" Grid.ColumnSpan="2"/>
-        <Button x:Name="button" Content="..." Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="39.091,27,0,0" VerticalAlignment="Top" Width="31" Click="button_Click"/>
-        <Label x:Name="label_Copy" Content="Проект" Grid.Column="1" HorizontalAlignment="Left" Margin="0,66,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="50"/>
-        <TextBox x:Name="Project_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="361" TextChanged="Project_text_TextChanged" Grid.ColumnSpan="2"/>
-        <Button x:Name="button_Copy" Content="..." Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="39.091,68,0,0" VerticalAlignment="Top" Width="31" Click="button_Copy_Click"/>
-        <Label x:Name="label_Copy1" Content="Шаблоны" Grid.Column="1" HorizontalAlignment="Left" Margin="0,109,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="63"/>
-        <TextBox x:Name="TemplateDir" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="82,111,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="361" TextChanged="TemplateDir_TextChanged" Grid.ColumnSpan="2"/>
-        <Button x:Name="button_Copy1" Content="..." Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="39.091,111,0,0" VerticalAlignment="Top" Width="31" Click="button_Copy1_Click"/>
-        <Label x:Name="label_Copy2" Content="Подпапки от" Grid.Column="1" HorizontalAlignment="Left" Margin="2,143,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="80"/>
-        <TextBox x:Name="from_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="84,145,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="from_text_TextChanged"/>
-        <Label x:Name="label_Copy3" Content="до" Grid.Column="1" HorizontalAlignment="Left" Margin="152,144,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="24"/>
-        <TextBox x:Name="to_text" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="181,146,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="to_text_TextChanged"/>
-        <Button x:Name="button1" Content="Создать" Grid.Column="1" HorizontalAlignment="Left" Margin="0,226,0,0" VerticalAlignment="Top" Width="484" Height="35" IsDefault="True" FontSize="18.667" FontWeight="Bold" Click="button1_Click" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_Copy4" Content="Доп. параметры" Grid.Column="1" HorizontalAlignment="Left" Margin="2,182,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.392,0.639" Height="26" Width="101"/>
-        <TextBox x:Name="Additional" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="108,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="376" TextChanged="Additional_TextChanged" Grid.ColumnSpan="2"/>
-
-    </Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="0" Grid.Row="0" Style="{DynamicResource Grid}">
+            <Label x:Name="label" Content="Директория" Style="{DynamicResource StartLabel}"/>
+            <TextBox x:Name="Dir_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Dir_text_TextChanged"/>
+            <Button x:Name="button" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Click"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="1" Style="{DynamicResource Grid}">
+            <Label x:Name="label_Copy" Content="Проект" Style="{DynamicResource StartLabel}"/>
+            <TextBox x:Name="Project_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Project_text_TextChanged"/>
+            <Button x:Name="button_Copy" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Copy_Click"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="2" Style="{DynamicResource Grid}">
+            <Label x:Name="label_Copy1" Content="Шаблоны" Style="{DynamicResource StartLabel}"/>
+            <TextBox x:Name="TemplateDir" Style="{DynamicResource TextBoxMiddle}" TextChanged="TemplateDir_TextChanged"/>
+            <Button x:Name="button_Copy1" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Copy1_Click"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="3" Style="{DynamicResource Grid}">
+            <Label x:Name="label_Copy4" Content="Доп. параметры" Style="{DynamicResource StartLabel}"/>
+            <TextBox x:Name="Additional" Style="{DynamicResource TextBoxRight}" TextChanged="Additional_TextChanged"/>
+        </Grid>
+        <Grid  Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid x:Name="Diap" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+                <Label x:Name="label_Copy2" Content="Подпапки от" Style="{DynamicResource StartLabel}" Width="80"/>
+                <TextBox x:Name="from_text" HorizontalAlignment="Left" Height="23" Margin="82,2,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="from_text_TextChanged"/>
+                <Label x:Name="label_Copy3" Content="до" Style="{DynamicResource StartLabel}" Margin="150,1,0,0" Width="24"/>
+                <TextBox x:Name="to_text" HorizontalAlignment="Left" Height="23" Margin="179,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="to_text_TextChanged"/>
+            </Grid>
+            <Grid x:Name="List_Grid" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0">
+                <Label x:Name="label_List" Content="Подпапки" Style="{DynamicResource StartLabel}"/>
+                <TextBox x:Name="List_text" Style="{DynamicResource TextBoxRight}" TextChanged="List_text_TextChanged"/>
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="0" Style="{DynamicResource Grid}">
+                <RadioButton x:Name="RB_Diap" Content="Диапазон" VerticalAlignment="Top" IsChecked="True" Checked="RB_Diap_Checked" Margin="0,0,84,0"/>
+                <RadioButton x:Name="RB_List" Content="Список" HorizontalAlignment="Left" Margin="98,0,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RB_List_Checked"/>
+            </Grid>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="5" Margin="0,0,0,0">
+            <Button x:Name="button1" Content="Создать"  Margin="0,0,0,0" VerticalAlignment="Top" Height="35" IsDefault="True" FontSize="20" FontWeight="Bold" Click="button1_Click" />
+        </Grid>
+            </Grid>
 </Window>
