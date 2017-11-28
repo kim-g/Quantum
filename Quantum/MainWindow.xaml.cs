@@ -201,6 +201,7 @@ namespace Quantum
             Diap.Visibility = Visibility.Visible;
             List_Grid.Visibility = Visibility.Collapsed;
             if (Config != null) Config.SetConfigValue("list", false);
+            Form1.SizeToContent = SizeToContent.Height;
         }
 
         private void RB_List_Checked(object sender, RoutedEventArgs e)
@@ -208,6 +209,7 @@ namespace Quantum
             Diap.Visibility = Visibility.Collapsed;
             List_Grid.Visibility = Visibility.Visible;
             if (Config != null) Config.SetConfigValue("list", true);
+            Form1.SizeToContent = SizeToContent.Height;
         }
 
         private void List_text_TextChanged(object sender, TextChangedEventArgs e)
