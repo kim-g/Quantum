@@ -57,8 +57,8 @@
                         он играет, как умеет» по лицензии 
                         <Run x:Name="License" Style="{StaticResource LinkText}" MouseLeftButtonUp="License_MouseLeftButtonUp">
                             BSD-3-Clause
-                        </Run>
-                        , и не требует никакой платы за использование.
+                        </Run>, 
+						и не требует никакой платы за использование.
                         <LineBreak />
                         <LineBreak />
                         Автор – 
