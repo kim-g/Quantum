@@ -24,10 +24,10 @@ namespace Quantum
     {
         SQLiteDataBase Config;
 
-        public MainWindow()
+        public MainWindow(SQLiteDataBase ConfigDataBase)
         {
             InitializeComponent();
-            Config = SQLiteDataBase.Open("config.db");
+            Config = ConfigDataBase;
 
             Dir_text.Text = Config.GetConfigValue("work_dir");
             Project_text.Text = Config.GetConfigValue("project_dir");

@@ -70,7 +70,7 @@
         <!-- Молекулярные орбитали -->
         <Grid Grid.Column="0" Grid.Row="2" Style="{DynamicResource Grid}">
             <Button x:Name="MOButton" Content="Проставить молекулярные орбитали" 
-                    Style="{DynamicResource Button}"/>
+                    Style="{DynamicResource Button}" Click="MOButton_Click"/>
         </Grid>
 
         <!-- О программе -->

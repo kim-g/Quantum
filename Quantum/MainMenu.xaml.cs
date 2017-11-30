@@ -19,16 +19,18 @@ namespace Quantum
     /// </summary>
     public partial class MainMenu : Window
     {
-        public static string ProgramVersion = "1.1.0";
+        public static string ProgramVersion = "1.2.0";
+        SQLiteDataBase Config;
 
         public MainMenu()
         {
             InitializeComponent();
+            Config = SQLiteDataBase.Open("config.db");
         }
 
         private void ProjectsButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow Projects = new MainWindow();
+            MainWindow Projects = new MainWindow(Config);
             Projects.ShowDialog();
             GC.Collect();
         }
@@ -42,6 +44,14 @@ namespace Quantum
         {
             About AboutForm = new About();
             AboutForm.ShowDialog();
+            GC.Collect();
+        }
+
+        private void MOButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetMO SetMO_Form = new SetMO(Config);
+            SetMO_Form.Owner = this;
+            SetMO_Form.ShowDialog();
             GC.Collect();
         }
     }

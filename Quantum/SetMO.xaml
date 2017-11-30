@@ -5,8 +5,73 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="SetMO" Height="300" Width="300">
-    <Grid>
-        
+        Title="Расчёт молекулярных орбиталей" Height="300" Width="378.504" ResizeMode="NoResize" SizeToContent="Height" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <Style x:Key="Grid">
+            <Setter Property="Control.Margin" Value="0,0,0,10" />
+        </Style>
+        <Style x:Key="BrowseButton">
+            <Setter Property="Control.Margin" Value="10,0,0,0" />
+            <Setter Property="Control.HorizontalAlignment" Value="Right" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.Width" Value="31" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="StartLabel">
+            <Setter Property="Control.Margin" Value="0,0,10,0" />
+            <Setter Property="Control.HorizontalAlignment" Value="Left" />
+            <Setter Property="Control.Height" Value="26" />
+            <Setter Property="Control.Width" Value="101" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="Control.RenderTransformOrigin" Value="0.392,0.639" />
+        </Style>
+        <Style x:Key="TextBoxMiddle">
+            <Setter Property="Control.Margin" Value="111,0,41,0" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+            <EventSetter Event="TextBox.TextChanged" Handler="TextBox_TextChanged"/>
+            
+        </Style>
+        <Style x:Key="TextBoxRight">
+            <Setter Property="Control.Margin" Value="111,0,0,0" />
+            <Setter Property="Control.Height" Value="23" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+            <EventSetter Event="TextBox.TextChanged" Handler="TextBox_TextChanged"/>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="Root" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Grid.Row="0" Style="{StaticResource Grid}">
+            <Label Content="INPUT Файл" Style="{StaticResource StartLabel}"/>
+            <TextBox x:Name="FileName" Style="{StaticResource TextBoxMiddle}" Tag="MO_Input_File"/>
+            <Button x:Name="FileNameBrowse" Content="..." Style="{StaticResource BrowseButton}" Click="FileNameBrowse_Click" />
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="1" Style="{StaticResource Grid}">
+            <Label Content="ВЗМО (HOMO)" Style="{StaticResource StartLabel}"/>
+            <TextBox x:Name="N_Homo" Style="{StaticResource TextBoxRight}" Tag="MO_HOMO_N"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="2" Style="{StaticResource Grid}">
+            <Label Content="Количество доп." Style="{StaticResource StartLabel}"/>
+            <TextBox x:Name="N_MO" Style="{StaticResource TextBoxRight}" Text="1" Tag="MO_N"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="3" Style="{StaticResource Grid}">
+            <Label Content="Длина расчёта" Style="{StaticResource StartLabel}"/>
+            <TextBox x:Name="N_Length" Style="{StaticResource TextBoxRight}" Text="20" Tag="MO_Length"/>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="4" Style="{StaticResource Grid}">
+            <Button x:Name="Start" Content="Заполнить" Click="Start_Click"/>
+        </Grid>
     </Grid>
 </Window>
