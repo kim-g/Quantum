@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
-        mc:Ignorable="d" Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" VerticalAlignment="Top" ResizeMode="CanResizeWithGrip" SizeToContent="Height" Width="600">
+        mc:Ignorable="d" Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" VerticalAlignment="Top" ResizeMode="CanResizeWithGrip" SizeToContent="Height" Width="600" ShowInTaskbar="False">
     <Window.Resources>
         <Style x:Key="Grid">
             <Setter Property="Control.Margin" Value="0,0,0,10" />
