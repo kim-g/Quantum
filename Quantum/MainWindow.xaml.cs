@@ -31,22 +31,45 @@ namespace Quantum
 
             Dir_text.Text = Config.GetConfigValue("work_dir");
             Project_text.Text = Config.GetConfigValue("project_dir");
-            TemplateDir.Text = Config.GetConfigValue("template_dir");
+            //TemplateDir.Text = Config.GetConfigValue("template_dir");
             from_text.Text = Config.GetConfigValue("from");
             to_text.Text = Config.GetConfigValue("to");
             Additional.Text = Config.GetConfigValue("additional");
             List_text.Text = Config.GetConfigValue("list_text");
+            ChargeTB.Text = "0";
+            MultiTB.Text = "1";
+
+            List<string> Templates = Directory.EnumerateDirectories("Templates").ToList();
+            foreach (string Template in Templates)
+            {
+                string[] DirAddress = Template.Split('\\');
+                TemplateDir.Items.Add(DirAddress[1]);
+                if (DirAddress[1] == Config.GetConfigValue("template_dir"))
+                    TemplateDir.SelectedIndex = TemplateDir.Items.Count - 1;
+            }
 
             RB_Diap.IsChecked = !Config.GetConfigValueBool("list");
             RB_List.IsChecked = Config.GetConfigValueBool("list");
         }
 
-
+        /// <summary>
+        /// Показывает окно создания расчётных задач
+        /// </summary>
+        /// <param name="owner">Окно-родитель</param>
+        /// <param name="ConfigDataBase">База данных конфигурации</param>
+        public static void ShowModal(Window owner, SQLiteDataBase ConfigDataBase)
+        {
+            MainWindow Projects = new MainWindow(ConfigDataBase);
+            Projects.Owner = owner;
+            Projects.ShowDialog();
+            GC.Collect();
+        }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             // Ищем все темплаты
-            string[] allTemplates = Directory.GetFiles(TemplateDir.Text, "*", SearchOption.TopDirectoryOnly);
+            string[] allTemplates = Directory.GetFiles("Templates\\" + TemplateDir.Text, "*", 
+                SearchOption.TopDirectoryOnly);
             List<string> Templates = new List<string>();
             List<string> TemplateNames = new List<string>();
             foreach (string file in allTemplates)
@@ -107,7 +130,8 @@ namespace Quantum
             // И записывает туда изменённые файлы
             for (int j = 0; j < Templates.Count; j++)
             {
-                string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir);
+                string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir).
+                    Replace("@Charge@", ChargeTB.Text).Replace("@Mult@", MultiTB.Text);
                 string[] Add_Rep = Additional.Text.Split(';');
                 foreach (string Rep in Add_Rep)
                 {
@@ -215,6 +239,11 @@ namespace Quantum
         private void List_text_TextChanged(object sender, TextChangedEventArgs e)
         {
             Config.SetConfigValue("list_text", List_text.Text);
+        }
+
+        private void TemplateDir_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Config.SetConfigValue("template_dir", TemplateDir.SelectedItem.ToString());
         }
     }
 }

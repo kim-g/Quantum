@@ -19,42 +19,62 @@ namespace Quantum
     /// </summary>
     public partial class MainMenu : Window
     {
-        public static string ProgramVersion = "1.2.1";
+        /// <summary>
+        /// Версия программы
+        /// </summary>
+        public static string ProgramVersion = "1.3.0";
+        /// <summary>
+        /// База данных конфига
+        /// </summary>
         SQLiteDataBase Config;
 
+        /// <summary>
+        /// Инициализация окна
+        /// </summary>
         public MainMenu()
         {
             InitializeComponent();
             Config = SQLiteDataBase.Open("config.db");
         }
 
+        /// <summary>
+        /// Нажатие на кнопку "Проекты расчётов из шаблонов"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProjectsButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow Projects = new MainWindow(Config);
-            Projects.Owner = this;
-            Projects.ShowDialog();
-            GC.Collect();
+            MainWindow.ShowModal(this, Config);
         }
 
+        /// <summary>
+        /// Нажатие кнопки "Закрыть"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
 
+        /// <summary>
+        /// Нажатие кнопки "О программе"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
-            About AboutForm = new About();
-            AboutForm.Owner = this;
-            AboutForm.ShowDialog();
-            GC.Collect();
+            About.ShowModal(this);
         }
 
+        /// <summary>
+        /// Показать окно редактирования расчёта МО (Устарело)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MOButton_Click(object sender, RoutedEventArgs e)
         {
-            SetMO SetMO_Form = new SetMO(Config);
-            SetMO_Form.Owner = this;
-            SetMO_Form.ShowDialog();
-            GC.Collect();
+            SetMO.ShowModal(this, Config);
         }
     }
 }

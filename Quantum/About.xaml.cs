@@ -26,6 +26,18 @@ namespace Quantum
             Year.Text = DateTime.Now.Year.ToString();
         }
 
+        /// <summary>
+        /// Показать окно с информацией о программе и её авторах в диалоговом режиме
+        /// </summary>
+        /// <param name="owner">Окно-родитель</param>
+        public static void ShowModal(Window owner)
+        {
+            About AboutForm = new About();
+            AboutForm.Owner = owner;
+            AboutForm.ShowDialog();
+            GC.Collect();
+        }
+
         private void Author_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             System.Diagnostics.Process.Start("mailto:kim-g@ios.uran.ru");
