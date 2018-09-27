@@ -116,6 +116,7 @@
       <DependentUpon>SetMO.xaml</DependentUpon>
     </Compile>
     <Compile Include="SQLiteDataBase.cs" />
+    <Compile Include="StringExtention.cs" />
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

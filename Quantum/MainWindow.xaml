@@ -38,70 +38,78 @@
         </Style>
     </Window.Resources>
     <Grid Margin="10,10,10,8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid Grid.Column="0" Grid.Row="0" Style="{DynamicResource Grid}">
-            <Label x:Name="label" Content="Директория" Style="{DynamicResource StartLabel}"/>
-            <TextBox x:Name="Dir_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Dir_text_TextChanged"/>
-            <Button x:Name="button" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Click"/>
-        </Grid>
-        <Grid Grid.Column="0" Grid.Row="1" Style="{DynamicResource Grid}">
-            <Label x:Name="label_Copy" Content="Проект" Style="{DynamicResource StartLabel}"/>
-            <TextBox x:Name="Project_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Project_text_TextChanged"/>
-            <Button x:Name="button_Copy" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Copy_Click"/>
-        </Grid>
-        <Grid Grid.Column="0" Grid.Row="2" Style="{DynamicResource Grid}">
-            <Label x:Name="label_Copy1" Content="Шаблоны" Style="{DynamicResource StartLabel}"/>
-            <ComboBox x:Name="TemplateDir" Style="{DynamicResource TextBoxMiddle}" SelectionChanged="TemplateDir_SelectionChanged" />
-        </Grid>
-        <Grid Grid.Column="0" Grid.Row="3" Style="{DynamicResource Grid}">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Заряд"/>
-                <TextBox x:Name="ChargeTB" Width="40" HorizontalAlignment="Left" Margin="0,0,30,0"/>
-                <Label Content="Мультиплетность"/>
-                <TextBox x:Name="MultiTB" Width="40" HorizontalAlignment="Left"/>
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
-            <Label x:Name="label_Copy4" Content="Доп. параметры" Style="{DynamicResource StartLabel}"/>
-            <TextBox x:Name="Additional" Style="{DynamicResource TextBoxRight}" TextChanged="Additional_TextChanged"/>
-        </Grid>
-        <Grid  Grid.Column="0" Grid.Row="5" Style="{DynamicResource Grid}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid x:Name="Diap" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
-                <Label x:Name="label_Copy2" Content="Подпапки от" Style="{DynamicResource StartLabel}" Width="80"/>
-                <TextBox x:Name="from_text" HorizontalAlignment="Left" Height="23" Margin="82,2,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="from_text_TextChanged"/>
-                <Label x:Name="label_Copy3" Content="до" Style="{DynamicResource StartLabel}" Margin="150,1,0,0" Width="24"/>
-                <TextBox x:Name="to_text" HorizontalAlignment="Left" Height="23" Margin="179,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="to_text_TextChanged"/>
-            </Grid>
-            <Grid x:Name="List_Grid" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0">
-                <Label x:Name="label_List" Content="Подпапки" Style="{DynamicResource StartLabel}"/>
-                <TextBox x:Name="List_text" Style="{DynamicResource TextBoxRight}" TextChanged="List_text_TextChanged"/>
-            </Grid>
+        <StackPanel Orientation="Vertical">
             <Grid Grid.Column="0" Grid.Row="0" Style="{DynamicResource Grid}">
-                <RadioButton x:Name="RB_Diap" Content="Диапазон" VerticalAlignment="Top" IsChecked="True" Checked="RB_Diap_Checked" Margin="0,0,84,0"/>
-                <RadioButton x:Name="RB_List" Content="Список" HorizontalAlignment="Left" Margin="98,0,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RB_List_Checked"/>
+                <Label x:Name="label" Content="Директория" Style="{DynamicResource StartLabel}"/>
+                <TextBox x:Name="Dir_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Dir_text_TextChanged"/>
+                <Button x:Name="button" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Click"/>
             </Grid>
-        </Grid>
-        <Grid Grid.Column="0" Grid.Row="6" Margin="0,0,0,0">
-            <Button x:Name="button1" Content="Создать"  Margin="0,0,0,0" VerticalAlignment="Top" Height="35" IsDefault="True" FontSize="20" FontWeight="Bold" Click="button1_Click" />
-        </Grid>
+            <Grid Grid.Column="0" Grid.Row="1" Style="{DynamicResource Grid}">
+                <Label x:Name="label_Copy" Content="Проект" Style="{DynamicResource StartLabel}"/>
+                <TextBox x:Name="Project_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Project_text_TextChanged"/>
+                <Button x:Name="button_Copy" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Copy_Click"/>
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="2" Style="{DynamicResource Grid}">
+                <Label x:Name="label_Copy1" Content="Шаблоны" Style="{DynamicResource StartLabel}"/>
+                <ComboBox x:Name="TemplateDir" Style="{DynamicResource TextBoxMiddle}" SelectionChanged="TemplateDir_SelectionChanged" />
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="3" Style="{DynamicResource Grid}">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Заряд"/>
+                    <TextBox x:Name="ChargeTB" Width="40" HorizontalAlignment="Left" Margin="0,0,30,0"/>
+                    <Label Content="Мультиплетность"/>
+                    <TextBox x:Name="MultiTB" Width="40" HorizontalAlignment="Left"  Margin="0,0,30,0"/>
+                    <CheckBox x:Name="Charges" Content="Зарядовые плотности" VerticalAlignment="Center" IsChecked="True" Click="Charges_Click"/>
+                </StackPanel>
+            </Grid>
+            <Grid Style="{DynamicResource Grid}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Зафиксировать:"/>
+                        <RadioButton x:Name="ConstNone" Content="Ничего" VerticalContentAlignment="Stretch" VerticalAlignment="Center" IsChecked="True" Margin="0,0,10,0" Checked="ConstNone_Checked"/>
+                        <RadioButton x:Name="ConstBond" Content="Связь" VerticalContentAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,10,0" Checked="ConstBond_Checked"/>                    
+                    </StackPanel>
+                    <StackPanel x:Name="ConstBondStack" Orientation="Horizontal" Visibility="Collapsed">
+                        <Label Content="Атомы: "/>
+                        <TextBox x:Name="Atom1" Width="40" TextChanged="TextBox_TextChanged" Tag="ConstBondAtom1"/>
+                        <Label Content=" и "/>
+                        <TextBox x:Name="Atom2" Width="40" TextChanged="TextBox_TextChanged" Tag="ConstBondAtom2"/>
+                        <Label Content=", значение "/>
+                        <TextBox x:Name="BondLength" Width="40" TextChanged="TextBox_TextChanged" Tag="ConstBondLength"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
+                <Label x:Name="label_Copy4" Content="Доп. параметры" Style="{DynamicResource StartLabel}"/>
+                <TextBox x:Name="Additional" Style="{DynamicResource TextBoxRight}" TextChanged="Additional_TextChanged"/>
+            </Grid>
+            <Grid  Grid.Column="0" Grid.Row="5" Style="{DynamicResource Grid}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid x:Name="Diap" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+                    <Label x:Name="label_Copy2" Content="Подпапки от" Style="{DynamicResource StartLabel}" Width="80"/>
+                    <TextBox x:Name="from_text" HorizontalAlignment="Left" Height="23" Margin="82,2,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="from_text_TextChanged"/>
+                    <Label x:Name="label_Copy3" Content="до" Style="{DynamicResource StartLabel}" Margin="150,1,0,0" Width="24"/>
+                    <TextBox x:Name="to_text" HorizontalAlignment="Left" Height="23" Margin="179,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="52" TextChanged="to_text_TextChanged"/>
+                </Grid>
+                <Grid x:Name="List_Grid" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0">
+                    <Label x:Name="label_List" Content="Подпапки" Style="{DynamicResource StartLabel}"/>
+                    <TextBox x:Name="List_text" Style="{DynamicResource TextBoxRight}" TextChanged="List_text_TextChanged"/>
+                </Grid>
+                <Grid Grid.Column="0" Grid.Row="0" Style="{DynamicResource Grid}">
+                    <RadioButton x:Name="RB_Diap" Content="Диапазон" VerticalAlignment="Top" IsChecked="True" Checked="RB_Diap_Checked" Margin="0,0,84,0"/>
+                    <RadioButton x:Name="RB_List" Content="Список" HorizontalAlignment="Left" Margin="98,0,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RB_List_Checked"/>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="0" Grid.Row="6" Margin="0,0,0,0">
+                <Button x:Name="button1" Content="Создать"  Margin="0,0,0,0" VerticalAlignment="Top" Height="35" IsDefault="True" FontSize="20" FontWeight="Bold" Click="button1_Click" />
+            </Grid>
+        </StackPanel>
     </Grid>
 </Window>

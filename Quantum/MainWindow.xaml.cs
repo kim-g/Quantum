@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WinForms = System.Windows.Forms;
+using Extentions;
 
 namespace Quantum
 {
@@ -31,13 +32,16 @@ namespace Quantum
 
             Dir_text.Text = Config.GetConfigValue("work_dir");
             Project_text.Text = Config.GetConfigValue("project_dir");
-            //TemplateDir.Text = Config.GetConfigValue("template_dir");
             from_text.Text = Config.GetConfigValue("from");
             to_text.Text = Config.GetConfigValue("to");
             Additional.Text = Config.GetConfigValue("additional");
             List_text.Text = Config.GetConfigValue("list_text");
             ChargeTB.Text = "0";
             MultiTB.Text = "1";
+            Atom1.Text = Config.GetConfigValue("ConstBondAtom1");
+            Atom2.Text = Config.GetConfigValue("ConstBondAtom2");
+            BondLength.Text = Config.GetConfigValue("ConstBondLength");
+            Charges.IsChecked = Config.GetConfigValueBool("Charges");
 
             List<string> Templates = Directory.EnumerateDirectories("Templates").ToList();
             foreach (string Template in Templates)
@@ -120,6 +124,28 @@ namespace Quantum
 
         private void CreateProject(List<string> Templates, List<string> TemplateNames, string WorkDirectory, string CurDir)
         {
+            T SetItem<T>(string Text, string Target)
+            {
+                T IntValue = default(T);
+                Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+                string NewText = Text.Trim().Replace('.', separator).Replace(',',separator).Replace(" ", "");
+                
+                if (NewText == "")
+                {
+                    MessageBox.Show($"Введите {Target}!");
+                    return default(T);
+                }
+                try
+                {
+                    IntValue = NewText.To<T>();
+                }
+                catch
+                {
+                    MessageBox.Show($"Неправильно введён {Target}!");
+                }
+                return IntValue;
+            }
+            
             // Формируем название
             string CurAddress = System.IO.Path.Combine(WorkDirectory, CurDir);
             string CurDirLocalUnix = System.IO.Path.Combine(Project_text.Text, CurDir).Replace('\\', '/');
@@ -132,6 +158,28 @@ namespace Quantum
             {
                 string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir).
                     Replace("@Charge@", ChargeTB.Text).Replace("@Mult@", MultiTB.Text);
+                
+                // Получаем дополнительные параметры
+                string More = "";
+
+                if (Charges.IsChecked == true)
+                    More +="#Вывести зарядовые плотности\n%output\n\tPrint[P_AtPopMO_M] 1\nend\n";
+
+                if (ConstBond.IsChecked == true)
+                {
+                    int First, Second;
+                    float Bond;
+                    First = SetItem<int>(Atom1.Text, "номер первого атома");
+                    Second = SetItem<int>(Atom2.Text, "номер второго атома");
+                    Bond = SetItem<float>(BondLength.Text, "длину связи");
+
+                    string BondStr = Bond.ToString().
+                        Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0], '.');
+                    More += "#Зафиксировать связь\n%geom \n    constraints { B " + $"{First} {Second} {BondStr} " + " C } end \nend\n";
+                }
+
+                TextOut = TextOut.Replace("@More@", More);
+
                 string[] Add_Rep = Additional.Text.Split(';');
                 foreach (string Rep in Add_Rep)
                 {
@@ -244,6 +292,28 @@ namespace Quantum
         private void TemplateDir_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Config.SetConfigValue("template_dir", TemplateDir.SelectedItem.ToString());
+        }
+
+        private void ConstNone_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ConstBondStack == null) return;
+            ConstBondStack.Visibility = Visibility.Collapsed;
+        }
+
+        private void ConstBond_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ConstBondStack == null) return;
+            ConstBondStack.Visibility = Visibility.Visible;
+        }
+
+        private void Charges_Click(object sender, RoutedEventArgs e)
+        {
+            Config.SetConfigValue("Charges", Charges.IsChecked == true);
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Config.SetConfigValue(((TextBox)sender).Tag.ToString(), ((TextBox)sender).Text);
         }
     }
 }

@@ -34,8 +34,10 @@ namespace Quantum
 
         public static void ShowModal(Window owner, SQLiteDataBase ConfigDataBase)
         {
-            SetMO SetMO_Form = new SetMO(ConfigDataBase);
-            SetMO_Form.Owner = owner;
+            SetMO SetMO_Form = new SetMO(ConfigDataBase)
+            {
+                Owner = owner
+            };
             SetMO_Form.ShowDialog();
             GC.Collect();
         }
