@@ -76,5 +76,10 @@ namespace Quantum
         {
             SetMO.ShowModal(this, Config);
         }
+
+        private void EnergyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Energy_Diagram.ShowModal(this, Config);
+        }
     }
 }

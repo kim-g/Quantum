@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
         Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" 
-        VerticalAlignment="Top" ResizeMode="CanMinimize" Height="300" Width="400" Icon="Logo.ico" 
+        VerticalAlignment="Top" ResizeMode="CanMinimize" Height="332" Width="400" Icon="Logo.ico" 
         SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="Grid">
@@ -30,6 +30,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -73,14 +74,20 @@
                     Style="{DynamicResource Button}" Click="MOButton_Click"/>
         </Grid>
 
-        <!-- О программе -->
+        <!-- Энергии -->
         <Grid Grid.Column="0" Grid.Row="3" Style="{DynamicResource Grid}">
+            <Button x:Name="EnergyButton" Content="Диаграммы энергий" 
+                    Style="{DynamicResource Button}" Click="EnergyButton_Click"/>
+        </Grid>
+
+        <!-- О программе -->
+        <Grid Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
             <Button x:Name="AboutButton" Content="О программе" 
                     Style="{DynamicResource Button}" Click="AboutButton_Click"/>
         </Grid>
 
         <!-- Выход -->
-        <Grid Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
+        <Grid Grid.Column="0" Grid.Row="5" Style="{DynamicResource Grid}">
             <Button x:Name="ExitButton" Content="Выход" 
                     Style="{DynamicResource Button}" Click="ExitButton_Click"/>
         </Grid>

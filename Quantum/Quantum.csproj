@@ -108,9 +108,19 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Diagram.xaml.cs">
+      <DependentUpon>Diagram.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EnergyElement.cs" />
+    <Compile Include="Energy_Diagram.xaml.cs">
+      <DependentUpon>Energy_Diagram.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Functions.cs" />
     <Compile Include="MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MoleculeElement.xaml.cs">
+      <DependentUpon>MoleculeElement.xaml</DependentUpon>
     </Compile>
     <Compile Include="SetMO.xaml.cs">
       <DependentUpon>SetMO.xaml</DependentUpon>
@@ -118,6 +128,14 @@
     <Compile Include="SQLiteDataBase.cs" />
     <Compile Include="StringExtention.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Diagram.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Energy_Diagram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,6 +155,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MoleculeElement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SetMO.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -190,6 +212,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ИОС.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="HOMO.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="LUMO.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
