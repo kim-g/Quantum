@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Energy_Diagram" Height="800" Width="500">
     <Grid HorizontalAlignment="Left">
-        <local:MoleculeElement x:Name="Test" Margin="0" HorizontalAlignment="Left"/>
+        <local:MoleculeElement x:Name="Test" Margin="0" Width="Auto" FontSize="20"/>
         <TextBox x:Name="MinVal" Text="-6" HorizontalAlignment="Left" VerticalAlignment="Top" Height="27" Width="63" Margin="334,60,0,0"/>
         <TextBox x:Name="MaxVal" Text="-2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="29" Width="66" Margin="334,26,0,0"/>
         <Button x:Name="UpdateBtn" Content="Обновить" HorizontalAlignment="Left" VerticalAlignment="Top" Height="34" Width="97" Margin="334,108,0,0" Click="UpdateBtn_Click"/>

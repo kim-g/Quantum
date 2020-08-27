@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfAnimatedGif;
 
 namespace Quantum
 {
@@ -24,6 +25,13 @@ namespace Quantum
         {
             InitializeComponent();
             AvailableHeight = ActualHeight - 450;
+            SizeChanged += MoleculeElement_SizeChanged;
+            Update();
+        }
+
+        private void MoleculeElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Update();
         }
 
         protected EnergyElement source;
@@ -31,7 +39,7 @@ namespace Quantum
         protected double max;
         protected double AvailableHeight;
         protected double Scale;
-        protected double ImageText = 240;
+        protected double ImageText = 200;
 
         /// <summary>
         /// Источник информации о молекуле.
@@ -72,6 +80,18 @@ namespace Quantum
             }
         }
 
+        public double ImageHeight
+        {
+            get => ImageText;
+            set
+            {
+                ImageText = value;
+                Update();
+            }
+        }
+
+        
+
         /// <summary>
         /// Обновить график
         /// </summary>
@@ -79,45 +99,60 @@ namespace Quantum
         {
             if (Source == null) return;
             if (ActualHeight == 0) return;
+            if (ActualWidth == 0) return;
 
-            AvailableHeight = ActualHeight - ImageText * 2;
+            AvailableHeight = ActualHeight - ImageText * 2 - 
+                HOMO_Label.ActualHeight - LUMO_Label.ActualHeight;
             double Delta = Max - Min;
             Scale = Delta / AvailableHeight;
 
-
-            HOMO_Line.Y1 = (Max - Source.HOMO.Energy) / Scale + ImageText;
+            HOMO_Line.X1 = ActualWidth / 4;
+            HOMO_Line.X2 = HOMO_Line.X1 * 3;
+            HOMO_Label.Content = Source.HOMO.EnergyString(4);
+            HOMO_Label.FontSize = FontSize;
+            HOMO_Line.Y1 = (Max - Source.HOMO.Energy) / Scale + ImageText + HOMO_Label.ActualHeight;
             HOMO_Line.Y2 = HOMO_Line.Y1;
 
-            LUMO_Line.Y1 = (Max - Source.LUMO.Energy) / Scale + ImageText;
+            LUMO_Line.X1 = HOMO_Line.X1;
+            LUMO_Line.X2 = HOMO_Line.X2;
+            LUMO_Label.Content = Source.LUMO.EnergyString(4);
+            LUMO_Label.Content = Source.LUMO.EnergyString(4);
+            LUMO_Line.Y1 = (Max - Source.LUMO.Energy) / Scale + ImageText + LUMO_Label.ActualHeight;
             LUMO_Line.Y2 = LUMO_Line.Y1;
 
-            HOMO_Label.Content = Source.HOMO.EnergyString(4);
+            
             HOMO_Label.Margin = new Thickness(0, HOMO_Line.Y1, 0, 0);
-            LUMO_Label.Content = Source.LUMO.EnergyString(4);
-            LUMO_Label.Margin = new Thickness(0, LUMO_Line.Y1 - 40, 0, 0);
+            LUMO_Label.Margin = new Thickness(0, LUMO_Line.Y1 - LUMO_Label.ActualHeight, 0, 0);
             Delta_Label.Content = Source.GapString(4);
-            Delta_Label.Margin = new Thickness(Delta_Label.Margin.Left, 
+            Delta_Label.FontSize = FontSize * 1.25;
+            Delta_Label.Margin = new Thickness(HOMO_Line.X1 + ActualWidth / 10, 
                 (HOMO_Line.Y1 - LUMO_Line.Y1 - Delta_Label.ActualHeight)/2 + LUMO_Line.Y1, 0, 0);
+            
 
+
+            Arrow_Line.X1 = HOMO_Line.X1 + ActualWidth / 10;
+            Arrow_Line.X2 = Arrow_Line.X1;
             Arrow_Line.Y1 = LUMO_Line.Y1;
             Arrow_Line.Y2 = HOMO_Line.Y1;
 
             Arrow_Up.Points = new PointCollection()
             {
-                new Point(70, LUMO_Line.Y1),
-                new Point(65, LUMO_Line.Y1+10),
-                new Point(75, LUMO_Line.Y1+10)
+                new Point(Arrow_Line.X1, LUMO_Line.Y1),
+                new Point(Arrow_Line.X1 - ActualWidth / 40, LUMO_Line.Y1 + ActualWidth / 20),
+                new Point(Arrow_Line.X1 + ActualWidth / 40, LUMO_Line.Y1 + ActualWidth / 20)
             };
 
             Arrow_Down.Points = new PointCollection()
             {
-                new Point(70, HOMO_Line.Y1),
-                new Point(65, HOMO_Line.Y1-10),
-                new Point(75, HOMO_Line.Y1-10)
+                new Point(Arrow_Line.X1, HOMO_Line.Y1),
+                new Point(Arrow_Line.X1 - ActualWidth / 40, HOMO_Line.Y1 - ActualWidth / 20),
+                new Point(Arrow_Line.X1 + ActualWidth / 40, HOMO_Line.Y1 - ActualWidth / 20)
             };
 
             HOMO_Image.Margin = new Thickness(0, HOMO_Label.Margin.Top + HOMO_Label.ActualHeight, 0, 0);
             LUMO_Image.Margin = new Thickness(0, LUMO_Label.Margin.Top - LUMO_Image.ActualHeight, 0, 0);
+            HOMO_Image.MaxHeight = ImageText;
+            LUMO_Image.MaxHeight = ImageText;
         }
     }
 }

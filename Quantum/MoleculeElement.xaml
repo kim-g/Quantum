@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Quantum"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="200" Width="200">
+             d:DesignHeight="450" d:DesignWidth="200" Width="200" FontSize="20">
     <Grid>
         <Line x:Name="HOMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="400" Y2="400"/>
         <Line x:Name="LUMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="230" Y2="230"/>
