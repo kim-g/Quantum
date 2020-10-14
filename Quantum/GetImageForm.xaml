@@ -1,0 +1,17 @@
+﻿<Window x:Class="Quantum.GetImageForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Quantum"
+        mc:Ignorable="d"
+        Title="GetImageForm" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="GotImage"/>
+        <Button Grid.Row="1" Width="100" Content="Вставить" Click="Button_Click"/>
+    </Grid>
+</Window>

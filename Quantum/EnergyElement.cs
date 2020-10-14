@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Quantum
@@ -59,13 +60,12 @@ namespace Quantum
             return Energy.ToString($"F{Decimal}");
         }
 
-        public BitmapImage Picture { get; set; }
+        public ImageSource Picture { get; set; }
 
         public void PictureFromFile (string FileName)
         {
-            Picture.BeginInit();
-            Picture.UriSource = new Uri(FileName, UriKind.Absolute);
-            Picture.EndInit();
+            BitmapImage BI = new BitmapImage(new Uri(FileName, UriKind.Absolute));
+            Picture = BI;
         }
     }
 }

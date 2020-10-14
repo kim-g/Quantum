@@ -1,0 +1,26 @@
+﻿<Window x:Class="Quantum.MoleculeEdit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Quantum"
+        mc:Ignorable="d"
+        Title="Добавить молекулу" Height="521.751" Width="208.395" SizeToContent="WidthAndHeight">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="0,20">
+            <Label Content="Шифр"/>
+            <TextBox x:Name="MolNameTB"/>
+            <Label Content="LUMO"/>
+            <Image x:Name="LUMO_Img" Source="Load.png" Width="200" Height="200" MouseUp="LUMO_Img_MouseUp"/>
+            <TextBox x:Name="LUMO_Value"/>
+
+            <Label Content="HOMO"/>
+            <Image x:Name="HOMO_Img" Source="Load.png" Width="200" Height="200" MouseUp="HOMO_Img_MouseUp"/>
+            <TextBox x:Name="HOMO_Value"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="Добавить" Click="Button_Click" Margin="0,0,20,0" />
+                <Button Content="Закрыть" Click="Button_Click_1" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

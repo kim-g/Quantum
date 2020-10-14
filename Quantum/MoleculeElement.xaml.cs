@@ -50,6 +50,8 @@ namespace Quantum
             set
             {
                 source = value;
+                HOMO_Image.Source = source.HOMO.Picture;
+                LUMO_Image.Source = source.LUMO.Picture;
                 Update();
             }
         }
@@ -102,7 +104,8 @@ namespace Quantum
             if (ActualWidth == 0) return;
 
             AvailableHeight = ActualHeight - ImageText * 2 - 
-                HOMO_Label.ActualHeight - LUMO_Label.ActualHeight;
+                HOMO_Label.ActualHeight - LUMO_Label.ActualHeight -
+                Name_Label.ActualHeight - 20;
             double Delta = Max - Min;
             Scale = Delta / AvailableHeight;
 
@@ -153,6 +156,10 @@ namespace Quantum
             LUMO_Image.Margin = new Thickness(0, LUMO_Label.Margin.Top - LUMO_Image.ActualHeight, 0, 0);
             HOMO_Image.MaxHeight = ImageText;
             LUMO_Image.MaxHeight = ImageText;
+
+            Name_Label.Content = Source.Name;
+            Name_Label.FontSize = FontSize;
+            Name_Label.Margin = new Thickness(0, HOMO_Image.Margin.Top + HOMO_Image.ActualHeight + 20, 0, 0);
         }
     }
 }

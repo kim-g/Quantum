@@ -20,20 +20,13 @@ namespace Quantum
     public partial class Energy_Diagram : Window
     {
         SQLiteDataBase Config;
-        EnergyElement EE = new EnergyElement();
+        EnergyElement EE;
+        int N = 0;
 
         public Energy_Diagram(SQLiteDataBase ConfigDataBase)
         {
             InitializeComponent();
             Config = ConfigDataBase;
-
-            EE.HOMO.Energy = -2.3456;
-            EE.LUMO.Energy = -5.6789;
-            EE.Name = "Test";
-
-            Test.Source = EE;
-            Test.Min = -6;
-            Test.Max = -2;
         }
 
         public static void ShowModal(Window owner, SQLiteDataBase ConfigDataBase)
@@ -46,14 +39,21 @@ namespace Quantum
             GC.Collect();
         }
 
-        private void UpdateBtn_Click(object sender, RoutedEventArgs e)
+        private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            char Separatop = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+            EnergyElement NewElement = MoleculeEdit.Add();
+            if (NewElement != null) Energies.Source.Add(NewElement);
+        }
 
+        private void CopyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Energies.CopyBitmapImageToClipboard();
 
-            EE.HOMO.Energy = Convert.ToDouble(MinVal.Text.Replace('.', Separatop).Replace(',',Separatop));
-            EE.LUMO.Energy = Convert.ToDouble(MaxVal.Text.Replace('.', Separatop).Replace(',', Separatop));
-            Test.Update();
+        }
+
+        private void PrintBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Energies.Print();
         }
     }
 }

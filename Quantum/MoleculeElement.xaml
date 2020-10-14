@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Quantum"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="200" Width="200" FontSize="20">
+             d:DesignHeight="500" d:DesignWidth="200" Width="200" FontSize="20">
     <Grid>
         <Line x:Name="HOMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="400" Y2="400"/>
         <Line x:Name="LUMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="230" Y2="230"/>
@@ -15,7 +15,8 @@
         <Label x:Name="HOMO_Label" VerticalAlignment="Top" Margin="0,400,0,0" Content="-6.6584" FontSize="20" HorizontalAlignment="Center"/>
         <Label x:Name="LUMO_Label" VerticalAlignment="Top" Margin="0,190,0,0" Content="-2.6584" FontSize="20"  HorizontalAlignment="Center"/>
         <Label x:Name="Delta_Label" VerticalAlignment="Top" Margin="70,300,0,0" Content="4.0000" FontSize="24"  HorizontalAlignment="Left" FontWeight="Bold"/>
-        <Image x:Name="HOMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" Source="HOMO.png" MaxWidth="200" MaxHeight="200"/>
-        <Image x:Name="LUMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" Source="LUMO.png" MaxWidth="200" MaxHeight="200"/>
+        <Label x:Name="Name_Label" VerticalAlignment="Top" Margin="0,440,0,0" Content="1a" FontSize="20"  HorizontalAlignment="Center" FontWeight="Bold"/>
+        <Image x:Name="HOMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="200" MaxHeight="200"/>
+        <Image x:Name="LUMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="200" MaxHeight="200"/>
     </Grid>
 </UserControl>
