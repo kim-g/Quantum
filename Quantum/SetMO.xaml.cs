@@ -20,9 +20,9 @@ namespace Quantum
     /// </summary>
     public partial class SetMO : Window
     {
-        SQLiteDataBase Config;
+        SQLiteConfig Config;
 
-        public SetMO(SQLiteDataBase ConfigDataBase)
+        public SetMO(SQLiteConfig ConfigDataBase)
         {
             InitializeComponent();
             Config = ConfigDataBase;
@@ -32,7 +32,7 @@ namespace Quantum
             }
         }
 
-        public static void ShowModal(Window owner, SQLiteDataBase ConfigDataBase)
+        public static void ShowModal(Window owner, SQLiteConfig ConfigDataBase)
         {
             SetMO SetMO_Form = new SetMO(ConfigDataBase)
             {

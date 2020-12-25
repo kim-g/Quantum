@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,7 +30,10 @@ namespace Quantum
         protected double MinEnergy = -1;
         protected double MaxEnergy = 0;
         protected double elementwidth = 200;
-        
+
+        public delegate void UpdateEvent(object sender);
+        public event UpdateEvent Updated;
+
         /// <summary>
         /// Цвет фона основного пространства диаграммы
         /// </summary>
@@ -101,13 +105,14 @@ namespace Quantum
                 for (int i = 0; i < Diff; i++)
                 {
                     MoleculeElement ME = new MoleculeElement();
+                    ME.MouseDoubleClick += OnDblClick;
                     Field.Children.Add(ME);
                     Elements.Add(ME);
                 }
             }
             if (Diff < 0)
             {
-                for (int i = 0; i < Diff; i++)
+                for (int i = 0; i > Diff; i--)
                 {
                     MoleculeElement ME = Elements[Elements.Count - 1];
                     Field.Children.Remove(ME);
@@ -128,6 +133,8 @@ namespace Quantum
 
                 N++;
             }
+
+            Updated?.Invoke(this);
         }
 
         /// <summary>
@@ -160,8 +167,30 @@ namespace Quantum
         public void Print()
         {
             PrintDialog printDlg = new PrintDialog();
-            if (printDlg.ShowDialog() == true)
+            printDlg.PrintTicket.PageMediaSize
+                    = new PageMediaSize(Field.ActualWidth, Field.ActualHeight);
+            PrintTicket prntkt = printDlg.PrintTicket;
+            prntkt.PageMediaSize = new PageMediaSize(Field.ActualWidth, Field.ActualHeight);
+            prntkt.PageOrientation = PageOrientation.Landscape;
+            if (/*printDlg.ShowDialog() == */true)
+            {
+                prntkt = printDlg.PrintTicket;
+                prntkt.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA0);
+                prntkt.PageOrientation = PageOrientation.Landscape;
+                printDlg.PrintTicket = prntkt;
                 printDlg.PrintVisual(Field, "Диаграмма энергий.");
+                //PrintHelper.ShowPrintPreview(PrintHelper.GetFixedDocument(Field, printDlg));
+            }
+        }
+
+        private void OnDblClick(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                MoleculeElement ME = (MoleculeElement)sender;
+                ME.Source = MoleculeEdit.Edit(ME.Source);
+                Update();
+            }
         }
     }
 }

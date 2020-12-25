@@ -13,15 +13,16 @@
             <ColumnDefinition Width="200
 " />
         </Grid.ColumnDefinitions>
-        <local:Diagram x:Name="Energies" Margin="0,0,0,0"/>
+        <local:Diagram x:Name="Energies" Margin="0,0,0,0" Updated="Energies_Updated"/>
 
-            <GridSplitter Grid.Column="1"  ShowsPreview="False" Width="3"
+        <GridSplitter Grid.Column="1"  ShowsPreview="False" Width="3"
         HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
         <StackPanel Grid.Column="2">
-            <Button x:Name="AddBtn" Content="Копировать" HorizontalAlignment="Center" Height="34" Width="97" Margin="0,10,0,0" Click="AddBtn_Click"/>
+            <Button x:Name="AddBtn" Content="Добавить" HorizontalAlignment="Center" Height="34" Width="97" Margin="0,10,0,0" Click="AddBtn_Click"/>
             <Button x:Name="CopyBtn" Content="Копировать" HorizontalAlignment="Center" Height="34" Width="97" Margin="0,10,0,0" Click="CopyBtn_Click"/>
             <Button x:Name="PrintBtn" Content="Печать" HorizontalAlignment="Center" VerticalAlignment="Top" Height="34" Width="97" Margin="0,10,0,0" Click="PrintBtn_Click"/>
+            <Button x:Name="SaveBtn" Content="Сохранить" HorizontalAlignment="Center" VerticalAlignment="Top" Height="34" Width="97" Margin="0,10,0,0" Click="SaveBtn_Click"/>
         </StackPanel>
     </Grid>
 </Window>

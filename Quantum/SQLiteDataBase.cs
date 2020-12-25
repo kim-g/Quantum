@@ -6,15 +6,15 @@ using System.IO;
 
 namespace Quantum
 {
-    public class SQLiteDataBase
+    public class SQLiteDataBase : IDisposable
     {
-        private String dbFileName;
-        private SQLiteConnection Connection;
-        private SQLiteCommand Command;
+        protected string dbFileName;
+        protected SQLiteConnection Connection;
+        protected SQLiteCommand Command;
 
         public string ErrorMsg;
 
-        public SQLiteDataBase(string FileName)
+        public SQLiteDataBase(string FileName = "")
         {
             dbFileName = FileName;
             Connection = new SQLiteConnection();
@@ -33,15 +33,19 @@ namespace Quantum
 
         static public SQLiteDataBase Open(string FileName)
         {
-            SQLiteDataBase NewBase = new SQLiteDataBase(FileName);
+            if (File.Exists(FileName))
+            {
+                SQLiteDataBase NewBase = new SQLiteDataBase(FileName);
 
-            if (NewBase.OpenDB())
-                return NewBase;
-            else
-                return null;
+                if (NewBase.OpenDB())
+                    return NewBase;
+                else
+                    return null;
+            }
+            return null;
         }
 
-        private bool OpenDB()
+        protected bool OpenDB()
         {
             if (!File.Exists(dbFileName))
             {
@@ -63,8 +67,11 @@ namespace Quantum
             return true;
         }
 
-        private bool CreateDB(string Query)
+        protected bool CreateDB(string Query)
         {
+            string Dir = Path.GetDirectoryName(Path.GetFullPath(dbFileName));
+            if (!Directory.Exists(Dir))
+                Directory.CreateDirectory(Dir);
             if (!File.Exists(dbFileName))
                 SQLiteConnection.CreateFile(dbFileName);
 
@@ -85,6 +92,11 @@ namespace Quantum
             return true;
         }
 
+        /// <summary>
+        /// Выполняет запрос. Возвращает таблицу.
+        /// </summary>
+        /// <param name="Query">Запрос</param>
+        /// <returns></returns>
         public DataTable ReadTable(string Query)
         {
             DataTable dTable = new DataTable();
@@ -97,8 +109,8 @@ namespace Quantum
 
             try
             {
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(Query, Connection);
-                adapter.Fill(dTable);
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(Query, Connection))
+                    adapter.Fill(dTable);
             }
             catch (SQLiteException ex)
             {
@@ -109,6 +121,12 @@ namespace Quantum
             return dTable;
         }
 
+        /// <summary>
+        /// Выдаёт количество записей в таблице с условиями
+        /// </summary>
+        /// <param name="Table">Имя таблицы</param>
+        /// <param name="Where">Условия</param>
+        /// <returns></returns>
         public int GetCount(string Table, string Where = null)
         {
             DataTable dTable = new DataTable();
@@ -122,8 +140,8 @@ namespace Quantum
             try
             {
                 string Query = Where == null ? "SELECT COUNT() AS 'C' FROM `" + Table + ";" : "SELECT COUNT() AS 'C' FROM `" + Table + "` WHERE " + Where + ";";
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(Query, Connection);
-                adapter.Fill(dTable);
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(Query, Connection))
+                    adapter.Fill(dTable);
             }
             catch (SQLiteException ex)
             {
@@ -134,6 +152,11 @@ namespace Quantum
             return Convert.ToInt32(dTable.Rows[0].ItemArray[0].ToString());
         }
 
+        /// <summary>
+        /// Выполнить запрос. Возврещает true в случае удачного выполнения и false в случае ошибки
+        /// </summary>
+        /// <param name="Query">Запрос</param>
+        /// <returns></returns>
         public bool Execute(string Query)
         {
             if (Connection.State != ConnectionState.Open)
@@ -150,32 +173,105 @@ namespace Quantum
             catch (SQLiteException ex)
             {
                 ErrorMsg = ex.Message;
+                Console.WriteLine($"Ошибка {ErrorMsg}");
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Выполнить запрос. Возврещает true в случае удачного выполнения и false в случае ошибки
+        /// </summary>
+        /// <param name="Query">Запрос. Значение @BLOB заменяется на поток</param>
+        /// <param name="BLOB">Поток для BLOB</param>
+        /// <returns></returns>
+        public bool ExecuteBLOB(string Query, Stream BLOB)
+        {
+            if (Connection.State != ConnectionState.Open)
+            {
+                ErrorMsg = "Open connection with database";
+                return false;
+            }
+
+            try
+            {
+                Command.CommandText = Query;
+                byte[] byteBLOB = new byte[BLOB.Length];
+                BLOB.Position = 0;
+                BLOB.Read(byteBLOB, 0, Convert.ToInt32(BLOB.Length));
+                Command.Parameters.Add("@BLOB", DbType.Binary, byteBLOB.Length).Value = byteBLOB;
+                Command.ExecuteNonQuery();
+            }
+            catch (SQLiteException ex)
+            {
+                ErrorMsg = ex.Message;
+                return false;
+            }
+            return true;
+        }
+
+        public long LastID
+        {
+            get { return Connection.LastInsertRowId; }
+        }
+
+        public void Dispose()
+        {
+            Connection.Dispose();
+            Command.Dispose();
+            Connection = null;
+            Command = null;
+            dbFileName = null;
+            ErrorMsg = null;
+        }
+    }
+
+    public class SQLiteConfig : SQLiteDataBase
+    {
+        public SQLiteConfig(string FileName) : base(FileName)
+        {
+            if (File.Exists(FileName))
+            {
+                OpenDB();
+            }
+            else
+            {
+                CreateDB("CREATE TABLE `config` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name`	TEXT NOT NULL, `value` TEXT); ");
+            }
+        }
+
+        public static new SQLiteConfig Open(string FileName)
+        {
+            return new SQLiteConfig(FileName);
         }
 
         //Работа с конфигом, получение значения
 
         public string GetConfigValue(string name)
         {
-            DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
-            if (Conf.Rows.Count == 0) return "";
-            return Conf.Rows[0].ItemArray[0].ToString();
+            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
+            {
+                if (Conf.Rows.Count == 0) return "";
+                return Conf.Rows[0].ItemArray[0].ToString();
+            }
         }
 
         public int GetConfigValueInt(string name)
         {
-            DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
-            if (Conf.Rows.Count == 0) return 0;
-            return Convert.ToInt32(Conf.Rows[0].ItemArray[0].ToString());
+            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
+            {
+                if (Conf.Rows.Count == 0) return 0;
+                return Convert.ToInt32(Conf.Rows[0].ItemArray[0].ToString());
+            }
         }
 
         public bool GetConfigValueBool(string name)
         {
-            DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1");
-            if (Conf.Rows.Count == 0) return false;
-            return Conf.Rows[0].ItemArray[0].ToString() == "1";
+            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
+            {
+                if (Conf.Rows.Count == 0) return false;
+                return Conf.Rows[0].ItemArray[0].ToString() == "1";
+            }
         }
 
 

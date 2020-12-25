@@ -33,7 +33,7 @@ namespace Quantum
         {
             double width = element.ActualWidth;
             double height = element.ActualHeight;
-            RenderTargetBitmap bmpCopied = new RenderTargetBitmap((int)Math.Round(width * 2), (int)Math.Round(height * 2), 96 * 2, 96 * 2, PixelFormats.Default);
+            RenderTargetBitmap bmpCopied = new RenderTargetBitmap((int)Math.Round(width*3), (int)Math.Round(height*3), 96*3, 96*3, PixelFormats.Default);
             DrawingVisual dv = new DrawingVisual();
             using (DrawingContext dc = dv.RenderOpen())
             {

@@ -23,9 +23,9 @@ namespace Quantum
     /// </summary>
     public partial class MainWindow : Window
     {
-        SQLiteDataBase Config;
+        SQLiteConfig Config;
 
-        public MainWindow(SQLiteDataBase ConfigDataBase)
+        public MainWindow(SQLiteConfig ConfigDataBase)
         {
             InitializeComponent();
             Config = ConfigDataBase;
@@ -61,7 +61,7 @@ namespace Quantum
         /// </summary>
         /// <param name="owner">Окно-родитель</param>
         /// <param name="ConfigDataBase">База данных конфигурации</param>
-        public static void ShowModal(Window owner, SQLiteDataBase ConfigDataBase)
+        public static void ShowModal(Window owner, SQLiteConfig ConfigDataBase)
         {
             MainWindow Projects = new MainWindow(ConfigDataBase);
             Projects.Owner = owner;

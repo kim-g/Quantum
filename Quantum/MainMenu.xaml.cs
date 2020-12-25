@@ -26,7 +26,7 @@ namespace Quantum
         /// <summary>
         /// База данных конфига
         /// </summary>
-        SQLiteDataBase Config;
+        SQLiteConfig Config;
 
         /// <summary>
         /// Инициализация окна
@@ -34,7 +34,7 @@ namespace Quantum
         public MainMenu()
         {
             InitializeComponent();
-            Config = SQLiteDataBase.Open("config.db");
+            Config = SQLiteConfig.Open("config.db");
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Quantum
 
         private void EnergyButton_Click(object sender, RoutedEventArgs e)
         {
-            Energy_Diagram.ShowModal(this, Config);
+            Energy_Diagram.ShowModal(this);
         }
     }
 }

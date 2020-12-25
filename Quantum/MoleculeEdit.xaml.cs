@@ -36,6 +36,10 @@ namespace Quantum
             HOMO_Img.Source = SwapClipboardImage();
         }
 
+        /// <summary>
+        /// Добавление нового элемента
+        /// </summary>
+        /// <returns></returns>
         public static EnergyElement Add()
         {
             MoleculeEdit ME = new MoleculeEdit();
@@ -55,6 +59,31 @@ namespace Quantum
                 return EE;
             }
             return null;
+        }
+
+        public static EnergyElement Edit(EnergyElement EE)
+        {
+            MoleculeEdit ME = new MoleculeEdit();
+            ME.MolNameTB.Text = EE.Name;
+            ME.HOMO_Img.Source = EE.HOMO.Picture;
+            ME.LUMO_Img.Source = EE.LUMO.Picture;
+            ME.HOMO_Value.Text = EE.HOMO.Energy.ToString();
+            ME.LUMO_Value.Text = EE.LUMO.Energy.ToString();
+            ME.ShowDialog();
+
+            if (ME.OK)
+            {
+                char Separatop = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+
+                EE.Name = ME.MolNameTB.Text;
+                EE.HOMO.Picture = ME.HOMO_Img.Source;
+                EE.LUMO.Picture = ME.LUMO_Img.Source;
+                EE.HOMO.Energy = Convert.ToDouble(ME.HOMO_Value.Text.Replace('.', Separatop).Replace(',', Separatop));
+                EE.LUMO.Energy = Convert.ToDouble(ME.LUMO_Value.Text.Replace('.', Separatop).Replace(',', Separatop));
+
+                return EE;
+            }
+            return EE;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

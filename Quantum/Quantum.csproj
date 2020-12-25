@@ -120,6 +120,7 @@
     <Compile Include="Diagram.xaml.cs">
       <DependentUpon>Diagram.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EnergiesDB.cs" />
     <Compile Include="EnergyElement.cs" />
     <Compile Include="Energy_Diagram.xaml.cs">
       <DependentUpon>Energy_Diagram.xaml</DependentUpon>
@@ -139,6 +140,7 @@
       <DependentUpon>MoleculeElement.xaml</DependentUpon>
     </Compile>
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="PrintHelper.cs" />
     <Compile Include="SetMO.xaml.cs">
       <DependentUpon>SetMO.xaml</DependentUpon>
     </Compile>
