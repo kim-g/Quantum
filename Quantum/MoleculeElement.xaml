@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="200" Width="200" FontSize="20">
     <Grid>
+        <Rectangle Fill="White"/>
         <Line x:Name="HOMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="400" Y2="400"/>
         <Line x:Name="LUMO_Line" Stroke="Black" StrokeThickness="2" X1="50" X2="150" Y1="230" Y2="230"/>
         <Line x:Name="Arrow_Line" Stroke="Black" StrokeThickness="1" X1="70" X2="70" Y1="230" Y2="400"/>
@@ -18,5 +19,6 @@
         <Label x:Name="Name_Label" VerticalAlignment="Top" Margin="0,440,0,0" Content="1a" FontSize="20"  HorizontalAlignment="Center" FontWeight="Bold"/>
         <Image x:Name="HOMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="200" MaxHeight="200"/>
         <Image x:Name="LUMO_Image" HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="200" MaxHeight="200"/>
+        <Rectangle x:Name="SelectedRect" Fill="Transparent" Stroke="Red" StrokeThickness="2" Visibility="Hidden"/>
     </Grid>
 </UserControl>

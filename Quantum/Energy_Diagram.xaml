@@ -22,7 +22,9 @@
             <Button x:Name="AddBtn" Content="Добавить" HorizontalAlignment="Center" Height="34" Width="97" Margin="0,10,0,0" Click="AddBtn_Click"/>
             <Button x:Name="CopyBtn" Content="Копировать" HorizontalAlignment="Center" Height="34" Width="97" Margin="0,10,0,0" Click="CopyBtn_Click"/>
             <Button x:Name="PrintBtn" Content="Печать" HorizontalAlignment="Center" VerticalAlignment="Top" Height="34" Width="97" Margin="0,10,0,0" Click="PrintBtn_Click"/>
-            <Button x:Name="SaveBtn" Content="Сохранить" HorizontalAlignment="Center" VerticalAlignment="Top" Height="34" Width="97" Margin="0,10,0,0" Click="SaveBtn_Click"/>
+            <Label x:Name="FS_Label" Content="Размер шрифта: 20" Margin="10,10,10,0"/>
+            <Slider x:Name="FontSize" Margin="10,0,10,0" Minimum="10" Maximum="40" ValueChanged="FontSize_ValueChanged" Value="20"/>
+
         </StackPanel>
     </Grid>
 </Window>

@@ -29,7 +29,7 @@ namespace Quantum
     /// </summary>
     public static class WPF_to_WMF_Converter
     {
-        public static void CopyUIElementToClipboard(FrameworkElement element)
+        public static void CopyUIElementToClipboard(FrameworkElement element, float Scale)
         {
             double width = element.ActualWidth;
             double height = element.ActualHeight;

@@ -40,6 +40,7 @@ namespace Quantum
         protected double AvailableHeight;
         protected double Scale;
         protected double ImageText = 200;
+        protected bool selected = false;
 
         /// <summary>
         /// Источник информации о молекуле.
@@ -92,6 +93,16 @@ namespace Quantum
             }
         }
 
+        public bool Selected
+        {
+            get => selected;
+            set
+            {
+                selected = value;
+                SelectedRect.Visibility = selected ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
+
         
 
         /// <summary>
@@ -119,7 +130,7 @@ namespace Quantum
             LUMO_Line.X1 = HOMO_Line.X1;
             LUMO_Line.X2 = HOMO_Line.X2;
             LUMO_Label.Content = Source.LUMO.EnergyString(4);
-            LUMO_Label.Content = Source.LUMO.EnergyString(4);
+            LUMO_Label.FontSize = FontSize;
             LUMO_Line.Y1 = (Max - Source.LUMO.Energy) / Scale + ImageText + LUMO_Label.ActualHeight;
             LUMO_Line.Y2 = LUMO_Line.Y1;
 
@@ -160,6 +171,8 @@ namespace Quantum
             Name_Label.Content = Source.Name;
             Name_Label.FontSize = FontSize;
             Name_Label.Margin = new Thickness(0, HOMO_Image.Margin.Top + HOMO_Image.ActualHeight + 20, 0, 0);
+
+            SelectedRect.Visibility = selected ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

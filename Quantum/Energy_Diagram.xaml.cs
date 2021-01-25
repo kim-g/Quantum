@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -22,6 +13,9 @@ namespace Quantum
     public partial class Energy_Diagram : Window
     {
         string FileName;
+        EnergiesDB DB;
+        private delegate void SimpleDelegate();
+
 
         public Energy_Diagram()
         {
@@ -42,7 +36,7 @@ namespace Quantum
                     {
                     Energy_Diagram Energy_Diagram_Form = new Energy_Diagram() { Owner = owner };
                     Energy_Diagram_Form.FileName = SD.FileName;
-                    Energy_Diagram_Form.Load(Energy_Diagram_Form.FileName);
+                    Energy_Diagram_Form.Load();
                     Energy_Diagram_Form.ShowDialog();
                 }
             }
@@ -52,7 +46,7 @@ namespace Quantum
         {
             EnergyElement NewElement = MoleculeEdit.Add();
             if (NewElement != null) Energies.Source.Add(NewElement);
-            Save(FileName);
+            Save();
         }
 
         private void CopyBtn_Click(object sender, RoutedEventArgs e)
@@ -62,36 +56,62 @@ namespace Quantum
 
         private void PrintBtn_Click(object sender, RoutedEventArgs e)
         {
-            Energies.Print();
+            Energies.Print(this);
         }
 
-        private void Save(string FileName)
+        private void Save()
         {
-            EnergiesDB EDB = EnergiesDB.Open(FileName);
+            if (Energies == null) return;
+            if (DB == null) return;
+            
+            DB.SaveParameter("fontsize", Energies.FontSize);
+
             foreach (EnergyElement EE in Energies.Source.Where(t=>t.Modifyed))
-                EDB.SaveMolecule(EE);
+                DB.SaveMolecule(EE);
         }
 
-        private void Load(string FileName)
+        private void Load()
         {
-            EnergiesDB EDB = EnergiesDB.Open(FileName);
-            Energies.Source.Clear();
+            DB = EnergiesDB.Open(FileName);
 
-            using (DataTable dt = EDB.ReadTable("SELECT `id` FROM `elements`"))
+            string FS = DB.LoadParameter("fontsize");
+            if (FS == null)
+                DB.SaveParameter("fontsize", 20);
+            else
+                Energies.FontSize = double.Parse(FS);
+
+            FontSize.Value = Energies.FontSize;
+
+            Energies.Source.Clear();
+            using (DataTable dt = DB.ReadTable("SELECT `id` FROM `elements`"))
             {
                 foreach (DataRow dr in dt.Rows)
-                    Energies.Source.Add(EDB.LoadMolecule(Convert.ToInt64(dr["id"])));
+                    Energies.Source.Add(DB.LoadMolecule(Convert.ToInt64(dr["id"])));
             }
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            Save(FileName);
+            Save();
         }
 
         private void Energies_Updated(object sender)
         {
-            Save(FileName);
+            Save();
+        }
+
+        private void FontSize_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        {
+            Console.WriteLine("FontSize changing stop");
+        }
+
+        private void FontSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Energies.FontSize = FontSize.Value;
+            FS_Label.Content = $"Размер шрифта: {FontSize.Value:F1}";
+
+            Energies.Update();
+            Dispatcher.BeginInvoke(new SimpleDelegate(Save), null) ;
         }
     }
 }

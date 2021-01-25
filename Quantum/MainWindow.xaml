@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
-        mc:Ignorable="d" Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" VerticalAlignment="Top" ResizeMode="CanResizeWithGrip" SizeToContent="Height" Width="600" ShowInTaskbar="False">
+        mc:Ignorable="d" Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" VerticalAlignment="Top" ResizeMode="CanResizeWithGrip" SizeToContent="Height" Width="618" ShowInTaskbar="False">
     <Window.Resources>
         <Style x:Key="Grid">
             <Setter Property="Control.Margin" Value="0,0,0,10" />
@@ -49,17 +49,22 @@
                 <TextBox x:Name="Project_text" Style="{DynamicResource TextBoxMiddle}" TextChanged="Project_text_TextChanged"/>
                 <Button x:Name="button_Copy" Content="..." Style="{DynamicResource BrowseButton}" Click="button_Copy_Click"/>
             </Grid>
-            <Grid Grid.Column="0" Grid.Row="2" Style="{DynamicResource Grid}">
+            <Grid Style="{DynamicResource Grid}">
                 <Label x:Name="label_Copy1" Content="Шаблоны" Style="{DynamicResource StartLabel}"/>
                 <ComboBox x:Name="TemplateDir" Style="{DynamicResource TextBoxMiddle}" SelectionChanged="TemplateDir_SelectionChanged" />
             </Grid>
-            <Grid Grid.Column="0" Grid.Row="3" Style="{DynamicResource Grid}">
+            <Grid Style="{DynamicResource Grid}">
+                <Label x:Name="label_root" Content="Корень" Style="{DynamicResource StartLabel}"/>
+                <ComboBox x:Name="RootCB" Style="{DynamicResource TextBoxMiddle}" SelectionChanged="RootCB_SelectionChanged"/>
+            </Grid>
+            <Grid Style="{DynamicResource Grid}">
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Заряд"/>
                     <TextBox x:Name="ChargeTB" Width="40" HorizontalAlignment="Left" Margin="0,0,30,0"/>
                     <Label Content="Мультиплетность"/>
                     <TextBox x:Name="MultiTB" Width="40" HorizontalAlignment="Left"  Margin="0,0,30,0"/>
-                    <CheckBox x:Name="Charges" Content="Зарядовые плотности" VerticalAlignment="Center" IsChecked="True" Click="Charges_Click"/>
+                    <CheckBox x:Name="Charges" Content="Зарядовые плотности" VerticalAlignment="Center" IsChecked="True"  Margin="0,0,30,0" Click="Charges_Click"/>
+                    <CheckBox x:Name="Hessian" Content="Численный Гессиан" VerticalAlignment="Center" Click="Hessian_Click"/>
                 </StackPanel>
             </Grid>
             <Grid Style="{DynamicResource Grid}">
@@ -67,7 +72,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Зафиксировать:"/>
                         <RadioButton x:Name="ConstNone" Content="Ничего" VerticalContentAlignment="Stretch" VerticalAlignment="Center" IsChecked="True" Margin="0,0,10,0" Checked="ConstNone_Checked"/>
-                        <RadioButton x:Name="ConstBond" Content="Связь" VerticalContentAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,10,0" Checked="ConstBond_Checked"/>                    
+                        <RadioButton x:Name="ConstBond" Content="Связь" VerticalContentAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,10,0" Checked="ConstBond_Checked"/>
                     </StackPanel>
                     <StackPanel x:Name="ConstBondStack" Orientation="Horizontal" Visibility="Collapsed">
                         <Label Content="Атомы: "/>
@@ -78,6 +83,10 @@
                         <TextBox x:Name="BondLength" Width="40" TextChanged="TextBox_TextChanged" Tag="ConstBondLength"/>
                     </StackPanel>
                 </StackPanel>
+            </Grid>
+            <Grid Style="{DynamicResource Grid}">
+                <Label x:Name="label_solvent" Content="Растворитель" Style="{DynamicResource StartLabel}"/>
+                <ComboBox x:Name="SolventCB" Style="{DynamicResource TextBoxMiddle}" SelectionChanged="SolventCB_SelectionChanged"/>
             </Grid>
             <Grid Grid.Column="0" Grid.Row="4" Style="{DynamicResource Grid}">
                 <Label x:Name="label_Copy4" Content="Доп. параметры" Style="{DynamicResource StartLabel}"/>

@@ -106,6 +106,7 @@ namespace Quantum
                 {
                     MoleculeElement ME = new MoleculeElement();
                     ME.MouseDoubleClick += OnDblClick;
+                    ME.MouseLeftButtonDown += ME_MouseLeftButtonDown;
                     Field.Children.Add(ME);
                     Elements.Add(ME);
                 }
@@ -137,6 +138,12 @@ namespace Quantum
             Updated?.Invoke(this);
         }
 
+        private void ME_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MoleculeElement ME = (MoleculeElement)sender;
+            ME.Selected = !ME.Selected;
+        }
+
         /// <summary>
         /// Определение минимального и минимального значения энергии в массиве
         /// </summary>
@@ -158,29 +165,31 @@ namespace Quantum
         /// </summary>
         public void CopyBitmapImageToClipboard()
         {
-            WPF_to_WMF_Converter.CopyUIElementToClipboard(Field);
+            WPF_to_WMF_Converter.CopyUIElementToClipboard(Field, 3);
         }
 
         /// <summary>
         /// Печать диаграммы
         /// </summary>
-        public void Print()
+        public void Print(Window Owner)
         {
-            PrintDialog printDlg = new PrintDialog();
+            /*PrintDialog printDlg = new PrintDialog();
             printDlg.PrintTicket.PageMediaSize
                     = new PageMediaSize(Field.ActualWidth, Field.ActualHeight);
             PrintTicket prntkt = printDlg.PrintTicket;
             prntkt.PageMediaSize = new PageMediaSize(Field.ActualWidth, Field.ActualHeight);
             prntkt.PageOrientation = PageOrientation.Landscape;
-            if (/*printDlg.ShowDialog() == */true)
-            {
+            if (/*printDlg.ShowDialog() == true)*/
+            /*{
                 prntkt = printDlg.PrintTicket;
                 prntkt.PageMediaSize = new PageMediaSize(PageMediaSizeName.ISOA0);
                 prntkt.PageOrientation = PageOrientation.Landscape;
                 printDlg.PrintTicket = prntkt;
                 printDlg.PrintVisual(Field, "Диаграмма энергий.");
                 //PrintHelper.ShowPrintPreview(PrintHelper.GetFixedDocument(Field, printDlg));
-            }
+            }*/
+
+                WPF_to_WMF_Converter.SaveUIElementToXAML(Field);
         }
 
         private void OnDblClick(object sender, MouseEventArgs e)
@@ -192,5 +201,6 @@ namespace Quantum
                 Update();
             }
         }
+
     }
 }

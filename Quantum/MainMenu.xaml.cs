@@ -22,7 +22,7 @@ namespace Quantum
         /// <summary>
         /// Версия программы
         /// </summary>
-        public static string ProgramVersion = "1.4.0";
+        public static string ProgramVersion = "1.5.0";
         /// <summary>
         /// База данных конфига
         /// </summary>

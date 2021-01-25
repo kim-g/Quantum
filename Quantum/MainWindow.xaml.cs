@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WinForms = System.Windows.Forms;
 using Extentions;
+using System.Data;
 
 namespace Quantum
 {
@@ -24,6 +25,9 @@ namespace Quantum
     public partial class MainWindow : Window
     {
         SQLiteConfig Config;
+        Dictionary<string, string> Roots;
+        Dictionary<string, string> RootLCTN;
+        Dictionary<string, string> Solvents;
 
         public MainWindow(SQLiteConfig ConfigDataBase)
         {
@@ -42,6 +46,7 @@ namespace Quantum
             Atom2.Text = Config.GetConfigValue("ConstBondAtom2");
             BondLength.Text = Config.GetConfigValue("ConstBondLength");
             Charges.IsChecked = Config.GetConfigValueBool("Charges");
+            Hessian.IsChecked = Config.GetConfigValueBool("numfreq");
 
             List<string> Templates = Directory.EnumerateDirectories("Templates").ToList();
             foreach (string Template in Templates)
@@ -50,6 +55,35 @@ namespace Quantum
                 TemplateDir.Items.Add(DirAddress[1]);
                 if (DirAddress[1] == Config.GetConfigValue("template_dir"))
                     TemplateDir.SelectedIndex = TemplateDir.Items.Count - 1;
+            }
+
+            Roots = new Dictionary<string, string>();
+            RootLCTN = new Dictionary<string, string>();
+            using (DataTable dt = Config.ReadTable("SELECT * FROM `roots`"))
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string name = dr["name"].ToString();
+                    Roots.Add(name, dr["path"].ToString());
+                    RootLCTN.Add(name, dr["lctndir"].ToString());
+                    RootCB.Items.Add(dr["name"].ToString());
+                    string root = Config.GetConfigValue("root");
+                    if (root == name)
+                        RootCB.SelectedIndex = RootCB.Items.Count - 1;
+                }
+            }
+
+            Solvents = new Dictionary<string, string>();
+            using (DataTable dt = Config.ReadTable("SELECT * FROM `solvents`"))
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string name = dr["name"].ToString();
+                    Solvents.Add(name, dr["code"].ToString());
+                    SolventCB.Items.Add(dr["name"].ToString());
+                    if (Config.GetConfigValue("solvent") == name)
+                        SolventCB.SelectedIndex = SolventCB.Items.Count - 1;
+                }
             }
 
             RB_Diap.IsChecked = !Config.GetConfigValueBool("list");
@@ -157,8 +191,11 @@ namespace Quantum
             for (int j = 0; j < Templates.Count; j++)
             {
                 string TextOut = Templates[j].Replace("@Dir@", CurDirLocalUnix).Replace("@N@", CurDir).
-                    Replace("@Charge@", ChargeTB.Text).Replace("@Mult@", MultiTB.Text);
-                
+                    Replace("@Charge@", ChargeTB.Text).Replace("@Mult@", MultiTB.Text).
+                    Replace("@root@", Roots[RootCB.SelectedItem.ToString()]).
+                    Replace("@Hessian@", (bool)Hessian.IsChecked ? "numfreq" : "freq").
+                    Replace("@lctndir@", RootLCTN[RootCB.SelectedItem.ToString()]);
+
                 // Получаем дополнительные параметры
                 string More = "";
 
@@ -176,6 +213,11 @@ namespace Quantum
                     string BondStr = Bond.ToString().
                         Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0], '.');
                     More += "#Зафиксировать связь\n%geom \n    constraints { B " + $"{First} {Second} {BondStr} " + " C } end \nend\n";
+                }
+
+                if (SolventCB.SelectedIndex > 0)
+                {
+                    More += $"!CPCMC({Solvents[SolventCB.SelectedItem.ToString()]})     # Растворитель: {SolventCB.SelectedItem}\n";
                 }
 
                 TextOut = TextOut.Replace("@More@", More);
@@ -314,6 +356,31 @@ namespace Quantum
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             Config.SetConfigValue(((TextBox)sender).Tag.ToString(), ((TextBox)sender).Text);
+        }
+
+        private void RootCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Config.SetConfigValue("root", RootCB.SelectedItem.ToString());
+        }
+
+        private void SolventCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Config.SetConfigValue("solvent", SolventCB.SelectedItem.ToString());
+            if (SolventCB.SelectedIndex > 0)
+            {
+                Hessian.IsChecked = true;
+                Hessian.IsEnabled = false;
+            }
+            else
+            {
+                Hessian.IsChecked = Config.GetConfigValueBool("numfreq");
+                Hessian.IsEnabled = true;
+            }
+        }
+
+        private void Hessian_Click(object sender, RoutedEventArgs e)
+        {
+            Config.SetConfigValue("numfreq", Hessian.IsChecked == true);
         }
     }
 }

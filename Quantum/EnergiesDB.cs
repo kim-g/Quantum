@@ -16,7 +16,8 @@ namespace Quantum
     {
         const string ElementsTable = "CREATE TABLE \"elements\" (\"id\"	INTEGER NOT NULL, \"name\"	TEXT, \"homo\"	INTEGER, \"lumo\"	INTEGER, \"order\"	INTEGER, PRIMARY KEY(\"id\" AUTOINCREMENT)); ";
         const string MOTable = "CREATE TABLE \"mo\" (\"id\"	INTEGER NOT NULL, \"energy\"	REAL, \"image\"	BLOB, PRIMARY KEY(\"id\" AUTOINCREMENT)); ";
-        
+        const string ParamsTable = @"CREATE TABLE IF NOT EXISTS 'config' ('name' TEXT UNIQUE, 'value' TEXT, PRIMARY KEY('name')); ";
+
         public EnergiesDB(string FileName) : base(FileName)
         {
             dbFileName = FileName;
@@ -34,7 +35,10 @@ namespace Quantum
                     EnergiesDB NewConf = new EnergiesDB(FileName);
 
                     if (NewConf.OpenDB())
+                    {
+                        NewConf.Execute(ParamsTable);
                         return NewConf;
+                    }
                     else
                         return null;
                 }
@@ -42,13 +46,13 @@ namespace Quantum
                 {
                     EnergiesDB NewConf = new EnergiesDB(FileName);
 
-                    if (NewConf.CreateDB(ElementsTable + MOTable))
+                    if (NewConf.CreateDB(ElementsTable + MOTable + ParamsTable))
                         return NewConf;
                     else
                         return null;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -92,8 +96,8 @@ namespace Quantum
         /// <returns></returns>
         public void SaveMolecule(EnergyElement EE)
         {
-            SaveMO(EE.HOMO);
-            SaveMO(EE.LUMO);
+            if (EE.HOMO.Modifyed) SaveMO(EE.HOMO);
+            if (EE.LUMO.Modifyed) SaveMO(EE.LUMO);
 
             string TextQuery = "";
             if (EE.ID > 0)
@@ -157,6 +161,21 @@ namespace Quantum
             EE.ID = ID;
             EE.Stable();
             return EE;
+        }
+
+
+        public string LoadParameter(string Name)
+        {
+            using (DataTable dt = ReadTable($"SELECT `value` FROM `config` WHERE `name`='{Name}'"))
+            {
+                if (dt.Rows.Count == 0) return null;
+                return dt.Rows[0]["value"].ToString();
+            }
+        }
+
+        public void SaveParameter(string Name, object Value)
+        {
+            Execute($"INSERT OR REPLACE INTO config(name, value) VALUES ('{Name}', '{Value}')");
         }
     }
 }
