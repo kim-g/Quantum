@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="Energy_Diagram" Height="800" Width="1042.249">
+        Title="Energy_Diagram" Height="800" Width="1042.249" ShowInTaskbar="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

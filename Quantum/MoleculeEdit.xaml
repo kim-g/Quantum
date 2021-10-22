@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="Добавить молекулу" Height="521.751" Width="208.395" SizeToContent="WidthAndHeight">
+        Title="Добавить молекулу" Height="667.751" Width="208.395" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="0,20">
             <Label Content="Шифр"/>

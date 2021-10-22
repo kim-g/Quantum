@@ -1,0 +1,123 @@
+﻿<Window x:Class="Quantum.JobEdit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Quantum"
+        mc:Ignorable="d"
+        Title="Создание задания" Height="534.605" Width="385.558" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="Height">
+    <StackPanel Orientation="Vertical" Margin="10">
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Название" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" x:Name="JobNameTB" Text="Задание 1" Margin="0,4,0,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Комментарий" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" x:Name="JobCommentTB" Text="" Margin="0,4,0,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Метод" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobMethodTB" Text="" Margin="0,4,10,0" SelectionChanged="JobMethodTB_SelectionChanged"/>
+            <Button Grid.Column="2" Name="MethodAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid x:Name="DFT_Type_Grid" Visibility="Collapsed" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="DFT" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobDFT_TypeTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" x:Name="DFT_TypeAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid x:Name="BasisGrid" Visibility="Collapsed" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Базис" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobBasisTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="BasisAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Прочее" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobOtherTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="OtherAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Задача" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobTaskTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="TaskAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Память на ядро" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" x:Name="JobMemoryTB" Text="4096" Margin="0,4,0,0"/>
+            <Label Grid.Column="2" Content="МБ" Margin="0,0,10,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Гессиан" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobHesTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="HesAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <CheckBox x:Name="ChargesCB" Content="Расчёт зарядовых плотностей" Margin="0,0,0,10"/>
+        <CheckBox x:Name="TDDFT_CB" Content="Расчёт TD-DFT" Margin="0,0,0,10"/>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Растворитель" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobSolutionTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="SolutionAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <Grid Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Вывод" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" x:Name="JobOutputTB" Text="" Margin="0,4,10,0"/>
+            <Button Grid.Column="2" Name="OutputAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="AddB" Content="Создать" Padding="15,0,15,0" Margin="0,0,10,0"/>
+            <Button x:Name="CancelB" Content="Отменить" Padding="15,0,15,0"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

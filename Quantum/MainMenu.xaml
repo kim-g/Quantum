@@ -62,6 +62,9 @@
             <!-- Энергии -->
             <Button x:Name="EnergyButton" Content="Диаграммы энергий" 
                     Style="{DynamicResource Button}" Click="EnergyButton_Click"/>
+            <!-- Конструктор -->
+            <Button x:Name="ConstructorButton" Content="Конструктор расчётов" 
+                    Style="{DynamicResource Button}" Click="ConstructorButton_Click"/>
             <!-- О программе -->
             <Button x:Name="AboutButton" Content="О программе" 
                     Style="{DynamicResource Button}" Click="AboutButton_Click"/>
