@@ -31,7 +31,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Метод" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobMethodTB" Text="" Margin="0,4,10,0" SelectionChanged="JobMethodTB_SelectionChanged"/>
-            <Button Grid.Column="2" Name="MethodAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="MethodAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Height="22" VerticalAlignment="Top" Click="MethodAdd_Click"/>
         </Grid>
         <Grid x:Name="DFT_Type_Grid" Visibility="Collapsed" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -41,7 +41,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="DFT" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobDFT_TypeTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" x:Name="DFT_TypeAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" x:Name="DFT_TypeAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="DFT_TypeAdd_Click"/>
         </Grid>
         <Grid x:Name="BasisGrid" Visibility="Collapsed" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -51,7 +51,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Базис" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobBasisTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="BasisAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="BasisAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="BasisAdd_Click"/>
         </Grid>
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Прочее" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobOtherTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="OtherAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="OtherAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" HorizontalAlignment="Right" Width="20" Click="OtherAdd_Click"/>
         </Grid>
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>

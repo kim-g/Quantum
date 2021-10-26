@@ -133,13 +133,14 @@ namespace Quantum
         /// <param name="Data">Значения</param>
         public void FullfillCB(ComboBox CB, Dictionary<string, int> Data)
         {
+            CB.Items.Clear();
             foreach (KeyValuePair<string, int> Line in Data)
                 CB.Items.Add(Line.Key);
         }
 
         private void JobMethodTB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Console.WriteLine($"«{JobMethodTB.SelectedItem.ToString()}»");
+            if (JobMethodTB.SelectedItem == null) return;
             
             DFT_Type_Grid.Visibility = JobMethodTB.SelectedItem.ToString() == "DFT"
                 ? Visibility.Visible
@@ -184,6 +185,9 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Заполнение полей при открытии окна
+        /// </summary>
         private void Full()
         {
             if (CurrentJob == null)
@@ -218,6 +222,57 @@ namespace Quantum
                 JobSolutionTB.SelectedItem = Solutions.First(x => x.Value == CurrentJob.Solvent).Key;
                 JobOutputTB.SelectedItem = Outputs.First(x => x.Value == CurrentJob.Output).Key;
             }
+        }
+
+        private void MethodAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("methods", AddParam.Add("Добавить метод расчёта")))
+                UpdateCB(JobMethodTB, "methods");
+        }
+
+        /// <summary>
+        /// Добавление нового пункта в БД
+        /// </summary>
+        /// <param name="Table">Таблица</param>
+        /// <param name="Data">Пара «Имя» - «Значение»</param>
+        /// <returns></returns>
+        private bool AddValue(string Table, KeyValuePair<string, string> Data)
+        {
+            if (Data.Key == null) return false;
+
+            string SafeName = Data.Key.Replace('\"', ' ').Replace('\'', ' ');
+            string SafeCode = Data.Value.Replace('\"', ' ').Replace('\'', ' ');
+            return Config.Execute($"INSERT INTO `{Table}`(`name`, `code`) VALUES ('{SafeName}', '{SafeCode}')");
+        }
+
+        /// <summary>
+        /// Обновление списка ComboBox с сохранением выбранного элемента
+        /// </summary>
+        /// <param name="CB">ComboBox</param>
+        /// <param name="Table">Таблица, из которой берутся значения</param>
+        private void UpdateCB(ComboBox CB, string Table)
+        {
+            object LastValue = CB.SelectedItem;
+            FullfillCB(CB, LoadFromDB(Table));
+            CB.SelectedItem = LastValue;
+        }
+
+        private void DFT_TypeAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("dft", AddParam.Add("Добавить реализацию DFT")))
+                UpdateCB(JobDFT_TypeTB, "dft");
+        }
+
+        private void BasisAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("basises", AddParam.Add("Добавить базис")))
+                UpdateCB(JobBasisTB, "basises");
+        }
+
+        private void OtherAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("other", AddParam.Add("Добавить прочие параметры расчёта")))
+                UpdateCB(JobOtherTB, "other");
         }
     }
 }

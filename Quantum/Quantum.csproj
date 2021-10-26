@@ -112,6 +112,9 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AddParam.xaml.cs">
+      <DependentUpon>AddParam.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Diagram.xaml.cs">
       <DependentUpon>Diagram.xaml</DependentUpon>
     </Compile>
@@ -148,6 +151,10 @@
     <Compile Include="WpfWin32Window.cs" />
     <Compile Include="WPF_to_WMF_Converter.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddParam.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
