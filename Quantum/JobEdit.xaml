@@ -80,8 +80,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Память на ядро" Margin="0,0,10,0"/>
-            <TextBox Grid.Column="1" x:Name="JobMemoryTB" Text="4096" Margin="0,4,0,0"/>
-            <Label Grid.Column="2" Content="МБ" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" x:Name="JobMemoryTB" Text="4096" Margin="0,4,0,0" PreviewTextInput="JobMemoryTB_PreviewTextInput"/>
+            <Label Grid.Column="2" Content="МБ" Margin="0,0,0,0" HorizontalContentAlignment="Right" Padding="5,5,0,5"/>
         </Grid>
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -116,8 +116,8 @@
             <Button Grid.Column="2" Name="OutputAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="AddB" Content="Создать" Padding="15,0,15,0" Margin="0,0,10,0"/>
-            <Button x:Name="CancelB" Content="Отменить" Padding="15,0,15,0"/>
+            <Button x:Name="AddB" Content="Создать" Padding="15,0,15,0" Margin="0,0,10,0" Click="AddB_Click"/>
+            <Button x:Name="CancelB" Content="Отменить" Padding="15,0,15,0" Click="CancelB_Click"/>
         </StackPanel>
     </StackPanel>
 </Window>
