@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="Quantum.Node"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Quantum"
+             mc:Ignorable="d" 
+             d:DesignHeight="48" d:DesignWidth="64">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle x:Name="ParentRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Red" StrokeThickness="2"/>
+        <Rectangle Grid.Column="1" Fill="Yellow"/>
+        <Rectangle x:Name="ChildrenRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Blue" StrokeThickness="2" Grid.Column="2"/>
+    </Grid>
+</UserControl>
