@@ -71,7 +71,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Задача" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobTaskTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="TaskAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="TaskAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="TaskAdd_Click"/>
         </Grid>
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -91,7 +91,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Гессиан" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobHesTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="HesAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="HesAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="HesAdd_Click"/>
         </Grid>
         <CheckBox x:Name="ChargesCB" Content="Расчёт зарядовых плотностей" Margin="0,0,0,10"/>
         <CheckBox x:Name="TDDFT_CB" Content="Расчёт TD-DFT" Margin="0,0,0,10"/>
@@ -103,7 +103,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Растворитель" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobSolutionTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="SolutionAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="SolutionAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="SolutionAdd_Click"/>
         </Grid>
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
@@ -113,7 +113,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Вывод" Margin="0,0,10,0"/>
             <ComboBox Grid.Column="1" x:Name="JobOutputTB" Text="" Margin="0,4,10,0"/>
-            <Button Grid.Column="2" Name="OutputAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0"/>
+            <Button Grid.Column="2" Name="OutputAdd" Content="+"  Margin="0,4,0,0" Padding="5,0,5,0" Click="OutputAdd_Click"/>
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button x:Name="AddB" Content="Создать" Padding="15,0,15,0" Margin="0,0,10,0" Click="AddB_Click"/>

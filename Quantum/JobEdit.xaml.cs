@@ -246,14 +246,28 @@ namespace Quantum
         }
 
         /// <summary>
+        /// Добавление нового пункта в БД
+        /// </summary>
+        /// <param name="Table">Таблица</param>
+        /// <param name="Data">Пара «Имя» - «Значение»</param>
+        /// <returns></returns>
+        private bool AddValue(string Table, string Data)
+        {
+            if (Data == null) return false;
+
+            string SafeCode = Data.Replace('\"', ' ').Replace('\'', ' ');
+            return Config.Execute($"INSERT INTO `{Table}`(`code`) VALUES ('{SafeCode}')");
+        }
+
+        /// <summary>
         /// Обновление списка ComboBox с сохранением выбранного элемента
         /// </summary>
         /// <param name="CB">ComboBox</param>
         /// <param name="Table">Таблица, из которой берутся значения</param>
-        private void UpdateCB(ComboBox CB, string Table)
+        private void UpdateCB(ComboBox CB, string Table, string name="name")
         {
             object LastValue = CB.SelectedItem;
-            FullfillCB(CB, LoadFromDB(Table));
+            FullfillCB(CB, LoadFromDB(Table, name));
             CB.SelectedItem = LastValue;
         }
 
@@ -271,8 +285,31 @@ namespace Quantum
 
         private void OtherAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (AddValue("other", AddParam.Add("Добавить прочие параметры расчёта")))
-                UpdateCB(JobOtherTB, "other");
+            if (AddValue("other", AddParam.AddString("Добавить прочие параметры расчёта")))
+                UpdateCB(JobOtherTB, "other", "code");
+        }
+
+        private void TaskAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("tasks", AddParam.Add("Добавить задачу")))
+                UpdateCB(JobTaskTB, "tasks");
+        }
+
+        private void HesAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("hessians", AddParam.Add("Добавить вид гессиана")))
+                UpdateCB(JobHesTB, "hessians");
+        }
+
+        private void SolutionAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddValue("solvents", AddParam.Add("Добавить растворитель")))
+                UpdateCB(JobSolutionTB, "solvents");
+        }
+
+        private void OutputAdd_Click(object sender, RoutedEventArgs e)
+        {
+                UpdateCB(JobOutputTB, "outputs");
         }
     }
 }

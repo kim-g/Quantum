@@ -41,6 +41,18 @@ namespace Quantum
             return AP.Output;
         }
 
+        public static string AddString(string Title)
+        {
+            AddParam AP = new AddParam()
+            {
+                Title = Title
+            };
+
+            AP.NameGrid.Visibility = Visibility.Collapsed;
+            AP.ShowDialog();
+            return AP.Output.Value;
+        }
+
         private void CancelB_Click(object sender, RoutedEventArgs e)
         {
             Close();
