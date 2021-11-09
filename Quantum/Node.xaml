@@ -4,16 +4,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Quantum"
-             mc:Ignorable="d" 
-             d:DesignHeight="48" d:DesignWidth="64">
-    <Grid>
+             mc:Ignorable="d" Loaded="UserControl_Loaded" Height="66.75" Width="118.25" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Rectangle x:Name="ParentRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Red" StrokeThickness="2"/>
-        <Rectangle Grid.Column="1" Fill="Yellow"/>
-        <Rectangle x:Name="ChildrenRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Blue" StrokeThickness="2" Grid.Column="2"/>
+        <Rectangle x:Name="ParentRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Red" StrokeThickness="2" MouseUp="ParentRect_MouseUp" MouseDown="ParentRect_MouseDown">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="White" Opacity="0.1"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="FillRect" Grid.Column="1" MouseDown="Rectangle_MouseDown" MouseUp="Rectangle_MouseUp" MouseMove="Rectangle_MouseMove" MouseLeave="Rectangle_MouseLeave" RadiusX="3" RadiusY="3" StrokeThickness="6">
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FFE6E600" Offset="0"/>
+                    <GradientStop Color="#FF292B00" Offset="1"/>
+                    <GradientStop Color="#FF838300" Offset="0.063"/>
+                    <GradientStop Color="#FF4D4D00" Offset="0.943"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Grid Grid.Column="1" x:Name="Data" Margin="5"  MouseDown="Rectangle_MouseDown" MouseUp="Rectangle_MouseUp" MouseMove="Rectangle_MouseMove" MouseLeave="Rectangle_MouseLeave">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" x:Name="NameLabel" Foreground="White" Content="Название" HorizontalContentAlignment="Center" Padding="0" FontWeight="Bold" FontSize="14"/>
+            <Label Grid.Row="1" x:Name="InfoLabel" Foreground="White" FontSize="12" Padding="0,5,0,0" Background="{x:Null}" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="Доп. инфо" x:Name="InfoBlock"/>
+            </Label>
+        </Grid>
+        <Rectangle x:Name="ChildrenRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Blue" StrokeThickness="2" Grid.Column="2" MouseDown="ChildrenRect_MouseDown" MouseUp="ChildrenRect_MouseUp">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="White" Opacity="0.1"/>
+            </Rectangle.Fill>
+        </Rectangle>
     </Grid>
 </UserControl>

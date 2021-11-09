@@ -5,17 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="ProjectEdit" Height="450" Width="800">
+        Title="ProjectEdit" Height="450" Width="800" ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid>
-            <local:Node x:Name="Node1" HorizontalAlignment="Left" Height="100" Grid.RowSpan="2" VerticalAlignment="Top" Width="100" RenderTransformOrigin="3.123,0.429" Margin="74,65,0,0" MouseUp="Node1_MouseUp"/>
-            <local:Node x:Name="Node2" HorizontalAlignment="Left" Height="100" Grid.RowSpan="2" VerticalAlignment="Top" Width="100" RenderTransformOrigin="3.123,0.429" Margin="319,135,0,0"/>
-            <local:Node x:Name="Node3" HorizontalAlignment="Left" Height="100" Grid.RowSpan="2" VerticalAlignment="Top" Width="100" RenderTransformOrigin="3.123,0.429" Margin="237,262,0,0"/>
-        </Grid>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <Button x:Name="AddInputBtn" Margin="0,0,10,0" Padding="5,1" Click="AddInputBtn_Click" >
+                <Image Source="images\INPUT_add.png"/>
+            </Button>
+            <Button x:Name="AddOptBtn" Margin="0,0,10,0" Padding="5,1" Click="AddOptBtn_Click">
+                <Image Source="images\Opt_add.png"/>
+            </Button>
+            <Button x:Name="AddEndBtn" Margin="0,0,10,0" Padding="5,1" Click="AddEndBtn_Click">
+                <Image Source="images\Param_add.png"/>
+            </Button>
+            <Button x:Name="AddCommentBtn" Margin="0,0,10,0" Padding="5,1" Click="AddCommentBtn_Click">
+                <Image Source="images\Comment_add.png"/>
+            </Button>
+        </StackPanel>
+        <local:NodePanel Grid.Row="1" x:Name="Panel" Margin="10">
+            
+        </local:NodePanel>
     </Grid>
 </Window>

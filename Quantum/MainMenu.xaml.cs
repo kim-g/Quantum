@@ -84,8 +84,7 @@ namespace Quantum
 
         private void ConstructorButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectEdit PE = new ProjectEdit();
-            PE.ShowDialog();
+            ProjectEdit.JustShow();
         }
     }
 }

@@ -19,18 +19,88 @@ namespace Quantum
     /// </summary>
     public partial class ProjectEdit : Window
     {
+        private int NodeN = 1;
+        
         public ProjectEdit()
         {
             InitializeComponent();
-            Node2.ParentNode = Node1;
-            Node3.ParentNode = Node1;
+        }
 
-            Node1.RePaint();
+        public static void JustShow()
+        {
+            ProjectEdit PE = new ProjectEdit();
+            PE.ShowDialog();
         }
 
         private void Node1_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            Node1.RePaint();
+            ((Node)sender).RePaint();
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            foreach (Node N in Panel.Children.OfType<Node>())
+                N.RePaint();
+        }
+
+        private void AddInputBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Node NewNode = new Node()
+            {
+                Margin = new Thickness(0,0,0,0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top, 
+                Title = $"INPUT",
+                Info = "",
+                Type = NodeType.Input
+            };
+
+            Panel.Children.Add(NewNode);
+        }
+
+        private void AddOptBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Node NewNode = new Node()
+            {
+                Margin = new Thickness(0, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Title = $"Узел {NodeN++}",
+                Info = "Расчётный узел",
+                Type = NodeType.Optimization
+            };
+
+            Panel.Children.Add(NewNode);
+        }
+
+        private void AddEndBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Node NewNode = new Node()
+            {
+                Margin = new Thickness(0, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Title = $"Узел {NodeN++}",
+                Info = "Параметрический узел",
+                Type = NodeType.End
+            };
+
+            Panel.Children.Add(NewNode);
+        }
+
+        private void AddCommentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Node NewNode = new Node()
+            {
+                Margin = new Thickness(0, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Title = $"Комментарий",
+                Info = "",
+                Type = NodeType.Comment
+            };
+
+            Panel.Children.Add(NewNode);
         }
     }
 }

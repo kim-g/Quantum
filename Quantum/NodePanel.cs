@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+
+namespace Quantum
+{
+    public class NodePanel : Grid
+    {
+        private Node connectionParent = null;
+        private Node connectionChild = null;
+
+        private Line ConnectionLine = new Line() { Stroke = new SolidColorBrush(Colors.Red), StrokeThickness = 1.5, Visibility = Visibility.Hidden };
+
+        public Node ConnectionParent
+        {
+            get => connectionParent;
+            set
+            {
+                connectionParent = value;
+
+                if (connectionParent == null)
+                {
+                    ConnectionLine.Visibility = Visibility.Hidden;
+                    return;
+                }
+
+                ConnectionLine.X1 = connectionParent.ChildrenPosition.X;
+                ConnectionLine.Y1 = connectionParent.ChildrenPosition.Y;
+                ConnectionLine.X2 = connectionParent.ChildrenPosition.X;
+                ConnectionLine.Y2 = connectionParent.ChildrenPosition.Y;
+                ConnectionLine.Visibility = Visibility.Visible;
+            }
+        }
+
+        public Node ConnectionChild
+        {
+            get => connectionChild;
+            set
+            {
+                connectionChild = value;
+
+                if (connectionChild == null)
+                {
+                    ConnectionLine.Visibility = Visibility.Hidden;
+                    return;
+                }
+
+                ConnectionLine.X1 = connectionChild.ParentPosition.X;
+                ConnectionLine.Y1 = connectionChild.ParentPosition.Y;
+                ConnectionLine.X2 = connectionChild.ParentPosition.X;
+                ConnectionLine.Y2 = connectionChild.ParentPosition.Y;
+                ConnectionLine.Visibility = Visibility.Visible;
+            }
+        }
+
+        public NodePanel()
+        {
+            Background = new LinearGradientBrush(Color.FromRgb(0xEE, 0xEE, 0xEE), Color.FromRgb(0xC7, 0xC7, 0xC7), 90);
+            Children.Add(new Rectangle() { Stroke = new SolidColorBrush(Colors.DarkGray), StrokeThickness = 1 });
+            Children.Add(ConnectionLine);
+
+            MouseMove += NodePanel_MouseMove;
+            MouseUp += NodePanel_MouseUp;
+        }
+
+        private void NodePanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point Position = e.GetPosition(this);
+
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
+                N.Move(Position);
+
+            if (ConnectionParent!= null || ConnectionChild != null)
+            {
+                ConnectionLine.X2 = Position.X;
+                ConnectionLine.Y2 = Position.Y;
+            }
+        }
+
+        private void NodePanel_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
+                N.StopDrag();
+
+            ConnectionParent = null;
+            ConnectionChild = null;
+        }
+    }
+}
