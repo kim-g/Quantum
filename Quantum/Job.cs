@@ -19,9 +19,9 @@ namespace Quantum
         private int solvent = 0;
         private int output = 0;
 
-        private SQLiteConfig DB;
+        private SQLiteDataBase DB;
         
-        public Job(SQLiteConfig db)
+        public Job(SQLiteDataBase db)
         {
             DB = db;
         }
@@ -125,6 +125,22 @@ namespace Quantum
         public int Output { get => output; set { output = value; DB.Execute($"UPDATE `jobs` SET `output`={Output} WHERE `id`={ID};");
             } }
 
+        override public string ToString()
+        {
+            string Out = Comment;
+            if (Out != "") Out += "\n";
+            Out += DB.GetOne<string>("code", "methods", $"`id`={Method}") + " ";
+            Out += DFT > 0 ? DB.GetOne<string>("code", "dft", $"`id`={DFT}") + " " : "";
+            Out += Basis > 0 ? DB.GetOne<string>("code", "basises", $"`id`={Basis}") : "";
+            Out += "\n";
+            Out += Task > 1 ? DB.GetOne<string>("code", "tasks", $"`id`={Task}") + " " : "";
+            Out += Hessian > 1 ? DB.GetOne<string>("code", "hessians", $"`id`={Hessian}") : "";
+            Out += "\n";
+            Out += DB.GetOne<string>("code", "output", $"`id`={Output}") + " ";
+
+            return Out;
+        }
+
         public bool Update()
         {
             string SafeName = Name.Replace('\"', ' ').Replace('\'', ' ');
@@ -151,7 +167,7 @@ namespace Quantum
         /// </summary>
         /// <param name="_id">Номер задания в БД</param>
         /// <returns></returns>
-        public static Job Load(SQLiteConfig DB, long id)
+        public static Job Load(SQLiteDataBase DB, long id)
         {
             Job NewJob;
             using (DataTable dt = DB.ReadTable($"SELECT * FROM `jobs` WHERE `id`={id}"))
@@ -162,19 +178,19 @@ namespace Quantum
                 NewJob = new Job(DB)
                 {
                     id = id,
-                    name = dr["name"].ToString(),
-                    comment = dr["comment"].ToString(),
-                    method = (int)dr["method"],
-                    dft = (int)dr["dft"],
-                    basis = (int)dr["basis"],
-                    other = (int)dr["other"],
-                    task = (int)dr["task"],
-                    ram = (int)dr["ram"],
-                    hessian = (int)dr["hessian"],
-                    charges = (int)dr["charges"] == 1,
-                    tddft = (int)dr["tddft"] == 1,
-                    solvent = (int)dr["solvent"],
-                    output = (int)dr["output"]
+                    name = dr.Field<string>("name"),
+                    comment = dr.Field<string>("comment"),
+                    method = (int)dr.Field<long>("method"),
+                    dft = (int)dr.Field<long>("dft"),
+                    basis = (int)dr.Field<long>("basis"),
+                    other = (int)dr.Field<long>("other"),
+                    task = (int)dr.Field<long>("task"),
+                    ram = (int)dr.Field<long>("ram"),
+                    hessian = (int)dr.Field<long>("hessian"),
+                    charges = (int)dr.Field<long>("charges") == 1,
+                    tddft = (int)dr.Field<long>("tddft") == 1,
+                    solvent = (int)dr.Field<long>("solvent"),
+                    output = (int)dr.Field<long>("output")
                 };
             }
 

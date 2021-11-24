@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -19,7 +21,7 @@ namespace Quantum
     /// <summary>
     /// Логика взаимодействия для Node.xaml
     /// </summary>
-    public partial class Node : UserControl
+    public partial class Node : System.Windows.Controls.UserControl
     {
         private Node parent;
         private ObservableCollection<Node> children = new ObservableCollection<Node>();
@@ -31,36 +33,96 @@ namespace Quantum
         private string NameText;
         private string InfoText;
         private NodeType type = NodeType.Optimization;
+        private long id = 0;
+        private SQLiteDataBase DB;
+        private Job job;
+        private bool selected = false;
+        private bool Moving = false;
+        private bool SingleSelection = false;
 
+        private static byte MainColor1 = 0xE6;
+        private static byte MainColor2 = 0x83;
+        private static byte MainColor3 = 0x4D;
+        private static byte MainColor4 = 0x2B;
+        private static byte SubColor1 = 0x34;
+        private static byte SubColor2 = 0x1D;
+        private static byte SubColor3 = 0x11;
+        private static byte SubColor4 = 0x0A;
+        private static byte SelectedColor1 = 0xFF;
+        private static byte SelectedColor2 = 0xA3;
+        private static byte SelectedColor3 = 0x6D;
+        private static byte SelectedColor4 = 0x4B;
 
-        private Brush InputBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        private static Brush InputBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
         {
-            new GradientStop(Color.FromRgb(0xE6,0xE6,0x00), 0.0),
-            new GradientStop(Color.FromRgb(0x83,0x83,0x00), 0.063),
-            new GradientStop(Color.FromRgb(0x4D,0x4D,0x00), 0.937),
-            new GradientStop(Color.FromRgb(0x2B,0x2B,0x00), 1.0)
+            new GradientStop(Color.FromRgb(MainColor1,MainColor1,0x00), 0.0),
+            new GradientStop(Color.FromRgb(MainColor2,MainColor2,0x00), 0.063),
+            new GradientStop(Color.FromRgb(MainColor3,MainColor3,0x00), 0.937),
+            new GradientStop(Color.FromRgb(MainColor4,MainColor4,0x00), 1.0)
         }), 90);
-        private Brush OptimizationBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>() 
+        private static Brush OptimizationBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>() 
         { 
-            new GradientStop(Color.FromRgb(0x34,0xE6,0x00), 0.0),
-            new GradientStop(Color.FromRgb(0x1D,0x83,0x00), 0.063),
-            new GradientStop(Color.FromRgb(0x11,0x4D,0x00), 0.937),
-            new GradientStop(Color.FromRgb(0x0A,0x2B,0x00), 1.0)
+            new GradientStop(Color.FromRgb(SubColor1,MainColor1,0x00), 0.0),
+            new GradientStop(Color.FromRgb(SubColor2,MainColor2,0x00), 0.063),
+            new GradientStop(Color.FromRgb(SubColor3,MainColor3,0x00), 0.937),
+            new GradientStop(Color.FromRgb(SubColor4,MainColor4,0x00), 1.0)
         }), 90);
-        private Brush StopBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        private static Brush StopBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
         {
-            new GradientStop(Color.FromRgb(0xE6,0x34,0x00), 0.0),
-            new GradientStop(Color.FromRgb(0x83,0x1D,0x00), 0.063),
-            new GradientStop(Color.FromRgb(0x4D,0x11,0x00), 0.937),
-            new GradientStop(Color.FromRgb(0x2B,0x0A,0x00), 1.0)
+            new GradientStop(Color.FromRgb(MainColor1,SubColor1,0x00), 0.0),
+            new GradientStop(Color.FromRgb(MainColor2,SubColor2,0x00), 0.063),
+            new GradientStop(Color.FromRgb(MainColor3,SubColor3,0x00), 0.937),
+            new GradientStop(Color.FromRgb(MainColor4,SubColor4,0x00), 1.0)
         }), 90);
-        private Brush CommentBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        private static Brush CommentBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
         {
-            new GradientStop(Color.FromRgb(0x00,0x00,0xE6), 0.0),
-            new GradientStop(Color.FromRgb(0x00,0x00,0x83), 0.063),
-            new GradientStop(Color.FromRgb(0x00,0x00,0x4D), 0.937),
-            new GradientStop(Color.FromRgb(0x00,0x00,0x2B), 1.0)
+            new GradientStop(Color.FromRgb(0x00,0x00,MainColor1), 0.0),
+            new GradientStop(Color.FromRgb(0x00,0x00,MainColor2), 0.063),
+            new GradientStop(Color.FromRgb(0x00,0x00,MainColor3), 0.937),
+            new GradientStop(Color.FromRgb(0x00,0x00,MainColor4), 1.0)
         }), 90);
+        private static Brush RunBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        {
+            new GradientStop(Color.FromRgb(MainColor1,0x00,MainColor1), 0.0),
+            new GradientStop(Color.FromRgb(MainColor2,0x00,MainColor2), 0.063),
+            new GradientStop(Color.FromRgb(MainColor3,0x00,MainColor3), 0.937),
+            new GradientStop(Color.FromRgb(MainColor4,0x00,MainColor4), 1.0)
+        }), 90);
+        private static Brush OptimizationSelectedBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        {
+            new GradientStop(Color.FromRgb(SubColor1,SelectedColor1,0x00), 0.0),
+            new GradientStop(Color.FromRgb(SubColor2,SelectedColor2,0x00), 0.063),
+            new GradientStop(Color.FromRgb(SubColor3,SelectedColor3,0x00), 0.937),
+            new GradientStop(Color.FromRgb(SubColor4,SelectedColor4,0x00), 1.0)
+        }), 90);
+        private static Brush StopSelectedBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        {
+            new GradientStop(Color.FromRgb(SelectedColor1,SubColor1,0x00), 0.0),
+            new GradientStop(Color.FromRgb(SelectedColor2,SubColor2,0x00), 0.063),
+            new GradientStop(Color.FromRgb(SelectedColor3,SubColor3,0x00), 0.937),
+            new GradientStop(Color.FromRgb(SelectedColor4,SubColor4,0x00), 1.0)
+        }), 90);
+        private static Brush CommentSelectedBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        {
+            new GradientStop(Color.FromRgb(0x00,0x00,SelectedColor1), 0.0),
+            new GradientStop(Color.FromRgb(0x00,0x00,SelectedColor2), 0.063),
+            new GradientStop(Color.FromRgb(0x00,0x00,SelectedColor3), 0.937),
+            new GradientStop(Color.FromRgb(0x00,0x00,SelectedColor4), 1.0)
+        }), 90);
+        private static Brush RunSelectedBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
+        {
+            new GradientStop(Color.FromRgb(SelectedColor1,0x00,SelectedColor1), 0.0),
+            new GradientStop(Color.FromRgb(SelectedColor2,0x00,SelectedColor2), 0.063),
+            new GradientStop(Color.FromRgb(SelectedColor3,0x00,SelectedColor3), 0.937),
+            new GradientStop(Color.FromRgb(SelectedColor4,0x00,SelectedColor4), 1.0)
+        }), 90);
+
+        private static Brush SelectedBorderBrush = new SolidColorBrush(Colors.DarkBlue);
+
+        private static Dictionary<NodeType, Brush> MainBrushes = new Dictionary<NodeType, Brush>()
+        { {NodeType.Optimization, OptimizationBrush}, {NodeType.End, StopBrush }, {NodeType.Comment, CommentBrush }, {NodeType.Run, RunBrush } , { NodeType.Input, InputBrush} };
+        private static Dictionary<NodeType, Brush> SelectedBrushes = new Dictionary<NodeType, Brush>()
+        { {NodeType.Optimization, OptimizationSelectedBrush}, {NodeType.End, StopSelectedBrush }, {NodeType.Comment, CommentSelectedBrush }, {NodeType.Run, RunSelectedBrush } , { NodeType.Input, InputBrush} };
 
 
         private List<Line> ChildrenLines = new List<Line>();
@@ -76,8 +138,8 @@ namespace Quantum
                 if (parent != null)
                 {
                     parent.ChildrenNodes.Remove(this);
-                    ((NodePanel)Parent).Children.Remove(parent.ChildrenLines[parent.ChildrenLines.Count() - 1]);
-                    parent.ChildrenLines.RemoveAt(parent.ChildrenLines.Count() - 1);
+                    ((NodePanel)Parent).Children.Remove(ParentLine);
+                    parent.ChildrenLines.Remove(ParentLine);
                 }
                 parent = value;
                 ParentRect.Fill = parent == null ? null : parentbrush;
@@ -90,6 +152,12 @@ namespace Quantum
                 }
 
                 parent?.ChildrenNodes.Add(this);
+
+                if (parent == null) 
+                    DB.Execute($"UPDATE `nodes` SET `parent`= 0 WHERE `id`={ID}");
+                else
+                    DB.Execute($"UPDATE `nodes` SET `parent`= {parent.ID} WHERE `id`={ID}");
+
                 ParentChanged?.Invoke(this, new EventArgs());
 
                 RePaint();
@@ -177,6 +245,7 @@ namespace Quantum
             {
                 NameText = value;
                 NameLabel.Content = NameText;
+                this.Height = RealHeight();
             }
         }
 
@@ -195,8 +264,14 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Флаг перемещения узла
+        /// </summary>
         public bool Drag { get; private set; }
 
+        /// <summary>
+        /// Тип узла. Может принимать значения «Ввод», «Оптимизация», «Параметрический» и «Комментарий»
+        /// </summary>
         public NodeType Type
         {
             get => type;
@@ -206,38 +281,71 @@ namespace Quantum
                 switch(type)
                 {
                     case NodeType.Input:
-                        HasParent = false;
-                        HasChildren = true;
-                        FillRect.RadiusX = 10;
-                        FillRect.RadiusY = 10;
-                        FillRect.Fill = InputBrush;
-                        Width = 80;
+                        SetNode(false, true, 10, 80);
                         break;
                     case NodeType.Optimization:
-                        HasParent = true;
-                        HasChildren = true;
-                        FillRect.RadiusX = 3;
-                        FillRect.RadiusY = 3;
-                        FillRect.Fill = OptimizationBrush;
-                        Width = 150;
+                        SetNode(true, true, 3, 150);
                         break;
                     case NodeType.End:
-                        HasParent = true;
-                        HasChildren = false;
-                        FillRect.RadiusX = 3;
-                        FillRect.RadiusY = 3;
-                        FillRect.Fill = StopBrush;
-                        Width = 150;
+                        SetNode(true, false, 3, 150);
                         break;
                     case NodeType.Comment:
-                        HasParent = true;
-                        HasChildren = false;
-                        FillRect.RadiusX = 3;
-                        FillRect.RadiusY = 3;
-                        FillRect.Fill = CommentBrush;
-                        Width = 150;
+                        SetNode(true, false, 3, 150);
+                        break;
+                    case NodeType.Run:
+                        SetNode(true, true, 10, 50);
                         break;
                 }
+
+                FillRect.Fill = MainBrushes[Type];
+            }
+        }
+
+        /// <summary>
+        /// Номер узла в БД
+        /// </summary>
+        public long ID
+        {
+            get => id;
+            private set
+            {
+                // Заменить номер можно только с нуля.
+                if (id > 0) return;
+                if (value <= 0) return;
+                id = value;
+            }
+        }
+
+
+        public Job NodeJob
+        {
+            get => job;
+            set
+            {
+                if (Type == NodeType.Optimization || Type == NodeType.End)
+                {
+                    job = value;
+                    if (job == null) return;
+                    _ = DB.Execute($"UPDATE `nodes` SET `job`= {job.ID} WHERE `id`={ID}");
+
+                    Title = job.Name;
+                    Info = job.ToString();
+                    this.Height = RealHeight();
+                }
+                else
+                    job = null;
+            }
+        }
+
+
+        public bool Selected
+        {
+            get => selected;
+            set
+            {
+                selected = value;
+                FillRect.Fill = selected ? SelectedBrushes[Type] : MainBrushes[Type];
+                FillRect.Stroke = selected ? SelectedBorderBrush : null;
             }
         }
 
@@ -256,11 +364,45 @@ namespace Quantum
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Загрузка одиночного узла из БД
+        /// </summary>
+        /// <param name="DB">База данных SQLite</param>
+        /// <param name="ID">Номер узла</param>
+        /// <returns></returns>
+        public static Node LoadFromDB(SQLiteDataBase DB, long ID)
+        {
+            using (DataTable dt = DB.ReadTable($"SELECT * FROM `nodes` WHERE `id`={ID};"))
+            {
+                if (dt.Rows.Count == 0) return null;
+
+                DataRow dr = dt.Rows[0];
+
+                NodeType NT = (NodeType)Enum.ToObject(typeof(NodeType), dr.Field<long>("type"));
+                string name = dr.Field<string>("name");
+
+                Node NN = new Node()
+                {
+                    DB = DB,
+                    ID = ID,
+                    Type = NT,
+                    Title = name,
+                    Info = dr.Field<string>("comment"), 
+                    Margin = new Thickness(dr.Field<double>("pos_x"), dr.Field<double>("pos_y"), 0, 0)
+                };
+
+                return NN;
+            }
+        }
+
         private void ChildrenListChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             ChildrenChanged?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Перерисовка узла
+        /// </summary>
         public void RePaint()
         {
             if (ParentNode != null)
@@ -286,42 +428,98 @@ namespace Quantum
 
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            StartDrag = e.GetPosition((IInputElement)Parent);
-            Drag = true;
+            {
+                StartDrag = e.GetPosition((IInputElement)Parent);
+                if (e.ChangedButton == MouseButton.Left)
+                {
+                    Drag = true;
+                    Moving = false;
+                    SingleSelection = false;
+
+                    if (System.Windows.Forms.Control.ModifierKeys == Keys.Control)
+                    {
+                        if (!Selected)
+                        { 
+                            Selected = true;
+                            Drag = false;
+                        }
+                        else
+                            SingleSelection = true;
+                    }
+
+                    else
+                    {
+                        
+                        if (!Selected)
+                        {
+                            ((NodePanel)Parent).DeselectAll();
+                            Selected = true;
+                        }
+                        else
+                            SingleSelection = true;
+                    }
+                }
+            }
         }
 
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            StopDrag();
+            if (e.ChangedButton == MouseButton.Left)
+                if (SingleSelection && !Moving)
+                    Selected = false;
+
+            ((NodePanel)Parent).SaveSelected();
+            e.Handled = true;
         }
 
+        /// <summary>
+        /// Прекращение перетаскивания объекта
+        /// </summary>
         public void StopDrag()
         {
+            if (ID == 0) Save();
+            else DB.Execute($"UPDATE `nodes` SET `pos_x`={Margin.Left}, `pos_y`={Margin.Top} WHERE `id`={ID}");
             Drag = false;
         }
 
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
+        private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (Drag)
-            {
-                Move(e.GetPosition((IInputElement)Parent));
-            }
+
         }
 
-        public void Move(Point CurrentPosition)
+        public Point MoveDelta(Point Position)
         {
-            double X = Margin.Left + CurrentPosition.X - StartDrag.X;
-            if (X < 0) X = 0;
-            if (X > ((FrameworkElement)Parent).ActualWidth - ActualWidth) X = ((FrameworkElement)Parent).ActualWidth - ActualWidth;
-            double Y = Margin.Top + CurrentPosition.Y - StartDrag.Y;
-            if (Y < 0) Y = 0;
-            if (Y > ((FrameworkElement)Parent).ActualHeight - ActualHeight) Y = ((FrameworkElement)Parent).ActualHeight - ActualHeight;
-            Margin = new Thickness(X, Y, 0, 0);
-            StartDrag = CurrentPosition;
+            Point MD = new Point(Position.X - StartDrag.X, Position.Y - StartDrag.Y);
+            StartDrag = Position;
+            return MD;
+        }
+
+        /// <summary> 
+        /// Перемещение узла
+        /// </summary>
+        /// <param name="CurrentPosition">Текущее положение курсора</param>
+        public void MoveTo(Point CurrentPosition)
+        {
+            Point Delta = MoveDelta(CurrentPosition);
+            Move(Delta);
             RePaint();
         }
 
-        private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
+        public void Move(Point Delta)
+        {
+            if (Drag) Moving = true;
+            
+            double X = Margin.Left + Delta.X;
+            if (X < 0) X = 0;
+            if (X > ((FrameworkElement)Parent).ActualWidth - ActualWidth) X = ((FrameworkElement)Parent).ActualWidth - ActualWidth;
+            double Y = Margin.Top + Delta.Y;
+            if (Y < 0) Y = 0;
+            if (Y > ((FrameworkElement)Parent).ActualHeight - ActualHeight) Y = ((FrameworkElement)Parent).ActualHeight - ActualHeight;
+            Margin = new Thickness(X, Y, 0, 0);
+            RePaint();
+        }
+
+        private void Rectangle_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
 
         }
@@ -329,13 +527,16 @@ namespace Quantum
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             Height = RealHeight();
-            Console.WriteLine($"ActualHeight = {ActualHeight}");
         }
 
+        /// <summary>
+        /// Определение высоты узла
+        /// </summary>
+        /// <returns></returns>
         private double RealHeight()
         {
-            double Res = Data.Margin.Top + Data.Margin.Bottom + 
-                NameLabel.ActualHeight + NameLabel.Margin.Top + NameLabel.Margin.Bottom + 
+            double Res = Data.Margin.Top + Data.Margin.Bottom +
+                NameLabel.ActualHeight + NameLabel.Margin.Top + NameLabel.Margin.Bottom +
                 InfoBlock.ActualHeight + InfoLabel.Padding.Top + InfoLabel.Padding.Bottom;
             return Res;
         }
@@ -371,7 +572,95 @@ namespace Quantum
         {
             ((NodePanel)Parent).ConnectionChild = this;
         }
+
+        /// <summary>
+        /// Сохранение узла в известной базе данных
+        /// </summary>
+        /// <returns></returns>
+        public bool Save()
+        {
+            int NType = (int)Type;
+            string Comment = InfoText;
+            long JobID = 0;
+            long Par = ParentNode == null ? 0 : ParentNode.ID;
+            if (ID == 0)
+            {
+                bool OK = DB.Execute($"INSERT INTO `nodes` (`type`, `name`, `parent`, `comment`, `job`, `pos_x`, `pos_y`)" +
+                    $"VALUES ({NType}, '{NameText}', {Par}, '{Comment}', {JobID}, {Margin.Left}, {Margin.Top});");
+                ID = DB.LastID;
+                return OK;
+            }
+
+            return DB.Execute($"UPDATE `nodes` SET `type`={NType}, `name`='{NameText}', `parent`={Par}, " +
+                $"`comment`='{Comment}', `job`={JobID}, `pos_x`={Margin.Left}, `pos_y`={Margin.Top} WHERE `id`={ID}");
+        }
+
+        /// <summary>
+        /// Сохранение узла в базе данных
+        /// </summary>
+        /// <param name="db">База данных SQLite</param>
+        /// <returns></returns>
+        public bool Save(SQLiteDataBase db)
+        {
+            DB = db;
+            return Save();
+        }
+
+        public void LoadChildren()
+        {
+            using (DataTable dt = DB.ReadTable($"SELECT * FROM `nodes` WHERE `parent`={ID};"))
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Node NN = new Node()
+                    {
+                        DB = DB,
+                        ID = dr.Field<long>("id"),
+                        Type = (NodeType)dr.Field<long>("type"),
+                        Title = dr.Field<string>("name"),
+                        Info = dr.Field<string>("comment"),
+                        Margin = new Thickness(dr.Field<double>("pos_x"), dr.Field<double>("pos_y"), 0, 0)
+                    };
+
+                    if (NN.Type == NodeType.Optimization || NN.Type == NodeType.End)
+                        NN.NodeJob = Job.Load(DB, dr.Field<long>("job"));
+
+                    ((NodePanel)Parent).Children.Add(NN);
+                    NN.ParentNode = this;
+                    NN.LoadChildren();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Настройка ноды под тип
+        /// </summary>
+        /// <param name="hasParent">Наличие родителя</param>
+        /// <param name="hasChildren">Наличие потомка</param>
+        /// <param name="Radius">Радиус скругления</param>
+        /// <param name="fill">Заливка</param>
+        /// <param name="width">Ширина</param>
+        private void SetNode(bool hasParent, bool hasChildren, double Radius, double width)
+        {
+            HasParent = hasParent;
+            HasChildren = hasChildren;
+            FillRect.RadiusX = Radius;
+            FillRect.RadiusY = Radius;
+            Width = width;
+        }
+
+        /// <summary>
+        /// Удаляет все ссылки и запись в БД
+        /// </summary>
+        public void Delete()
+        {
+            ParentNode = null;
+            foreach (Node N in ChildrenNodes.ToArray())
+                N.ParentNode = null;
+            DB.Execute($"DELETE FROM `nodes` WHERE `id`={ID}");
+        }
     }
 
-    public enum NodeType { Input, Optimization, End, Comment }
+    public enum NodeType { Input, Optimization, End, Comment, Run }
 }

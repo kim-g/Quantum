@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="ProjectEdit" Height="450" Width="800" ContentRendered="Window_ContentRendered">
+        Title="ProjectEdit" Height="450" Width="800" ContentRendered="Window_ContentRendered" KeyDown="Window_KeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,8 +13,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <Button x:Name="AddInputBtn" Margin="0,0,10,0" Padding="5,1" Click="AddInputBtn_Click" >
-                <Image Source="images\INPUT_add.png"/>
+            <Button x:Name="RunInputBtn" Margin="0,0,10,0" Padding="5,1" Click="RunInputBtn_Click" >
+                <Image Source="images\Run_add.png"/>
             </Button>
             <Button x:Name="AddOptBtn" Margin="0,0,10,0" Padding="5,1" Click="AddOptBtn_Click">
                 <Image Source="images\Opt_add.png"/>
@@ -26,7 +26,7 @@
                 <Image Source="images\Comment_add.png"/>
             </Button>
         </StackPanel>
-        <local:NodePanel Grid.Row="1" x:Name="Panel" Margin="10">
+        <local:NodePanel Grid.Row="1" x:Name="Panel" Margin="10" KeyDown="Panel_KeyDown">
             
         </local:NodePanel>
     </Grid>

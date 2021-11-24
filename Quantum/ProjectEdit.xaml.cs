@@ -20,15 +20,19 @@ namespace Quantum
     public partial class ProjectEdit : Window
     {
         private int NodeN = 1;
+        private SQLiteDataBase DB;
         
         public ProjectEdit()
         {
             InitializeComponent();
         }
 
-        public static void JustShow()
+        public static void JustShow(SQLiteDataBase db)
         {
-            ProjectEdit PE = new ProjectEdit();
+            ProjectEdit PE = new ProjectEdit() { DB = db };
+            Node Input = Node.LoadFromDB(PE.DB, 1);
+            PE.Panel.Children.Add(Input);
+            Input.LoadChildren();
             PE.ShowDialog();
         }
 
@@ -43,64 +47,63 @@ namespace Quantum
                 N.RePaint();
         }
 
-        private void AddInputBtn_Click(object sender, RoutedEventArgs e)
+        private void RunInputBtn_Click(object sender, RoutedEventArgs e)
         {
-            Node NewNode = new Node()
-            {
-                Margin = new Thickness(0,0,0,0),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top, 
-                Title = $"INPUT",
-                Info = "",
-                Type = NodeType.Input
-            };
-
-            Panel.Children.Add(NewNode);
+            AddNode(NodeType.Run, "▶", "");
         }
 
         private void AddOptBtn_Click(object sender, RoutedEventArgs e)
         {
-            Node NewNode = new Node()
-            {
-                Margin = new Thickness(0, 0, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                Title = $"Узел {NodeN++}",
-                Info = "Расчётный узел",
-                Type = NodeType.Optimization
-            };
-
-            Panel.Children.Add(NewNode);
+            Job NewJob = JobEdit.New(this, DB);
+            if (NewJob == null) return;
+            Node NewNode = AddNode(NodeType.Optimization, $"Узел {NodeN++}", "Расчётный узел");
+            NewNode.NodeJob = NewJob;
         }
 
         private void AddEndBtn_Click(object sender, RoutedEventArgs e)
         {
-            Node NewNode = new Node()
-            {
-                Margin = new Thickness(0, 0, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                Title = $"Узел {NodeN++}",
-                Info = "Параметрический узел",
-                Type = NodeType.End
-            };
-
-            Panel.Children.Add(NewNode);
+            AddNode(NodeType.End, $"Узел {NodeN++}", "Параметрический узел");
         }
 
         private void AddCommentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AddNode(NodeType.End, $"Комментарий", "");
+        }
+
+        private Node AddNode(NodeType Type, string Title, string Comment)
         {
             Node NewNode = new Node()
             {
                 Margin = new Thickness(0, 0, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Title = $"Комментарий",
-                Info = "",
-                Type = NodeType.Comment
+                Title = Title,
+                Info = Comment,
+                Type = Type
             };
 
             Panel.Children.Add(NewNode);
+            NewNode.Save(DB);
+
+            return NewNode;
+        }
+
+        private void Panel_KeyDown(object sender, KeyEventArgs e)
+        {
+            
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            Console.WriteLine($"Key {e.Key} is Down");
+
+            switch (e.Key)
+            {
+                case Key.Delete:
+                    if (MessageBox.Show("Вы уверены, что хотите удалить выделенные узлы?", "Удаление узлов", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        Panel.DeleteSelectedNotes();
+                    break;
+            }
         }
     }
 }

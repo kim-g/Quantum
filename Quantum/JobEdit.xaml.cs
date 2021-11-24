@@ -20,7 +20,7 @@ namespace Quantum
     /// </summary>
     public partial class JobEdit : Window
     {
-        SQLiteConfig Config;
+        SQLiteDataBase Config;
 
         // Словари
         Dictionary<string, int> Methods;
@@ -34,7 +34,7 @@ namespace Quantum
 
         Job CurrentJob;
 
-        public JobEdit(SQLiteConfig ConfigDataBase)
+        public JobEdit(SQLiteDataBase ConfigDataBase)
         {
             InitializeComponent();
 
@@ -76,7 +76,7 @@ namespace Quantum
         /// </summary>
         /// <param name="owner">Окно-родитель</param>
         /// <param name="ConfigDataBase">База данных конфигурации</param>
-        public static Job New(Window owner, SQLiteConfig ConfigDataBase)
+        public static Job New(Window owner, SQLiteDataBase ConfigDataBase)
         {
             JobEdit Job = new JobEdit(ConfigDataBase);
             Job.Owner = owner;

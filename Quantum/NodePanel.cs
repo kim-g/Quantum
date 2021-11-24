@@ -67,15 +67,19 @@ namespace Quantum
             Children.Add(ConnectionLine);
 
             MouseMove += NodePanel_MouseMove;
-            MouseUp += NodePanel_MouseUp;
+            MouseLeftButtonUp += NodePanel_LeftMouseUp;
         }
+
 
         private void NodePanel_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.Handled) return;
+            e.Handled = true;
+
             Point Position = e.GetPosition(this);
 
             foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
-                N.Move(Position);
+                Move(N.MoveDelta(Position));
 
             if (ConnectionParent!= null || ConnectionChild != null)
             {
@@ -84,13 +88,69 @@ namespace Quantum
             }
         }
 
-        private void NodePanel_MouseUp(object sender, MouseButtonEventArgs e)
+        private void NodePanel_LeftMouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (e.Handled) return;
+            
             foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
                 N.StopDrag();
+
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Selected))
+                    N.Selected = false;
 
             ConnectionParent = null;
             ConnectionChild = null;
         }
+
+        /// <summary>
+        /// Убирает выделените узлов
+        /// </summary>
+        public void DeselectAll()
+        {
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Selected))
+                N.Selected = false;
+        }
+
+        /// <summary>
+        /// Удаляет узлы, вытирает из их БД, удаляет все связи.
+        /// </summary>
+        /// <param name="NodeList">Список узлов для удаления</param>
+        public void DeleteNodes(List<Node> NodeList)
+        {
+            foreach (Node N in NodeList)
+            {
+                N.Delete();
+                Children.Remove(N);
+            }
+        }
+
+        /// <summary>
+        /// Удаляет выделенные узлы
+        /// </summary>
+        public void DeleteSelectedNotes()
+        {
+            DeleteNodes(Children.OfType<Node>().Where(x => x.Selected && x.Type != NodeType.Input).ToList());
+        }
+
+        /// <summary>
+        /// Сдвигает все выделенные узлы на указанное расстояние
+        /// </summary>
+        /// <param name="Delta">Сдвиг узлов</param>
+        public void Move(Point Delta)
+        {
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Selected))
+                N.Move(Delta);
+        }
+
+        /// <summary>
+        /// Сохраняет положение всех выделенных узлов
+        /// </summary>
+        public void SaveSelected()
+        {
+            foreach (Node N in Children.OfType<Node>().Where(x => x.Selected))
+                N.StopDrag();
+        }
+
+
     }
 }

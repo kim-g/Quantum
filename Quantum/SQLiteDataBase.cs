@@ -224,6 +224,23 @@ namespace Quantum
             dbFileName = null;
             ErrorMsg = null;
         }
+
+        public T GetOne<T>(string Field, string Table, string Where = "TRUE")
+        {
+            using (DataTable dt = ReadTable($"SELECT `{Field}` FROM `{Table}` WHERE {Where}"))
+            {
+                if (dt.Rows.Count == 0) return default(T);
+
+                try
+                {
+                    return dt.Rows[0].Field<T>(Field);
+                }
+                catch (Exception e)
+                {
+                    return default(T);
+                }
+            }
+        }
     }
 
     public class SQLiteConfig : SQLiteDataBase
