@@ -60,6 +60,8 @@ namespace Quantum
             }
         }
 
+        public List<Sygnal> Sygnals { get; set; } = new List<Sygnal>();
+
         public NodePanel()
         {
             Background = new LinearGradientBrush(Color.FromRgb(0xEE, 0xEE, 0xEE), Color.FromRgb(0xC7, 0xC7, 0xC7), 90);
@@ -151,6 +153,11 @@ namespace Quantum
                 N.StopDrag();
         }
 
+
+        public void CreateProject()
+        {
+            Children.OfType<Node>().First(x => x.Type == NodeType.Input).StartSygnal();
+        }
 
     }
 }

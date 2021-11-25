@@ -29,5 +29,8 @@
         <local:NodePanel Grid.Row="1" x:Name="Panel" Margin="10" KeyDown="Panel_KeyDown">
             
         </local:NodePanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,10" HorizontalAlignment="Center">
+            <Button x:Name="Start" Content="Сформировать проект" Padding="10,1" Click="Start_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

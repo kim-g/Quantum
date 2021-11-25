@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Quantum
@@ -23,6 +17,7 @@ namespace Quantum
     /// </summary>
     public partial class Node : System.Windows.Controls.UserControl
     {
+        #region Внутренние переменные
         private Node parent;
         private ObservableCollection<Node> children = new ObservableCollection<Node>();
         private bool hasparent = true;
@@ -39,7 +34,10 @@ namespace Quantum
         private bool selected = false;
         private bool Moving = false;
         private bool SingleSelection = false;
+        private List<Line> ChildrenLines = new List<Line>();
+        private bool? parallelrun = null;
 
+        #region Цвета кистей
         private static byte MainColor1 = 0xE6;
         private static byte MainColor2 = 0x83;
         private static byte MainColor3 = 0x4D;
@@ -52,7 +50,10 @@ namespace Quantum
         private static byte SelectedColor2 = 0xA3;
         private static byte SelectedColor3 = 0x6D;
         private static byte SelectedColor4 = 0x4B;
+        #endregion
+        #endregion
 
+        #region Кисти
         private static Brush InputBrush = new LinearGradientBrush(new GradientStopCollection(new List<GradientStop>()
         {
             new GradientStop(Color.FromRgb(MainColor1,MainColor1,0x00), 0.0),
@@ -123,10 +124,9 @@ namespace Quantum
         { {NodeType.Optimization, OptimizationBrush}, {NodeType.End, StopBrush }, {NodeType.Comment, CommentBrush }, {NodeType.Run, RunBrush } , { NodeType.Input, InputBrush} };
         private static Dictionary<NodeType, Brush> SelectedBrushes = new Dictionary<NodeType, Brush>()
         { {NodeType.Optimization, OptimizationSelectedBrush}, {NodeType.End, StopSelectedBrush }, {NodeType.Comment, CommentSelectedBrush }, {NodeType.Run, RunSelectedBrush } , { NodeType.Input, InputBrush} };
+        #endregion
 
-
-        private List<Line> ChildrenLines = new List<Line>();
-
+        #region Свойства
         /// <summary>
         /// Родительский узел. Может быть только один.
         /// </summary>
@@ -244,7 +244,7 @@ namespace Quantum
             set
             {
                 NameText = value;
-                NameLabel.Content = NameText;
+                NameLabel.Content = Type == NodeType.Run ? "▶ " + NameText : NameText;
                 this.Height = RealHeight();
             }
         }
@@ -293,7 +293,7 @@ namespace Quantum
                         SetNode(true, false, 3, 150);
                         break;
                     case NodeType.Run:
-                        SetNode(true, true, 10, 50);
+                        SetNode(true, true, 10, 150);
                         break;
                 }
 
@@ -316,7 +316,9 @@ namespace Quantum
             }
         }
 
-
+        /// <summary>
+        /// Ссылка на номер задания в БД, с которым ассоциирован узел
+        /// </summary>
         public Job NodeJob
         {
             get => job;
@@ -337,7 +339,9 @@ namespace Quantum
             }
         }
 
-
+        /// <summary>
+        /// Флаг выделения узла
+        /// </summary>
         public bool Selected
         {
             get => selected;
@@ -359,6 +363,27 @@ namespace Quantum
         /// </summary>
         public event EventHandler ChildrenChanged;
 
+        /// <summary>
+        /// Многоядерный запуск программ. Только для типа Run
+        /// </summary>
+        public bool? ParallelRun
+        {
+            get => parallelrun;
+            set
+            {
+                if (Type == NodeType.Run)
+                {
+                    parallelrun = value == null ? false : value;
+                    int Par = parallelrun == true ? 1 : 0;
+                    DB.Execute($"UPDATE `nodes` SET `job`={Par} WHERE `id`={ID};");
+                }
+                else
+                    parallelrun = null;
+            }
+        }
+        #endregion
+
+        #region Конструкторы
         public Node()
         {
             InitializeComponent();
@@ -391,10 +416,28 @@ namespace Quantum
                     Margin = new Thickness(dr.Field<double>("pos_x"), dr.Field<double>("pos_y"), 0, 0)
                 };
 
+                switch (NT)
+                {
+                    case NodeType.Optimization:
+                    case NodeType.End:
+                        NN.NodeJob = Job.Load(DB, dr.Field<long>("job"));
+                        break;
+                    case NodeType.Run:
+                        NN.ParallelRun = dr.Field<long>("job") == 1;
+                        break;
+                }
+
                 return NN;
             }
         }
+        #endregion
 
+        #region Методы
+        /// <summary>
+        /// Событие. Изменение списка потомков
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChildrenListChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             ChildrenChanged?.Invoke(this, new EventArgs());
@@ -426,6 +469,11 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Событие. Кнопка нажата
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
             {
@@ -462,6 +510,11 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Событие. Кнопка отпущена
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -482,11 +535,21 @@ namespace Quantum
             Drag = false;
         }
 
+        /// <summary>
+        /// Событие. Движение мыши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Получить смещение мыши относительно старого положения
+        /// </summary>
+        /// <param name="Position"></param>
+        /// <returns></returns>
         public Point MoveDelta(Point Position)
         {
             Point MD = new Point(Position.X - StartDrag.X, Position.Y - StartDrag.Y);
@@ -505,6 +568,10 @@ namespace Quantum
             RePaint();
         }
 
+        /// <summary>
+        /// Перемещение узла на вектор изменения Delta
+        /// </summary>
+        /// <param name="Delta">Вектор перемещения</param>
         public void Move(Point Delta)
         {
             if (Drag) Moving = true;
@@ -606,6 +673,9 @@ namespace Quantum
             return Save();
         }
 
+        /// <summary>
+        /// Загрузка потомков узла
+        /// </summary>
         public void LoadChildren()
         {
             using (DataTable dt = DB.ReadTable($"SELECT * FROM `nodes` WHERE `parent`={ID};"))
@@ -660,7 +730,51 @@ namespace Quantum
                 N.ParentNode = null;
             DB.Execute($"DELETE FROM `nodes` WHERE `id`={ID}");
         }
+
+        /// <summary>
+        /// Обработка входящего сигнала
+        /// </summary>
+        /// <param name="sygnal"></param>
+        /// <returns></returns>
+        public Sygnal SendSygnal(Sygnal sygnal = null)
+        {
+            if (sygnal == null) Console.WriteLine("Создание нового сигнала");
+            Sygnal CurrentSygnal = sygnal == null ? new Sygnal(this) : sygnal;
+            if (Type == NodeType.Run)
+            {
+                Console.WriteLine("Создание нового сигнала узлом запуска");
+                Sygnal NewSygnal = new Sygnal(this) { Parallel = ParallelRun == true };
+                foreach (Node N in ChildrenNodes.Where(x => x.Type != NodeType.Comment))
+                    NewSygnal = N.SendSygnal(NewSygnal);
+                ((NodePanel)Parent).Sygnals.Insert(0, NewSygnal);
+
+                return CurrentSygnal;
+            }
+
+            if (Type != NodeType.Input) 
+                Console.WriteLine($"Добавление задания {NodeJob.Name} в список");
+            CurrentSygnal.Jobs.Add(NodeJob);
+            foreach (Node N in ChildrenNodes.Where(x => x.Type != NodeType.Comment))
+                CurrentSygnal = N.SendSygnal(CurrentSygnal);
+            return CurrentSygnal;
+        }
+
+        /// <summary>
+        /// Запуск сигнала из INPUT узла
+        /// </summary>
+        /// <returns></returns>
+        public bool StartSygnal()
+        {
+            if (Type != NodeType.Input) return false;
+
+            SendSygnal();
+            return true;
+        }
+        #endregion
     }
 
+    /// <summary>
+    /// Определяет тип узла.
+    /// </summary>
     public enum NodeType { Input, Optimization, End, Comment, Run }
 }

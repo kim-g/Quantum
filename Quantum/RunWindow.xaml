@@ -1,0 +1,23 @@
+﻿<Window x:Class="Quantum.RunWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Quantum"
+        mc:Ignorable="d"
+        Title="Добавить файл запуска" Height="450" Width="503.27" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Padding="10">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <local:LabelBox x:Name="TaskName" Title="Заголовок файла запуска" Height="30"/>
+        <CheckBox x:Name="ParralelChB" Content="Мультипоточный" Grid.Row="1"/>
+        <StackPanel Orientation="Horizontal" Grid.Row=" 2" HorizontalAlignment="Center">
+            <Button x:Name="AddBtn" Content="Добавить" Margin="0,0,10,0" Height="21" VerticalAlignment="Top" Click="AddBtn_Click"/>
+            <Button x:Name="CancelBtn" Content="Отменить" Click="CancelBtn_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

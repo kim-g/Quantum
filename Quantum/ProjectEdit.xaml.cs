@@ -49,7 +49,10 @@ namespace Quantum
 
         private void RunInputBtn_Click(object sender, RoutedEventArgs e)
         {
-            AddNode(NodeType.Run, "▶", "");
+            RunData RD = RunWindow.NewRun();
+            if (RD.Text == null) return;
+            Node NewNode = AddNode(NodeType.Run, RD.Text, "");
+            NewNode.ParallelRun = RD.Parallel;
         }
 
         private void AddOptBtn_Click(object sender, RoutedEventArgs e)
@@ -104,6 +107,11 @@ namespace Quantum
                         Panel.DeleteSelectedNotes();
                     break;
             }
+        }
+
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            Panel.CreateProject();
         }
     }
 }
