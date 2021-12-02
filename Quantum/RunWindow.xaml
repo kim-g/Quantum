@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="Добавить файл запуска" Height="450" Width="503.27" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Padding="10">
+        Title="Добавить файл запуска" Height="156.948" Width="503.27" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Padding="10" MinWidth="400">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,7 +15,7 @@
 
         <local:LabelBox x:Name="TaskName" Title="Заголовок файла запуска" Height="30"/>
         <CheckBox x:Name="ParralelChB" Content="Мультипоточный" Grid.Row="1"/>
-        <StackPanel Orientation="Horizontal" Grid.Row=" 2" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Grid.Row=" 2" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button x:Name="AddBtn" Content="Добавить" Margin="0,0,10,0" Height="21" VerticalAlignment="Top" Click="AddBtn_Click"/>
             <Button x:Name="CancelBtn" Content="Отменить" Click="CancelBtn_Click"/>
         </StackPanel>

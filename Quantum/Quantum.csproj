@@ -286,19 +286,7 @@
     <Resource Include="Load.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\INPUT_add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\Opt_add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\Param_add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\Comment_add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\Run_add.png" />
+    <Folder Include="images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

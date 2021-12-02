@@ -13,11 +13,17 @@ namespace Quantum
 {
     public class NodePanel : Grid
     {
+        #region Внутренние переменные
         private Node connectionParent = null;
         private Node connectionChild = null;
 
         private Line ConnectionLine = new Line() { Stroke = new SolidColorBrush(Colors.Red), StrokeThickness = 1.5, Visibility = Visibility.Hidden };
+        #endregion
 
+        #region Свойства
+        /// <summary>
+        /// Узел-родитель при стыковке узлов
+        /// </summary>
         public Node ConnectionParent
         {
             get => connectionParent;
@@ -39,6 +45,9 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Узел-потомок при стыковке узлов
+        /// </summary>
         public Node ConnectionChild
         {
             get => connectionChild;
@@ -60,8 +69,13 @@ namespace Quantum
             }
         }
 
+        /// <summary>
+        /// Список сигналов. 
+        /// </summary>
         public List<Sygnal> Sygnals { get; set; } = new List<Sygnal>();
+        #endregion
 
+        #region Конструктор
         public NodePanel()
         {
             Background = new LinearGradientBrush(Color.FromRgb(0xEE, 0xEE, 0xEE), Color.FromRgb(0xC7, 0xC7, 0xC7), 90);
@@ -71,8 +85,9 @@ namespace Quantum
             MouseMove += NodePanel_MouseMove;
             MouseLeftButtonUp += NodePanel_LeftMouseUp;
         }
+        #endregion
 
-
+        #region События
         private void NodePanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Handled) return;
@@ -103,7 +118,9 @@ namespace Quantum
             ConnectionParent = null;
             ConnectionChild = null;
         }
+        #endregion
 
+        #region Методы
         /// <summary>
         /// Убирает выделените узлов
         /// </summary>
@@ -153,11 +170,14 @@ namespace Quantum
                 N.StopDrag();
         }
 
-
+        /// <summary>
+        /// Создание файоа проекта
+        /// </summary>
         public void CreateProject()
         {
             Children.OfType<Node>().First(x => x.Type == NodeType.Input).StartSygnal();
         }
+        #endregion
 
     }
 }

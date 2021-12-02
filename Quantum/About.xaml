@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
         Title="О программе" Height="352.336" Width="428.973" WindowStartupLocation="CenterScreen" 
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="Grid">
             <Setter Property="Control.Margin" Value="0,0,0,10" />

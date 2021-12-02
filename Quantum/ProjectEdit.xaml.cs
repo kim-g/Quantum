@@ -63,14 +63,11 @@ namespace Quantum
             NewNode.NodeJob = NewJob;
         }
 
-        private void AddEndBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AddNode(NodeType.End, $"Узел {NodeN++}", "Параметрический узел");
-        }
-
         private void AddCommentBtn_Click(object sender, RoutedEventArgs e)
         {
-            AddNode(NodeType.End, $"Комментарий", "");
+            KeyValuePair<string, string> Comment = AddParam.Add("Добавить комментарий", "Заголовок", "Содержание");
+            if (Comment.Key == null) return;
+            AddNode(NodeType.Comment, Comment.Key, Comment.Value);
         }
 
         private Node AddNode(NodeType Type, string Title, string Comment)

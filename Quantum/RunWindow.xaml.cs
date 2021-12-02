@@ -28,7 +28,7 @@ namespace Quantum
         {
             RunWindow RW = new RunWindow();
             if (RW.ShowDialog() == true)
-                return new RunData() { Text = RW.TaskName.Text, Parallel = RW.ParralelChB.IsChecked == true };
+                return new RunData() { Text = RW.TaskName.Text, Parallel = RW.ParralelChB.IsChecked == true, OK = true};
             return new RunData();
         }
 
@@ -40,8 +40,8 @@ namespace Quantum
             RW.Title = "Редактировать файл запуска";
             RW.AddBtn.Content = "Редактировать";
             if (RW.ShowDialog() == true)
-                return new RunData() { Text = RW.TaskName.Text, Parallel = RW.ParralelChB.IsChecked == true };
-            return new RunData();
+                return new RunData() { Text = RW.TaskName.Text, Parallel = RW.ParralelChB.IsChecked == true, OK = true};
+            return new RunData() { OK = false };
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
@@ -61,5 +61,6 @@ namespace Quantum
     {
         public string Text;
         public bool Parallel;
+        public bool OK;
     }
 }

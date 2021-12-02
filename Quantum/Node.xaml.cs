@@ -282,15 +282,20 @@ namespace Quantum
                 {
                     case NodeType.Input:
                         SetNode(false, true, 10, 80);
+                        ParentNode = null;
                         break;
                     case NodeType.Optimization:
                         SetNode(true, true, 3, 150);
                         break;
                     case NodeType.End:
                         SetNode(true, false, 3, 150);
+                        foreach (Node N in ChildrenNodes.ToList())
+                            N.ParentNode = null;
                         break;
                     case NodeType.Comment:
                         SetNode(true, false, 3, 150);
+                        foreach (Node N in ChildrenNodes.ToList())
+                            N.ParentNode = null;
                         break;
                     case NodeType.Run:
                         SetNode(true, true, 10, 150);
@@ -326,6 +331,8 @@ namespace Quantum
             {
                 if (Type == NodeType.Optimization || Type == NodeType.End)
                 {
+                    Type = value.Task == 1 ? NodeType.End : NodeType.Optimization;
+
                     job = value;
                     if (job == null) return;
                     _ = DB.Execute($"UPDATE `nodes` SET `job`= {job.ID} WHERE `id`={ID}");
@@ -416,32 +423,12 @@ namespace Quantum
                     Margin = new Thickness(dr.Field<double>("pos_x"), dr.Field<double>("pos_y"), 0, 0)
                 };
 
-                switch (NT)
-                {
-                    case NodeType.Optimization:
-                    case NodeType.End:
-                        NN.NodeJob = Job.Load(DB, dr.Field<long>("job"));
-                        break;
-                    case NodeType.Run:
-                        NN.ParallelRun = dr.Field<long>("job") == 1;
-                        break;
-                }
-
                 return NN;
             }
         }
         #endregion
 
         #region Методы
-        /// <summary>
-        /// Событие. Изменение списка потомков
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ChildrenListChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            ChildrenChanged?.Invoke(this, new EventArgs());
-        }
 
         /// <summary>
         /// Перерисовка узла
@@ -470,62 +457,6 @@ namespace Quantum
         }
 
         /// <summary>
-        /// Событие. Кнопка нажата
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            {
-                StartDrag = e.GetPosition((IInputElement)Parent);
-                if (e.ChangedButton == MouseButton.Left)
-                {
-                    Drag = true;
-                    Moving = false;
-                    SingleSelection = false;
-
-                    if (System.Windows.Forms.Control.ModifierKeys == Keys.Control)
-                    {
-                        if (!Selected)
-                        { 
-                            Selected = true;
-                            Drag = false;
-                        }
-                        else
-                            SingleSelection = true;
-                    }
-
-                    else
-                    {
-                        
-                        if (!Selected)
-                        {
-                            ((NodePanel)Parent).DeselectAll();
-                            Selected = true;
-                        }
-                        else
-                            SingleSelection = true;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Событие. Кнопка отпущена
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                if (SingleSelection && !Moving)
-                    Selected = false;
-
-            ((NodePanel)Parent).SaveSelected();
-            e.Handled = true;
-        }
-
-        /// <summary>
         /// Прекращение перетаскивания объекта
         /// </summary>
         public void StopDrag()
@@ -533,16 +464,6 @@ namespace Quantum
             if (ID == 0) Save();
             else DB.Execute($"UPDATE `nodes` SET `pos_x`={Margin.Left}, `pos_y`={Margin.Top} WHERE `id`={ID}");
             Drag = false;
-        }
-
-        /// <summary>
-        /// Событие. Движение мыши
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-
         }
 
         /// <summary>
@@ -586,16 +507,6 @@ namespace Quantum
             RePaint();
         }
 
-        private void Rectangle_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            Height = RealHeight();
-        }
-
         /// <summary>
         /// Определение высоты узла
         /// </summary>
@@ -606,38 +517,6 @@ namespace Quantum
                 NameLabel.ActualHeight + NameLabel.Margin.Top + NameLabel.Margin.Bottom +
                 InfoBlock.ActualHeight + InfoLabel.Padding.Top + InfoLabel.Padding.Bottom;
             return Res;
-        }
-
-        private void ChildrenRect_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ((NodePanel)Parent).ConnectionParent = this;
-        }
-
-        private void ChildrenRect_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (((NodePanel)Parent).ConnectionParent == this) ((NodePanel)Parent).ConnectionParent = null;
-
-            if (((NodePanel)Parent).ConnectionChild != null)
-            {
-                ((NodePanel)Parent).ConnectionChild.ParentNode = this;
-                ((NodePanel)Parent).ConnectionChild = null;
-            }
-        }
-
-        private void ParentRect_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (((NodePanel)Parent).ConnectionChild == this) ((NodePanel)Parent).ConnectionChild = null;
-
-            if (((NodePanel)Parent).ConnectionParent != null)
-            {
-                ParentNode = ((NodePanel)Parent).ConnectionParent;
-                ((NodePanel)Parent).ConnectionParent = null;
-            }
-        }
-
-        private void ParentRect_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ((NodePanel)Parent).ConnectionChild = this;
         }
 
         /// <summary>
@@ -692,8 +571,17 @@ namespace Quantum
                         Margin = new Thickness(dr.Field<double>("pos_x"), dr.Field<double>("pos_y"), 0, 0)
                     };
 
-                    if (NN.Type == NodeType.Optimization || NN.Type == NodeType.End)
-                        NN.NodeJob = Job.Load(DB, dr.Field<long>("job"));
+                    switch (NN.Type)
+                    {
+                        case NodeType.Optimization:
+                        case NodeType.End:
+                            NN.NodeJob = Job.Load(DB, dr.Field<long>("job"));
+                            break;
+                        case NodeType.Run:
+                            NN.ParallelRun = dr.Field<long>("job") == 1;
+                            break;
+                    }
+
 
                     ((NodePanel)Parent).Children.Add(NN);
                     NN.ParentNode = this;
@@ -729,6 +617,8 @@ namespace Quantum
             foreach (Node N in ChildrenNodes.ToArray())
                 N.ParentNode = null;
             DB.Execute($"DELETE FROM `nodes` WHERE `id`={ID}");
+            if (NodeJob != null)
+                DB.Execute($"DELETE FROM `jobs` WHERE `id`={NodeJob.ID}");
         }
 
         /// <summary>
@@ -743,10 +633,12 @@ namespace Quantum
             if (Type == NodeType.Run)
             {
                 Console.WriteLine("Создание нового сигнала узлом запуска");
-                Sygnal NewSygnal = new Sygnal(this) { Parallel = ParallelRun == true };
+                Sygnal NewSygnal = new Sygnal(ParentNode, Title) { Parallel = ParallelRun == true, ParentParallel = CurrentSygnal.Parallel };
                 foreach (Node N in ChildrenNodes.Where(x => x.Type != NodeType.Comment))
                     NewSygnal = N.SendSygnal(NewSygnal);
                 ((NodePanel)Parent).Sygnals.Insert(0, NewSygnal);
+
+                NewSygnal.MakeRun("D:\\Temp\\Project", "Test/1/01", (SQLiteConfig)DB);
 
                 return CurrentSygnal;
             }
@@ -770,6 +662,161 @@ namespace Quantum
             SendSygnal();
             return true;
         }
+        #endregion
+
+        #region События
+        private void ChildrenRect_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ((NodePanel)Parent).ConnectionParent = this;
+        }
+
+        private void ChildrenRect_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (((NodePanel)Parent).ConnectionParent == this) ((NodePanel)Parent).ConnectionParent = null;
+
+            if (((NodePanel)Parent).ConnectionChild != null)
+            {
+                ((NodePanel)Parent).ConnectionChild.ParentNode = this;
+                ((NodePanel)Parent).ConnectionChild = null;
+            }
+        }
+
+        private void ParentRect_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (((NodePanel)Parent).ConnectionChild == this) ((NodePanel)Parent).ConnectionChild = null;
+
+            if (((NodePanel)Parent).ConnectionParent != null)
+            {
+                ParentNode = ((NodePanel)Parent).ConnectionParent;
+                ((NodePanel)Parent).ConnectionParent = null;
+            }
+        }
+
+        private void ParentRect_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            ((NodePanel)Parent).ConnectionChild = this;
+        }
+
+        private void Rectangle_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Height = RealHeight();
+        }
+
+        /// <summary>
+        /// Событие. Изменение списка потомков
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChildrenListChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            ChildrenChanged?.Invoke(this, new EventArgs());
+        }
+        
+        /// <summary>
+        /// Событие. Кнопка нажата
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            StartDrag = e.GetPosition((IInputElement)Parent);
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if (e.ClickCount == 2)
+                {
+                    switch (Type)
+                    {
+                        case NodeType.Run:
+                            RunData runData = RunWindow.EditRun(new RunData() { Parallel = ParallelRun == true, Text = Title });
+                            if (runData.OK)
+                            {
+                                ParallelRun = runData.Parallel;
+                                Title = runData.Text;
+                            }
+                            break;
+                        case NodeType.Optimization:
+                        case NodeType.End:
+                            Job newJob = JobEdit.Edit((SQLiteConfig)DB, NodeJob);
+                            if (newJob != null) NodeJob = newJob;
+                            RePaint();
+                            break;
+                        case NodeType.Comment:
+                            KeyValuePair<string, string> Data = AddParam.Edit("Редактирование комментария", new KeyValuePair<string, string>(Title, Info), "Заголовок", "Содержание");
+                            if (Data.Key == null) break;
+                            Title = Data.Key;
+                            Info = Data.Value;
+                            break;
+                    }
+                    return;
+                }
+
+                Drag = true;
+                Moving = false;
+                SingleSelection = false;
+
+                if (System.Windows.Forms.Control.ModifierKeys == Keys.Control)
+                {
+                    if (!Selected)
+                    {
+                        Selected = true;
+                        Drag = false;
+                    }
+                    else
+                        SingleSelection = true;
+                }
+
+                else
+                {
+
+                    if (!Selected)
+                    {
+                        ((NodePanel)Parent).DeselectAll();
+                        Selected = true;
+                    }
+                    else
+                        SingleSelection = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Событие. Кнопка отпущена
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+            if (e.ClickCount == 2)
+            {
+                Console.WriteLine("Двойной клик");
+                return;
+            }
+
+            if (e.ChangedButton == MouseButton.Left)
+                if (SingleSelection && !Moving)
+                    Selected = false;
+
+            ((NodePanel)Parent).SaveSelected();
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Событие. Движение мыши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Rectangle_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+        }
+
         #endregion
     }
 

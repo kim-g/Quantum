@@ -93,11 +93,22 @@ namespace Quantum
         /// </summary>
         /// <param name="owner">Окно-родитель</param>
         /// <param name="ConfigDataBase">База данных конфигурации</param>
-        public static Job Edit(Window owner, SQLiteConfig ConfigDataBase, long JobID)
+        /// <param name="JobID">Номер задачи в БД</param>
+        public static Job Edit(SQLiteConfig ConfigDataBase, long JobID)
+        {
+            return Edit(ConfigDataBase, Job.Load(ConfigDataBase, JobID));
+        }
+
+        /// <summary>
+        /// Показывает окно редактирования задания расчёта
+        /// </summary>
+        /// <param name="owner">Окно-родитель</param>
+        /// <param name="ConfigDataBase">База данных конфигурации</param>
+        /// <param name="job">Задача</param>
+        public static Job Edit(SQLiteConfig ConfigDataBase, Job job)
         {
             JobEdit JobWindow = new JobEdit(ConfigDataBase);
-            JobWindow.CurrentJob = Job.Load(ConfigDataBase, JobID);
-            JobWindow.Owner = owner;
+            JobWindow.CurrentJob = job;
             JobWindow.Full();
             JobWindow.AddB.Content = "Изменить";
             JobWindow.ShowDialog();
@@ -206,13 +217,26 @@ namespace Quantum
                 JobSolutionTB.SelectedItem = null;
                 JobOutputTB.SelectedItem = null;
             }
-            else 
+            else
             {
                 JobNameTB.Text = CurrentJob.Name;
                 JobCommentTB.Text = CurrentJob.Comment;
                 JobMethodTB.SelectedItem = Methods.First(x => x.Value == CurrentJob.Method).Key;
-                JobDFT_TypeTB.SelectedItem = DFT.First(x => x.Value == CurrentJob.DFT).Key;
-                JobBasisTB.SelectedItem = Basises.First(x => x.Value == CurrentJob.Basis).Key;
+                switch (CurrentJob.Method)
+                {
+                    case 1:
+                        JobDFT_TypeTB.SelectedIndex = -1; 
+                        JobBasisTB.SelectedIndex = -1;
+                        break;
+                    case 3:
+                        JobDFT_TypeTB.SelectedItem = DFT.First(x => x.Value == CurrentJob.DFT).Key;
+                        JobBasisTB.SelectedItem = Basises.First(x => x.Value == CurrentJob.Basis).Key;
+                        break;
+                    default:
+                        JobDFT_TypeTB.SelectedIndex = -1;
+                        JobBasisTB.SelectedItem = Basises.First(x => x.Value == CurrentJob.Basis).Key;
+                        break;
+                }
                 JobOtherTB.SelectedItem = Other.First(x => x.Value == CurrentJob.Other).Key;
                 JobTaskTB.SelectedItem = Tasks.First(x => x.Value == CurrentJob.Task).Key;
                 JobMemoryTB.Text = CurrentJob.RAM.ToString();

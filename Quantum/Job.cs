@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.IO;
 
 namespace Quantum
 {
@@ -18,7 +19,6 @@ namespace Quantum
         private bool tddft = false;
         private int solvent = 0;
         private int output = 0;
-
         private SQLiteDataBase DB;
         
         public Job(SQLiteDataBase db)
@@ -125,6 +125,57 @@ namespace Quantum
         public int Output { get => output; set { output = value; DB.Execute($"UPDATE `jobs` SET `output`={Output} WHERE `id`={ID};");
             } }
 
+        /// <summary>
+        /// Выдаёт строку с заданием для расчёта
+        /// </summary>
+        public string TaskLine
+        {
+            get
+            {
+                string Result = "!";
+
+                string MethodStr = DB.GetOne<string>("code", "methods", $"id={Method}");
+                string TaskStr = DB.GetOne<string>("code", "tasks", $"id={Task}");
+                string BasisStr;
+                string OtherStr;
+                switch (MethodStr)
+                {
+                    case "AM1":
+                        Result += MethodStr + " " + TaskStr;
+                        break;
+                    case "DFT":
+                        string DFTStr = DB.GetOne<string>("code", "dft", $"id={DFT}");
+                        BasisStr = DB.GetOne<string>("code", "basises", $"id={Basis}");
+                        OtherStr = DB.GetOne<string>("code", "other", $"id={Other}");
+                        Result += DFTStr + " " + BasisStr + " " + OtherStr + " " + TaskStr;
+                        break;
+                    default:
+                        BasisStr = DB.GetOne<string>("code", "basises", $"id={Basis}");
+                        OtherStr = DB.GetOne<string>("code", "other", $"id={Other}");
+                        Result += MethodStr + " " + BasisStr + " " + OtherStr + " " + TaskStr;
+                        break;
+                }
+
+                return Result;
+            }
+        }
+
+
+        public string OutputLine
+        {
+            get
+            {
+                string Result = "!";
+
+                string OutputStr = DB.GetOne<string>("code", "output", $"id={Output}");
+                string HessStr = DB.GetOne<string>("code", "hessians", $"id={Hessian}");
+
+                Result += OutputStr;
+                if (HessStr != "") Result += $" {HessStr}";
+                return Result;
+            }
+        }
+
         override public string ToString()
         {
             string Out = Comment;
@@ -140,6 +191,7 @@ namespace Quantum
 
             return Out;
         }
+
 
         public bool Update()
         {
@@ -195,6 +247,36 @@ namespace Quantum
             }
 
             return NewJob;
+        }
+
+
+        public void MakeInputFile(string Dir, string XYZ, int Charge, int Multiplet, int ProjectSolvent)
+        {
+            using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, Name + ".inp"), false))
+            {
+                sw.WriteLine($"# {Comment}");
+                sw.WriteLine(TaskLine);
+                sw.WriteLine(OutputLine);
+                if (RAM > 0)
+                    sw.WriteLine($"%maxcore {RAM} # Выделено {RAM} МБ памяти на ядро");
+                if (Charges)
+                    sw.WriteLine("#Вывести зарядовые плотности\n% output\n    Print[P_AtPopMO_M] 1\nend");
+                int CurSolvent = Solvent == 0 ? ProjectSolvent : Solvent;
+                if (CurSolvent > 1)
+                {
+                    using (DataTable dt = DB.ReadTable($"SELECT * FROM `solvents` WHERE `id`={CurSolvent}"))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            DataRow dr = dt.Rows[0];
+                            sw.WriteLine($"!CPCMC({dr.Field<string>("code")})     # Растворитель: {dr.Field<string>("name")}");
+                        }
+                    }
+                }
+                if (TDDFT)
+                    sw.WriteLine("# Вывести график UV-Vis\n% tddft\n    nroots 35\n    end");
+                sw.WriteLine($"* xyzfile {Charge} {Multiplet} {XYZ} *");
+            }
         }
     }
 }
