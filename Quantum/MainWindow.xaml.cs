@@ -1,21 +1,12 @@
-﻿using System;
+﻿using Extentions;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WinForms = System.Windows.Forms;
-using Extentions;
-using System.Data;
 
 namespace Quantum
 {
@@ -74,7 +65,7 @@ namespace Quantum
             }
 
             Solvents = new Dictionary<string, string>();
-            using (DataTable dt = Config.ReadTable("SELECT * FROM `solvents`"))
+            using (DataTable dt = Config.ReadTable("SELECT * FROM `solvents` WHERE `id`>0"))
             {
                 foreach (DataRow dr in dt.Rows)
                 {
