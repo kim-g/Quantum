@@ -16,6 +16,7 @@ namespace Quantum
         #region Внутренние переменные
         private Node connectionParent = null;
         private Node connectionChild = null;
+        private Node mouseOn = null;
 
         private Line ConnectionLine = new Line() { Stroke = new SolidColorBrush(Colors.Red), StrokeThickness = 1.5, Visibility = Visibility.Hidden };
         #endregion
@@ -69,6 +70,19 @@ namespace Quantum
             }
         }
 
+
+        /// <summary>
+        /// Нода, над которой находится мышь
+        /// </summary>
+        public Node MouseOn
+        { 
+            get => mouseOn; 
+            set
+            {
+                mouseOn = value;
+            }
+        }
+
         /// <summary>
         /// Список сигналов. 
         /// </summary>
@@ -100,8 +114,30 @@ namespace Quantum
 
             if (ConnectionParent!= null || ConnectionChild != null)
             {
-                ConnectionLine.X2 = Position.X;
-                ConnectionLine.Y2 = Position.Y;
+
+                if (ConnectionParent == null)
+                    if (MouseOn == null)
+                    {
+                        ConnectionLine.X2 = Position.X;
+                        ConnectionLine.Y2 = Position.Y;
+                    }
+                    else
+                    {
+                        ConnectionLine.X2 = MouseOn.ChildrenPosition.X;
+                        ConnectionLine.Y2 = MouseOn.ChildrenPosition.Y;
+                    }
+                if (ConnectionChild == null)
+                    if (MouseOn == null)
+                    {
+                        ConnectionLine.X2 = Position.X;
+                        ConnectionLine.Y2 = Position.Y;
+                    }
+                    else
+                    {
+                        ConnectionLine.X2 = MouseOn.ParentPosition.X;
+                        ConnectionLine.Y2 = MouseOn.ParentPosition.Y;
+                    }
+
             }
         }
 
@@ -173,9 +209,13 @@ namespace Quantum
         /// <summary>
         /// Создание файоа проекта
         /// </summary>
-        public void CreateProject()
+        public List<Sygnal> CreateProject()
         {
-            Children.OfType<Node>().First(x => x.Type == NodeType.Input).StartSygnal();
+            Sygnal Start = Children.OfType<Node>().First(x => x.Type == NodeType.Input).StartSygnal();
+            List<Sygnal> Sygnals = new List<Sygnal>();
+            Sygnals.Add(Start);
+            Sygnals.AddRange(Start.GetChildren());
+            return Sygnals;
         }
         #endregion
 

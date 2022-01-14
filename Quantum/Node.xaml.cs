@@ -142,7 +142,6 @@ namespace Quantum
                     parent.ChildrenLines.Remove(ParentLine);
                 }
                 parent = value;
-                ParentRect.Fill = parent == null ? null : parentbrush;
                 if (parent == null) ParentLine = null;
                 else
                 {
@@ -638,8 +637,8 @@ namespace Quantum
                     NewSygnal = N.SendSygnal(NewSygnal);
                 ((NodePanel)Parent).Sygnals.Insert(0, NewSygnal);
 
-                NewSygnal.MakeRun("D:\\Temp\\Project", "Test/1/01", (SQLiteConfig)DB);
-
+                CurrentSygnal.Children.Add(NewSygnal);
+                NewSygnal.ParentSygnal = CurrentSygnal;
                 return CurrentSygnal;
             }
 
@@ -655,12 +654,53 @@ namespace Quantum
         /// Запуск сигнала из INPUT узла
         /// </summary>
         /// <returns></returns>
-        public bool StartSygnal()
+        public Sygnal StartSygnal()
         {
-            if (Type != NodeType.Input) return false;
+            if (Type != NodeType.Input) return null;
+            return SendSygnal();
+        }
 
-            SendSygnal();
-            return true;
+        /// <summary>
+        /// Удаление узла и всех его потомков
+        /// </summary>
+        public void DeleteAll()
+        {
+            foreach (Node N in ChildrenNodes.ToArray())
+                N.DeleteAll();
+
+            Delete();
+        }
+
+        /// <summary>
+        /// Добавление данного узла в качестве потомка
+        /// </summary>
+        private void ConnectChildren()
+        {
+            NodePanel NP = (NodePanel)Parent;
+
+            if (NP.ConnectionChild == this) NP.ConnectionChild = null;
+
+            if (NP.ConnectionParent != null)
+            {
+                ParentNode = NP.ConnectionParent;
+                NP.ConnectionParent = null;
+            }
+        }
+
+        /// <summary>
+        /// Добавление данного узла в качестве hjlbntkz
+        /// </summary>
+        private void ConnectParent()
+        {
+            NodePanel NP = (NodePanel)Parent;
+
+            if (NP.ConnectionParent == this) NP.ConnectionParent = null;
+
+            if (NP.ConnectionChild != null)
+            {
+                NP.ConnectionChild.ParentNode = this;
+                NP.ConnectionChild = null;
+            }
         }
         #endregion
 
@@ -672,24 +712,12 @@ namespace Quantum
 
         private void ChildrenRect_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (((NodePanel)Parent).ConnectionParent == this) ((NodePanel)Parent).ConnectionParent = null;
-
-            if (((NodePanel)Parent).ConnectionChild != null)
-            {
-                ((NodePanel)Parent).ConnectionChild.ParentNode = this;
-                ((NodePanel)Parent).ConnectionChild = null;
-            }
+            ConnectParent();
         }
 
         private void ParentRect_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (((NodePanel)Parent).ConnectionChild == this) ((NodePanel)Parent).ConnectionChild = null;
-
-            if (((NodePanel)Parent).ConnectionParent != null)
-            {
-                ParentNode = ((NodePanel)Parent).ConnectionParent;
-                ((NodePanel)Parent).ConnectionParent = null;
-            }
+            ConnectChildren();
         }
 
         private void ParentRect_MouseDown(object sender, MouseButtonEventArgs e)
@@ -791,18 +819,29 @@ namespace Quantum
         /// <param name="e"></param>
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            NodePanel NP = (NodePanel)Parent;
 
-            if (e.ClickCount == 2)
+            if (NP.ConnectionChild != null || NP.ConnectionParent != null)
             {
-                Console.WriteLine("Двойной клик");
-                return;
+                if (NP.ConnectionChild == null)
+                {
+                    ConnectChildren();
+                    e.Handled = true;
+                    return;
+                }
+                if (NP.ConnectionParent == null)
+                {
+                    ConnectParent();
+                    e.Handled = true;
+                    return;
+                }
             }
 
             if (e.ChangedButton == MouseButton.Left)
                 if (SingleSelection && !Moving)
                     Selected = false;
 
-            ((NodePanel)Parent).SaveSelected();
+            NP.SaveSelected();
 
             e.Handled = true;
         }
@@ -817,7 +856,19 @@ namespace Quantum
 
         }
 
+        private void Grid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            NodePanel NP = (NodePanel)Parent;
+            NP.MouseOn = this;
+        }
+
+        private void Grid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            NodePanel NP = (NodePanel)Parent;
+            NP.MouseOn = null;
+        }
         #endregion
+
     }
 
     /// <summary>

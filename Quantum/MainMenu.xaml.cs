@@ -10,7 +10,7 @@ namespace Quantum
         /// <summary>
         /// Версия программы
         /// </summary>
-        public static string ProgramVersion = "1.5.2";
+        public static string ProgramVersion = "1.5.3";
         /// <summary>
         /// База данных конфига
         /// </summary>
@@ -72,7 +72,10 @@ namespace Quantum
 
         private void ConstructorButton_Click(object sender, RoutedEventArgs e)
         {
-            ProjectEdit.JustShow(Config);
+            ProjectListWindow PLW = new ProjectListWindow(Config);
+            PLW.ShowDialog();
+            
+            
         }
     }
 }

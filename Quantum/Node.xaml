@@ -5,17 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Quantum"
              mc:Ignorable="d" Loaded="UserControl_Loaded" Height="66.75" Width="118.25" HorizontalAlignment="Left" VerticalAlignment="Top">
-    <Grid Margin="0,0,0,0">
+    <Grid Margin="0,0,0,0" MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Rectangle x:Name="ParentRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Red" StrokeThickness="2" MouseUp="ParentRect_MouseUp" MouseDown="ParentRect_MouseDown">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="White" Opacity="0.1"/>
-            </Rectangle.Fill>
-        </Rectangle>
+        <Rectangle x:Name="ParentRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Red" StrokeThickness="2" MouseUp="ParentRect_MouseUp" MouseDown="ParentRect_MouseDown" Fill="Red"/>
+
         <Rectangle x:Name="FillRect" Grid.Column="1" MouseMove="Rectangle_MouseMove" MouseLeave="Rectangle_MouseLeave" RadiusX="3" RadiusY="3" StrokeThickness="2" MouseLeftButtonDown="Rectangle_MouseDown" MouseLeftButtonUp="Rectangle_MouseUp">
             <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -36,10 +33,7 @@
                 <TextBlock TextWrapping="Wrap" Text="Доп. инфо" x:Name="InfoBlock"/>
             </Label>
         </Grid>
-        <Rectangle x:Name="ChildrenRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Blue" StrokeThickness="2" Grid.Column="2" MouseDown="ChildrenRect_MouseDown" MouseUp="ChildrenRect_MouseUp">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="White" Opacity="0.1"/>
-            </Rectangle.Fill>
+        <Rectangle x:Name="ChildrenRect" HorizontalAlignment="Left" VerticalAlignment="Center" Width="8" Height="8" Stroke="Blue" StrokeThickness="2" Grid.Column="2" MouseDown="ChildrenRect_MouseDown" MouseUp="ChildrenRect_MouseUp" Fill="Blue">
         </Rectangle>
     </Grid>
 </UserControl>

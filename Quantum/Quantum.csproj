@@ -150,8 +150,12 @@
     </Compile>
     <Compile Include="NodePanel.cs" />
     <Compile Include="PrintHelper.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="ProjectEdit.xaml.cs">
       <DependentUpon>ProjectEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectListWindow.xaml.cs">
+      <DependentUpon>ProjectListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="RunWindow.xaml.cs">
       <DependentUpon>RunWindow.xaml</DependentUpon>
@@ -162,6 +166,7 @@
     <Compile Include="SQLiteDataBase.cs" />
     <Compile Include="StringExtention.cs" />
     <Compile Include="Sygnal.cs" />
+    <Compile Include="TitleCodePair.cs" />
     <Compile Include="WpfWin32Window.cs" />
     <Compile Include="WPF_to_WMF_Converter.cs" />
     <Page Include="About.xaml">
@@ -221,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProjectEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProjectListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -215,6 +215,18 @@ namespace Quantum
             get { return Connection.LastInsertRowId; }
         }
 
+        /// <summary>
+        /// Добавляет элемент по запросу и возвращает ID последней записи
+        /// </summary>
+        /// <param name="Query">Запрос</param>
+        /// <returns></returns>
+        public long Insert(string Query)
+        {
+            if (Execute(Query))
+                return LastID;
+            return 0;
+        }
+
         public void Dispose()
         {
             Connection.Dispose();

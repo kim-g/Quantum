@@ -16,6 +16,7 @@ namespace Quantum
         #region Внутренние переменные
         private Node _parent;
         private string _RunFile = "";
+        private List<Sygnal> child = new List<Sygnal>();
         private ObservableCollection<Job> jobs = new ObservableCollection<Job>();
 
         #endregion
@@ -57,6 +58,20 @@ namespace Quantum
             get => _RunFile;
             set => _RunFile = value;
         }
+
+        /// <summary>
+        /// Список сигналов-потомков
+        /// </summary>
+        public List<Sygnal> Children
+        {
+            get => child;
+            set => child = value;
+        }
+
+        /// <summary>
+        /// Сигнал-родитель
+        /// </summary>
+        public Sygnal ParentSygnal { get; set; }
         #endregion
 
         #region Конструкторы
@@ -69,16 +84,39 @@ namespace Quantum
         #endregion
 
         #region Методы
-        public void MakeRun(string Dir, string Task, SQLiteConfig Config, int ProjectSolvent = 1 )
+        public void MakeRun(string Dir, string Task, SQLiteConfig Config, long ProjectSolvent = 1 )
         {
-            MakeRunFile(Dir, Task, Config);
+            string CurDir = Dir;
+            string CurTask = Task;
+            
+            if (RunFileName.Contains("/"))
+            {
+                string[] Folders = RunFileName.Split('/');
+                for (int i = 0; i < Folders.Count() - 1; i++)
+                {
+                    CurDir = Path.Combine(Dir, Folders[i]);
+                    CurTask += $"/{Folders[i]}";
+                }
+            }
+            
+            Directory.CreateDirectory(CurDir);
+            MakeRunFile(CurDir, CurTask, Config);
 
             for (int i = 0; i < Jobs.Count; i++)
             {
-                string xyz = Config.GetConfigValue("task_dir") + "/" + Task + "/";
+                string xyz = Config.GetConfigValue("task_dir") + "/" + CurTask + "/";
                 if (i == 0)
                 {
+                    string ParentTask = Task;
+                    if (ParentSygnal?.RunFileName.Contains("/") == true)
+                    {
+                        string[] ParentFolders = ParentSygnal.RunFileName.Split('/');
+                        for (int j = 0; j < ParentFolders.Count() - 1; j++)
+                            ParentTask += $"/{ParentFolders[j]}";
+                    }
+
                     if (ParentParallel) xyz += "p_";
+                    xyz = Config.GetConfigValue("task_dir") + "/" + ParentTask + "/";
                     xyz += Parent.Title;
                 }
                 else
@@ -87,7 +125,7 @@ namespace Quantum
                     xyz += Jobs[i - 1].Name;
                 }
                 xyz += ".xyz";
-                Jobs[i].MakeInputFile(Dir, xyz, 0, 1, ProjectSolvent); 
+                Jobs[i]?.MakeInputFile(CurDir, xyz, 0, 1, ProjectSolvent); 
             }
         }
 
@@ -100,7 +138,10 @@ namespace Quantum
         /// <returns></returns>
         private bool MakeRunFile(string Dir, string Task, SQLiteConfig Config)
         {
-            using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, RunFileName), false))
+            if (RunFileName == "") return false;
+            string[] SplitName = RunFileName.Split('/');
+            string RunName = SplitName[SplitName.Count() - 1];
+            using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, RunName), false))
             {
                 sw.WriteLine("#!/bin/bash");
                 sw.WriteLine("# Настройка каталогов для расчёта");
@@ -139,6 +180,17 @@ namespace Quantum
                 sw.Close();
             }
             return true;
+        }
+
+        public List<Sygnal> GetChildren()
+        {
+            List<Sygnal> Collection = new List<Sygnal>();
+            foreach (Sygnal S in Children)
+            {
+                Collection.Add(S);
+                Collection.AddRange(S.GetChildren());
+            }
+            return Collection;
         }
         #endregion
     }

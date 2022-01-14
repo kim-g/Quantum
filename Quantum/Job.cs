@@ -8,17 +8,17 @@ namespace Quantum
         private long id = 0;
         private string name = "";
         private string comment = "";
-        private int method = 0;
-        private int dft = 0;
-        private int basis = 0;
-        private int other = 0;
-        private int task = 0;
-        private int ram = 0;
-        private int hessian = 0;
+        private long method = 0;
+        private long dft = 0;
+        private long basis = 0;
+        private long other = 0;
+        private long task = 0;
+        private long ram = 0;
+        private long hessian = 0;
         private bool charges = false;
         private bool tddft = false;
-        private int solvent = 0;
-        private int output = 0;
+        private long solvent = 0;
+        private long output = 0;
         private SQLiteDataBase DB;
         
         public Job(SQLiteDataBase db)
@@ -62,43 +62,43 @@ namespace Quantum
         /// <summary>
         /// ID метода
         /// </summary>
-        public int Method { get => method; set { method = value; DB.Execute($"UPDATE `jobs` SET  `method`={Method} WHERE `id`={ID};");
+        public long Method { get => method; set { method = value; DB.Execute($"UPDATE `jobs` SET  `method`={Method} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// ID DFT
         /// </summary>
-        public int DFT { get => dft; set { dft = value; DB.Execute($"UPDATE `jobs` SET  `dft`={DFT} WHERE `id`={ID};");
+        public long DFT { get => dft; set { dft = value; DB.Execute($"UPDATE `jobs` SET  `dft`={DFT} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// ID базиса
         /// </summary>
-        public int Basis { get => basis; set { basis = value; DB.Execute($"UPDATE `jobs` SET `basis`={Basis} WHERE `id`={ID};");
+        public long Basis { get => basis; set { basis = value; DB.Execute($"UPDATE `jobs` SET `basis`={Basis} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// ID дополнительных параметров
         /// </summary>
-        public int Other { get => other; set { other = value; DB.Execute($"UPDATE `jobs` SET `other`={Other} WHERE `id`={ID};");
+        public long Other { get => other; set { other = value; DB.Execute($"UPDATE `jobs` SET `other`={Other} WHERE `id`={ID};");
             } }
         
         /// <summary>
         /// ID задачи
         /// </summary>
-        public int Task { get => task; set { task = value; DB.Execute($"UPDATE `jobs` SET `task`={Task} WHERE `id`={ID};");
+        public long Task { get => task; set { task = value; DB.Execute($"UPDATE `jobs` SET `task`={Task} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// Количество памяти на ядро
         /// </summary>
-        public int RAM { get => ram; set { ram = value; DB.Execute($"UPDATE `jobs` SET `ram`={RAM} WHERE `id`={ID};");
+        public long RAM { get => ram; set { ram = value; DB.Execute($"UPDATE `jobs` SET `ram`={RAM} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// ID гессиана
         /// </summary>
-        public int Hessian { get => hessian; set { hessian = value; DB.Execute($"UPDATE `jobs` SET `hessian`={Hessian} WHERE `id`={ID};");
+        public long Hessian { get => hessian; set { hessian = value; DB.Execute($"UPDATE `jobs` SET `hessian`={Hessian} WHERE `id`={ID};");
             } }
 
         /// <summary>
@@ -116,13 +116,13 @@ namespace Quantum
         /// <summary>
         /// ID растворителя
         /// </summary>
-        public int Solvent { get => solvent; set { solvent = value; DB.Execute($"UPDATE `jobs` SET `solvent`={Solvent} WHERE `id`={ID};");
+        public long Solvent { get => solvent; set { solvent = value; DB.Execute($"UPDATE `jobs` SET `solvent`={Solvent} WHERE `id`={ID};");
             } }
 
         /// <summary>
         /// ID Вывода (малый, большой)
         /// </summary>
-        public int Output { get => output; set { output = value; DB.Execute($"UPDATE `jobs` SET `output`={Output} WHERE `id`={ID};");
+        public long Output { get => output; set { output = value; DB.Execute($"UPDATE `jobs` SET `output`={Output} WHERE `id`={ID};");
             } }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Quantum
         }
 
 
-        public void MakeInputFile(string Dir, string XYZ, int Charge, int Multiplet, int ProjectSolvent)
+        public void MakeInputFile(string Dir, string XYZ, int Charge, int Multiplet, long ProjectSolvent)
         {
             using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, Name + ".inp"), false))
             {
@@ -261,7 +261,7 @@ namespace Quantum
                     sw.WriteLine($"%maxcore {RAM} # Выделено {RAM} МБ памяти на ядро");
                 if (Charges)
                     sw.WriteLine("#Вывести зарядовые плотности\n% output\n    Print[P_AtPopMO_M] 1\nend");
-                int CurSolvent = Solvent == 0 ? ProjectSolvent : Solvent;
+                long CurSolvent = Solvent == 0 ? ProjectSolvent : Solvent;
                 if (CurSolvent > 1)
                 {
                     using (DataTable dt = DB.ReadTable($"SELECT * FROM `solvents` WHERE `id`={CurSolvent}"))

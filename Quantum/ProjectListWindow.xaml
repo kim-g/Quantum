@@ -1,0 +1,114 @@
+﻿<Window x:Class="Quantum.ProjectListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Quantum"
+        mc:Ignorable="d"
+        Title="Проекты для расчёта" Height="568" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Margin="0,0,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="ProjectsList" Grid.Row="0" SelectionChanged="ProjectsList_SelectionChanged"/>
+            <StackPanel Orientation="Vertical" Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button x:Name="AddProject" Content="Добавить" Padding="5,1,8,1" Margin="0,0,10,0" Click="AddProject_Click"/>
+                    <Button x:Name="EditProject" Content="Редактировать" Padding="5,1,8,1" Margin="0,0,10,0" Click="EditProject_Click"/>
+                    <Button x:Name="DeleteProject" Content="Удалить" Padding="5,1,8,1" Margin="0,0,10,0" Click="DeleteProject_Click"/>
+                    
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="ParamGrid" Visibility="Visible" Grid.Column="1" Margin="5,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="DescriptionLabel" Background="#FFD4D4D4" MinHeight="100" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" FontSize="16" BorderBrush="#FF343434" BorderThickness="1" Padding="10">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock x:Name="ProjectNameTextBlock" Text="Стандартный B3LYP с МО" FontWeight="Bold" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="DesciptionTextBlock" Text="Расчёт AM1 - B3LYP (3-21G - 6-311G*) - MO" FontSize="14" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+             </Label>
+
+            <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="1">
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Заказчик"/>
+                    <ComboBox x:Name="OrdererCB" Grid.Column="1"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="230"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Набор расчётных файлов"/>
+                    <TextBox x:Name="CollectionTB" Grid.Column="1"/>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <Label Content="Генерация списка расчётов" Margin="0,0,10,0"/>
+                    <RadioButton IsChecked="True" Content="диапазоном" Margin="0,0,20,0" VerticalAlignment="Center" Checked="RadioButton_Checked_1"/>
+                    <RadioButton IsChecked="False" Content="списком" VerticalAlignment="Center" Checked="RadioButton_Checked"/>
+                </StackPanel>
+                <Grid x:Name="GenListGrid" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Список расчётов"/>
+                    <ListBox x:Name="CountList" Grid.Row="1" Height="100"/>
+                    <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5,0,0,0">
+                        <Button x:Name="AddCountBtn" Content="+" Width="20" Margin="0,0,0,5"/>
+                        <Button x:Name="DeleteCountBtn" Content="-" Width="20" Margin="0,0,0,5"/>
+                    </StackPanel>
+                </Grid>
+                <StackPanel Orientation="Horizontal" x:Name="GenRangeSP">
+                    <Label Content="С"/>
+                    <TextBox x:Name="GenRangeFromTB" Text="1" Width="50" VerticalContentAlignment="Center"/>
+                    <Label Content="до"/>
+                    <TextBox x:Name="GenRangeToTB" Text="1" Width="50" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Height="2" Fill="#FF838383" />
+                    <Label Content="Общие параметры" Grid.Column="1" />
+                    <Rectangle Grid.Column="2" Height="2" Fill="#FF838383" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <Label Content="Заряд"/>
+                    <TextBox x:Name="ChargeTB" Text="0" Width="41" VerticalContentAlignment="Center"/>
+                    <Label Content="Мультиплетность"/>
+                    <TextBox x:Name="MultipletTB" Text="1" Width="41" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Общий растворитель"/>
+                    <ComboBox x:Name="SolventCB" Grid.Column="1"/>
+                </Grid>
+            </StackPanel>
+            <Button Grid.Row="2" Content="СОЗДАТЬ РАСЧЁТНЫЕ ФАЙЛЫ" Padding="1,5,1,4" FontSize="16" Click="Button_Click"/>
+        </Grid>
+    </Grid>
+</Window>

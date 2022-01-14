@@ -36,6 +36,26 @@ namespace Quantum
             PE.ShowDialog();
         }
 
+        /// <summary>
+        /// Редактирование проекта
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="StartNode"></param>
+        public static void Edit(SQLiteDataBase db, long ProjectID)
+        {
+            Project P = Project.Load(db, ProjectID);
+            
+            ProjectEdit PE = new ProjectEdit() { DB = db };
+            PE.NameTB.Text = P.Title;
+            PE.DescriptionTB.Text = P.Description;
+            Node Input = Node.LoadFromDB(PE.DB, P.Input);
+            PE.Panel.Children.Add(Input);
+            Input.LoadChildren();
+            PE.ShowDialog();
+            P.Title = PE.NameTB.Text;
+            P.Description = PE.DescriptionTB.Text;
+        }
+
         private void Node1_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ((Node)sender).RePaint();

@@ -39,23 +39,14 @@ namespace Quantum
             InitializeComponent();
 
             Config = ConfigDataBase;
-            Methods = LoadFromDB("methods");
-            DFT = LoadFromDB("dft");
-            Basises = LoadFromDB("basises");
-            Other = LoadFromDB("other", "code");
-            Tasks = LoadFromDB("tasks");
-            Hessians = LoadFromDB("hessians");
-            Solutions = LoadFromDB("solvents");
-            Outputs = LoadFromDB("output");
-
-            FullfillCB(JobMethodTB, Methods);
-            FullfillCB(JobDFT_TypeTB, DFT);
-            FullfillCB(JobBasisTB, Basises);
-            FullfillCB(JobOtherTB, Other);
-            FullfillCB(JobTaskTB, Tasks);
-            FullfillCB(JobHesTB, Hessians);
-            FullfillCB(JobSolutionTB, Solutions);
-            FullfillCB(JobOutputTB, Outputs);
+            LoadFromDB(JobMethodTB, "methods");
+            LoadFromDB(JobDFT_TypeTB, "dft");
+            LoadFromDB(JobBasisTB, "basises");
+            LoadFromDB(JobOtherTB, "other", "code");
+            LoadFromDB(JobTaskTB, "tasks");
+            LoadFromDB(JobHesTB, "hessians");
+            LoadFromDB(JobSolutionTB, "solvents");
+            LoadFromDB(JobOutputTB, "output");
         }
 
         /// <summary>
@@ -122,31 +113,18 @@ namespace Quantum
         /// </summary>
         /// <param name="table">Имя таблицы</param>
         /// <returns></returns>
-        public Dictionary<string, int> LoadFromDB(string table, string name = "name")
+        public void LoadFromDB(ComboBox CB, string table, string name = "name")
         {
-            Dictionary<string, int> Dic = new Dictionary<string, int>();
-
+            CB.Items.Clear();
             using (DataTable dt = Config.ReadTable($"SELECT * FROM `{table}` ORDER BY `id`;"))
             {
                 foreach (DataRow dr in dt.Rows)
                 {
-                    Dic.Add(dr[name].ToString(), Convert.ToInt32(dr["id"]));
+                    TitleCodePair TCV = new TitleCodePair(dr[name].ToString(), dr.Field<long>("id"));
+                    CB.Items.Add(TCV);
                 }
             }
 
-            return Dic;
-        }
-
-        /// <summary>
-        /// Заполнить ComboBox значениями
-        /// </summary>
-        /// <param name="CB">ComboBox для заполнения</param>
-        /// <param name="Data">Значения</param>
-        public void FullfillCB(ComboBox CB, Dictionary<string, int> Data)
-        {
-            CB.Items.Clear();
-            foreach (KeyValuePair<string, int> Line in Data)
-                CB.Items.Add(Line.Key);
         }
 
         private void JobMethodTB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -173,17 +151,17 @@ namespace Quantum
             CurrentJob.Update();
             CurrentJob.Name = JobNameTB.Text;
             CurrentJob.Comment = JobCommentTB.Text;
-            CurrentJob.Method = Methods[JobMethodTB.SelectedItem.ToString()];
-            CurrentJob.DFT = JobDFT_TypeTB.SelectedItem == null ? 0 : DFT[JobDFT_TypeTB.SelectedItem.ToString()];
-            CurrentJob.Basis = JobBasisTB.SelectedItem == null ? 0 : Basises[JobBasisTB.SelectedItem.ToString()];
-            CurrentJob.Other = Other[JobOtherTB.SelectedItem.ToString()];
-            CurrentJob.Task = Tasks[JobTaskTB.SelectedItem.ToString()];
+            CurrentJob.Method = (long)((TitleCodePair)JobMethodTB.SelectedItem).Value;
+            CurrentJob.DFT = JobDFT_TypeTB.SelectedItem == null ? 0 : (long)((TitleCodePair)JobDFT_TypeTB.SelectedItem).Value;
+            CurrentJob.Basis = JobBasisTB.SelectedItem == null ? 0 : (long)((TitleCodePair)JobBasisTB.SelectedItem).Value;
+            CurrentJob.Other = (long)((TitleCodePair)JobOtherTB.SelectedItem).Value;
+            CurrentJob.Task = (long)((TitleCodePair)JobTaskTB.SelectedItem).Value;
             CurrentJob.RAM = Convert.ToInt32(JobMemoryTB.Text);
-            CurrentJob.Hessian = Hessians[JobHesTB.SelectedItem.ToString()];
+            CurrentJob.Hessian = (long)((TitleCodePair)JobHesTB.SelectedItem).Value;
             CurrentJob.Charges = ChargesCB.IsChecked == true;
             CurrentJob.TDDFT = TDDFT_CB.IsChecked == true;
-            CurrentJob.Solvent = Solutions[JobSolutionTB.SelectedItem.ToString()];
-            CurrentJob.Output = Outputs[JobOutputTB.SelectedItem.ToString()];
+            CurrentJob.Solvent = (long)((TitleCodePair)JobSolutionTB.SelectedItem).Value;
+            CurrentJob.Output = (long)((TitleCodePair)JobOutputTB.SelectedItem).Value;
 
             Close();
         }
@@ -201,6 +179,16 @@ namespace Quantum
         /// </summary>
         private void Full()
         {
+            void Set(ComboBox CB, object Value)
+            {
+                foreach (var Val in CB.Items)
+                    if ((long)((TitleCodePair)Val).Value == (long)Value)
+                    {
+                        CB.SelectedItem = Val;
+                        return;
+                    }
+            }
+            
             if (CurrentJob == null)
             {
                 JobNameTB.Text = "Task01";
@@ -221,7 +209,7 @@ namespace Quantum
             {
                 JobNameTB.Text = CurrentJob.Name;
                 JobCommentTB.Text = CurrentJob.Comment;
-                JobMethodTB.SelectedItem = Methods.First(x => x.Value == CurrentJob.Method).Key;
+                Set(JobMethodTB, CurrentJob.Method) ;
                 switch (CurrentJob.Method)
                 {
                     case 1:
@@ -229,22 +217,22 @@ namespace Quantum
                         JobBasisTB.SelectedIndex = -1;
                         break;
                     case 3:
-                        JobDFT_TypeTB.SelectedItem = DFT.First(x => x.Value == CurrentJob.DFT).Key;
-                        JobBasisTB.SelectedItem = Basises.First(x => x.Value == CurrentJob.Basis).Key;
+                        Set(JobDFT_TypeTB, CurrentJob.DFT);
+                        Set(JobBasisTB,CurrentJob.Basis);
                         break;
                     default:
                         JobDFT_TypeTB.SelectedIndex = -1;
-                        JobBasisTB.SelectedItem = Basises.First(x => x.Value == CurrentJob.Basis).Key;
+                        Set(JobBasisTB,CurrentJob.Basis);
                         break;
                 }
-                JobOtherTB.SelectedItem = Other.First(x => x.Value == CurrentJob.Other).Key;
-                JobTaskTB.SelectedItem = Tasks.First(x => x.Value == CurrentJob.Task).Key;
+                Set(JobOtherTB,CurrentJob.Other);
+                Set(JobTaskTB,CurrentJob.Task);
                 JobMemoryTB.Text = CurrentJob.RAM.ToString();
-                JobHesTB.SelectedItem = Hessians.First(x => x.Value == CurrentJob.Hessian).Key;
+                Set(JobHesTB,CurrentJob.Hessian);
                 ChargesCB.IsChecked = CurrentJob.Charges;
                 TDDFT_CB.IsChecked = CurrentJob.TDDFT;
-                JobSolutionTB.SelectedItem = Solutions.First(x => x.Value == CurrentJob.Solvent).Key;
-                JobOutputTB.SelectedItem = Outputs.First(x => x.Value == CurrentJob.Output).Key;
+                Set(JobSolutionTB,CurrentJob.Solvent);
+                Set(JobOutputTB,CurrentJob.Output);
             }
         }
 
@@ -291,7 +279,7 @@ namespace Quantum
         private void UpdateCB(ComboBox CB, string Table, string name="name")
         {
             object LastValue = CB.SelectedItem;
-            FullfillCB(CB, LoadFromDB(Table, name));
+            LoadFromDB(CB, Table, name);
             CB.SelectedItem = LastValue;
         }
 
