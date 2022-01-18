@@ -57,6 +57,7 @@ namespace Extentions
             {
                 case "true":
                 case "1":
+                case "on":
                 case "да": return true;
                 default: return false;
             }

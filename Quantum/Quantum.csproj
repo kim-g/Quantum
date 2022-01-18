@@ -53,7 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>images\Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -109,99 +109,96 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="About.xaml.cs">
+    <Compile Include="General\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AddParam.xaml.cs">
+    <Compile Include="NodeCreator\AddParam.xaml.cs">
       <DependentUpon>AddParam.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Diagram.xaml.cs">
+    <Compile Include="EnergyDiagram\Diagram.xaml.cs">
       <DependentUpon>Diagram.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EnergiesDB.cs" />
-    <Compile Include="EnergyElement.cs" />
-    <Compile Include="Energy_Diagram.xaml.cs">
+    <Compile Include="EnergyDiagram\EnergiesDB.cs" />
+    <Compile Include="EnergyDiagram\EnergyElement.cs" />
+    <Compile Include="EnergyDiagram\Energy_Diagram.xaml.cs">
       <DependentUpon>Energy_Diagram.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Functions.cs" />
-    <Compile Include="GetImageForm.xaml.cs">
+    <Compile Include="General\Functions.cs" />
+    <Compile Include="EnergyDiagram\GetImageForm.xaml.cs">
       <DependentUpon>GetImageForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helper.cs" />
-    <Compile Include="Job.cs" />
-    <Compile Include="JobEdit.xaml.cs">
+    <Compile Include="General\Helper.cs" />
+    <Compile Include="NodeCreator\Job.cs" />
+    <Compile Include="NodeCreator\JobEdit.xaml.cs">
       <DependentUpon>JobEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LabelBox.xaml.cs">
+    <Compile Include="General\LabelBox.xaml.cs">
       <DependentUpon>LabelBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainMenu.xaml.cs">
+    <Compile Include="General\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MoleculeEdit.xaml.cs">
+    <Compile Include="EnergyDiagram\MoleculeEdit.xaml.cs">
       <DependentUpon>MoleculeEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MoleculeElement.xaml.cs">
+    <Compile Include="EnergyDiagram\MoleculeElement.xaml.cs">
       <DependentUpon>MoleculeElement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="Node.xaml.cs">
+    <Compile Include="General\NativeMethods.cs" />
+    <Compile Include="NodeCreator\Node.xaml.cs">
       <DependentUpon>Node.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NodePanel.cs" />
-    <Compile Include="PrintHelper.cs" />
-    <Compile Include="Project.cs" />
-    <Compile Include="ProjectEdit.xaml.cs">
+    <Compile Include="NodeCreator\NodePanel.cs" />
+    <Compile Include="General\PrintHelper.cs" />
+    <Compile Include="NodeCreator\Project.cs" />
+    <Compile Include="NodeCreator\ProjectEdit.xaml.cs">
       <DependentUpon>ProjectEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectListWindow.xaml.cs">
+    <Compile Include="NodeCreator\ProjectListWindow.xaml.cs">
       <DependentUpon>ProjectListWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunWindow.xaml.cs">
+    <Compile Include="NodeCreator\RunWindow.xaml.cs">
       <DependentUpon>RunWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SetMO.xaml.cs">
-      <DependentUpon>SetMO.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SQLiteDataBase.cs" />
-    <Compile Include="StringExtention.cs" />
-    <Compile Include="Sygnal.cs" />
-    <Compile Include="TitleCodePair.cs" />
-    <Compile Include="WpfWin32Window.cs" />
-    <Compile Include="WPF_to_WMF_Converter.cs" />
-    <Page Include="About.xaml">
+    <Compile Include="General\SQLiteDataBase.cs" />
+    <Compile Include="General\StringExtention.cs" />
+    <Compile Include="NodeCreator\Sygnal.cs" />
+    <Compile Include="General\TitleCodePair.cs" />
+    <Compile Include="General\WpfWin32Window.cs" />
+    <Compile Include="General\WPF_to_WMF_Converter.cs" />
+    <Page Include="General\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AddParam.xaml">
+    <Page Include="NodeCreator\AddParam.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Diagram.xaml">
+    <Page Include="EnergyDiagram\Diagram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Energy_Diagram.xaml">
+    <Page Include="EnergyDiagram\Energy_Diagram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GetImageForm.xaml">
+    <Page Include="EnergyDiagram\GetImageForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="JobEdit.xaml">
+    <Page Include="NodeCreator\JobEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LabelBox.xaml">
+    <Page Include="General\LabelBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainMenu.xaml">
+    <Page Include="General\MainMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="TemplateCreator\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -209,35 +206,31 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="TemplateCreator\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MoleculeEdit.xaml">
+    <Page Include="EnergyDiagram\MoleculeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MoleculeElement.xaml">
+    <Page Include="EnergyDiagram\MoleculeElement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Node.xaml">
+    <Page Include="NodeCreator\Node.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProjectEdit.xaml">
+    <Page Include="NodeCreator\ProjectEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProjectListWindow.xaml">
+    <Page Include="NodeCreator\ProjectListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SetMO.xaml">
+    <Page Include="NodeCreator\RunWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,7 +264,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo.ico" />
+    <Resource Include="images\Logo.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -286,17 +279,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_IOS.gif" />
+    <Resource Include="images\Logo_IOS.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ИОС.png" />
+    <Resource Include="images\ИОС.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Load.png" />
+    <Resource Include="images\Load.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="images\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -60,6 +51,7 @@ namespace Quantum
 
             AP.NameGrid.Visibility = Visibility.Collapsed;
             AP.ParamValueLabel.Content = value;
+            
             AP.ShowDialog();
             return AP.Output.Value;
         }
@@ -94,6 +86,18 @@ namespace Quantum
         {
             Output = new KeyValuePair<string, string>(NameTB.Text, CodeTB.Text);
             Close();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            _ = Keyboard.Focus(NameTB);
+            NameTB.Focus();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+
         }
     }
 }

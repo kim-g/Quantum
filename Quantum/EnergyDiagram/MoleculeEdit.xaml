@@ -11,11 +11,11 @@
             <Label Content="Шифр"/>
             <TextBox x:Name="MolNameTB"/>
             <Label Content="LUMO"/>
-            <Image x:Name="LUMO_Img" Source="Load.png" Width="200" Height="200" MouseUp="LUMO_Img_MouseUp"/>
+            <Image x:Name="LUMO_Img" Source="../images/Load.png" Width="200" Height="200" MouseUp="LUMO_Img_MouseUp"/>
             <TextBox x:Name="LUMO_Value"/>
 
             <Label Content="HOMO"/>
-            <Image x:Name="HOMO_Img" Source="Load.png" Width="200" Height="200" MouseUp="HOMO_Img_MouseUp"/>
+            <Image x:Name="HOMO_Img" Source="../images/Load.png" Width="200" Height="200" MouseUp="HOMO_Img_MouseUp"/>
             <TextBox x:Name="HOMO_Value"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button Content="Добавить" Click="Button_Click" Margin="0,0,20,0" />

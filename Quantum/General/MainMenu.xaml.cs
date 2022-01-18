@@ -55,16 +55,6 @@ namespace Quantum
             About.ShowModal(this);
         }
 
-        /// <summary>
-        /// Показать окно редактирования расчёта МО (Устарело)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MOButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetMO.ShowModal(this, Config);
-        }
-
         private void EnergyButton_Click(object sender, RoutedEventArgs e)
         {
             Energy_Diagram.ShowModal(this);

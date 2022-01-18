@@ -3,16 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -85,8 +77,41 @@ namespace Quantum
             Input.LoadChildren();
 
             Sygnal MainSygnal = Input.StartSygnal();
-            string Dir = System.IO.Path.Combine(((SQLiteConfig)DB).GetConfigValue("work_dir"), OrdererCB.SelectedItem.ToString(), CollectionTB.Text, "01");
-            string Task = OrdererCB.SelectedItem.ToString() + "/" + CollectionTB.Text.Replace('\\', '/') + "/" + "01";
+
+            if (RB_Range.IsChecked == true)
+            {
+                int From = 1;
+                int To = 1;
+                try
+                {
+                    From = Convert.ToInt32(GenRangeFromTB.Text);
+                    To = Convert.ToInt32(GenRangeToTB.Text);
+                }
+                catch
+                {
+                    new Exception("Неправильное значение для диапазона");
+
+                }
+
+                for (int i = From; i <= To; i++)
+                {
+                    CreateNewCount(MainSygnal, $"{i:00}");
+                }
+            }
+
+            if (RB_List.IsChecked == true)
+            {
+                foreach (object Line in CountList.Items)
+                {
+                    CreateNewCount(MainSygnal, Line.ToString());
+                }
+            }
+        }
+
+        private void CreateNewCount(Sygnal MainSygnal, string CountName)
+        {
+            string Dir = System.IO.Path.Combine(((SQLiteConfig)DB).GetConfigValue("work_dir"), OrdererCB.SelectedItem.ToString(), CollectionTB.Text, CountName);
+            string Task = OrdererCB.SelectedItem.ToString() + "/" + CollectionTB.Text.Replace('\\', '/') + "/" + CountName.Replace('\\', '/');
             MainSygnal.MakeRun(Dir, Task, (SQLiteConfig)DB, ((TitleCodePair)SolventCB.SelectedItem).ID);
             foreach (Sygnal S in MainSygnal.GetChildren())
                 S.MakeRun(Dir, Task, (SQLiteConfig)DB, ((TitleCodePair)SolventCB.SelectedItem).ID);
@@ -120,6 +145,23 @@ namespace Quantum
                 return;
             ((Project)ProjectsList.SelectedItem).DeleteProject();
             ProjectsList.Items.Remove(ProjectsList.SelectedItem);
+        }
+
+        private void NumbersTB_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !char.IsDigit(e.Text, 0);
+        }
+
+        private void AddCountBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string Task = AddParam.AddString("Добавить расчётное задание");
+            if (Task == null) return;
+            CountList.Items.Add(Task);
+        }
+
+        private void DeleteCountBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CountList.Items.Remove(CountList.SelectedItem);
         }
     }
 }

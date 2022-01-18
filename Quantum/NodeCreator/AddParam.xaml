@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
-        Title="AddParam" Height="176.567" Width="369.619" ResizeMode="NoResize" SizeToContent="Height">
+        Title="AddParam" Height="176.567" Width="369.619" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen" Activated="Window_Activated" Loaded="Window_Loaded"
+        FocusManager.FocusedElement="{Binding ElementName=NameTB}">
     <StackPanel Orientation="Vertical" Margin="10">
-        <Grid x:Name="NameGrid" Margin="0,0,0,10" >
+        <Grid x:Name="NameGrid" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label x:Name="ParamNameLabel" Content="Название"/>
-            <TextBox x:Name="NameTB" Grid.Column="1" Text="" Margin="0,4,0,0"/>
+            <TextBox x:Name="NameTB" Grid.Column="1" Text="" Margin="0,4,0,0" TabIndex="1"/>
         </Grid>
 
         <Grid Margin="0,0,0,10" >
@@ -22,11 +23,11 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label x:Name="ParamValueLabel" Content="Значение"/>
-            <TextBox x:Name="CodeTB" Grid.Column="1" Text="" Margin="0,4,0,0"/>
+            <TextBox x:Name="CodeTB" Grid.Column="1" Text="" Margin="0,4,0,0" IsTabStop="False"/>
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="AddB" Content="Добавить" Padding="20,1" Margin="0,0,10,0" Click="AddB_Click"/>
-            <Button x:Name="CancelB" Content="Отмена" Padding="20,1" Click="CancelB_Click"/>
+            <Button x:Name="AddB" Content="Добавить" Padding="20,1" Margin="0,0,10,0" Click="AddB_Click" IsDefault="True"/>
+            <Button x:Name="CancelB" Content="Отмена" Padding="20,1" Click="CancelB_Click" IsCancel="True"/>
         </StackPanel>
     </StackPanel>
 </Window>

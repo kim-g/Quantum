@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Quantum"
         mc:Ignorable="d"
         Title="Quantum – формирование расчётных проектов" WindowStartupLocation="CenterScreen" 
-        VerticalAlignment="Top" ResizeMode="CanMinimize" Height="332" Width="400" Icon="Logo.ico" 
+        VerticalAlignment="Top" ResizeMode="CanMinimize" Height="332" Width="400" Icon="../images/Logo.ico" 
         SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="TitleLabel">
@@ -42,8 +42,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Column="0" Grid.Row="0" Margin="0,0,0,0">
-                <Image gif:ImageBehavior.AnimatedSource="Logo_IOS.gif" x:Name="image" Grid.Column="1" 
-                       HorizontalAlignment="Left" VerticalAlignment="Top" Source="Logo_IOS.gif" Stretch="None"/>
+                <Image gif:ImageBehavior.AnimatedSource="../images/Logo_IOS.gif" x:Name="image" Grid.Column="1" 
+                       HorizontalAlignment="Left" VerticalAlignment="Top" Source="../images/Logo_IOS.gif" Stretch="None"/>
             </Grid>
             <Grid Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
                 <Label x:Name="label" Style="{DynamicResource TitleLabel}">
