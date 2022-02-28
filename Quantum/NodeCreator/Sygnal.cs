@@ -141,7 +141,7 @@ namespace Quantum
             if (RunFileName == "") return false;
             string[] SplitName = RunFileName.Split('/');
             string RunName = SplitName[SplitName.Count() - 1];
-            using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, RunName), false))
+            using (StreamWriter sw = new StreamWriter(Path.Combine(Dir, RunName), false) { NewLine= "\n" })
             {
                 sw.WriteLine("#!/bin/bash");
                 sw.WriteLine("# Настройка каталогов для расчёта");
