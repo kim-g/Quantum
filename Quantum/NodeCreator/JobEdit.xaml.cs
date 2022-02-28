@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -21,17 +13,6 @@ namespace Quantum
     public partial class JobEdit : Window
     {
         SQLiteDataBase Config;
-
-        // Словари
-        Dictionary<string, int> Methods;
-        Dictionary<string, int> DFT;
-        Dictionary<string, int> Basises;
-        Dictionary<string, int> Other;
-        Dictionary<string, int> Tasks;
-        Dictionary<string, int> Hessians;
-        Dictionary<string, int> Solutions;
-        Dictionary<string, int> Outputs;
-
         Job CurrentJob;
 
         public JobEdit(SQLiteDataBase ConfigDataBase)
@@ -124,7 +105,6 @@ namespace Quantum
                     CB.Items.Add(TCV);
                 }
             }
-
         }
 
         private void JobMethodTB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -198,7 +178,7 @@ namespace Quantum
                 JobBasisTB.SelectedItem = null;
                 JobOtherTB.SelectedItem = null;
                 JobTaskTB.SelectedItem = null;
-                JobMemoryTB.Text = "4096";
+                JobMemoryTB.Text = "0";
                 JobHesTB.SelectedItem = null;
                 ChargesCB.IsChecked = false;
                 TDDFT_CB.IsChecked = false;

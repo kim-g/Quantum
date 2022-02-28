@@ -276,31 +276,77 @@ namespace Quantum
 
         //Работа с конфигом, получение значения
 
-        public string GetConfigValue(string name)
+        /// <summary>
+        /// Получение конфига как объекта
+        /// </summary>
+        /// <param name="name">Имя параметра конфига</param>
+        /// <returns></returns>
+        private object GetConfigObject(string name)
         {
-            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
+            using (DataTable Conf = ReadTable($"SELECT `value` FROM `config` WHERE `name`='{name}' LIMIT 1"))
             {
                 if (Conf.Rows.Count == 0) return "";
-                return Conf.Rows[0].ItemArray[0].ToString();
+                return Conf.Rows[0].ItemArray[0];
             }
         }
 
+        /// <summary>
+        /// Получение конфига как строки
+        /// </summary>
+        /// <param name="name">Имя параметра конфига</param>
+        /// <returns></returns>
+        public string GetConfigValue(string name)
+        {
+            return GetConfigObject(name).ToString();
+        }
+
+        /// <summary>
+        /// Получение конфига как числа INT
+        /// </summary>
+        /// <param name="name">Имя параметра конфига</param>
+        /// <returns></returns>
         public int GetConfigValueInt(string name)
         {
-            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
-            {
-                if (Conf.Rows.Count == 0) return 0;
-                return Convert.ToInt32(Conf.Rows[0].ItemArray[0].ToString());
-            }
+            try
+            { return Convert.ToInt32(GetConfigObject(name));}
+
+            catch (Exception)
+            { return 0; }
         }
 
+        /// <summary>
+        /// Получение конфига как лоическое значение
+        /// </summary>
+        /// <param name="name">Имя параметра конфига</param>
+        /// <returns></returns>
         public bool GetConfigValueBool(string name)
         {
-            using (DataTable Conf = ReadTable("SELECT `value` FROM `config` WHERE `name`='" + name + "' LIMIT 1"))
-            {
-                if (Conf.Rows.Count == 0) return false;
-                return Conf.Rows[0].ItemArray[0].ToString() == "1";
-            }
+            return GetConfigValue(name) == "1";
+        }
+
+        /// <summary>
+        /// Получение конфига как числа LONG
+        /// </summary>
+        /// <param name="name">Имя параметра конфига</param>
+        /// <returns></returns>
+        public long GetConfigValueLong(string name)
+        {
+            try
+            { return Convert.ToInt64(GetConfigObject(name)); }
+
+            catch (Exception)
+            { return 0; }
+
+        }
+
+        public T GetConfigValue<T>(string name)
+        {
+            try
+            { return (T)GetConfigObject(name); }
+            catch (Exception)
+
+            { return default(T); }
+            
         }
 
 
@@ -308,27 +354,31 @@ namespace Quantum
 
         public bool SetConfigValue(string name, string value)
         {
-            if (GetCount("config", "`name`='" + name + "'") > 0)
-                return Execute("UPDATE `config` SET `value`='" + value + "' WHERE `name`='" + name + "';");
-            else
-                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + value + "');");
+            if (GetCount("config", $"`name`='{name}'") > 0)
+                return Execute($"UPDATE `config` SET `value`='{value}' WHERE `name`='{name}';");
+            return Execute($"INSERT INTO `config` (`name`, `value`) VALUES ('{name}','{value}');");
         }
 
         public bool SetConfigValue(string name, int value)
         {
-            if (GetCount("config", "`name`='" + name + "'") > 0)
-                return Execute("UPDATE `config` SET `value`='" + value.ToString() + "' WHERE `name`='" + name + "'");
-            else
-                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + value.ToString() + "');");
+            if (GetCount("config", $"`name`='{name}'") > 0)
+                return Execute($"UPDATE `config` SET `value`='{value}' WHERE `name`='{name}'");
+            return Execute($"INSERT INTO `config` (`name`, `value`) VALUES ('{name}','{value}');");
+        }
+
+        public bool SetConfigValue(string name, long value)
+        {
+            if (GetCount("config", $"`name`='{name}'") > 0)
+                return Execute($"UPDATE `config` SET `value`='{value}' WHERE `name`='{name}'");
+            return Execute($"INSERT INTO `config` (`name`, `value`) VALUES ('{name}','{value}');");
         }
 
         public bool SetConfigValue(string name, bool value)
         {
             string val = value ? "1" : "0";
-            if (GetCount("config", "`name`='" + name + "'") > 0)
-                return Execute("UPDATE `config` SET `value`='" + val + "' WHERE `name`='" + name + "'");
-            else
-                return Execute("INSERT INTO `config` (`name`, `value`) VALUES ('" + name + "','" + val + "');");
+            if (GetCount("config", $"`name`='{name}'") > 0)
+                return Execute($"UPDATE `config` SET `value`='{val}' WHERE `name`='{name}'");
+            return Execute($"INSERT INTO `config` (`name`, `value`) VALUES ('{name}','{val}');");
         }
     }
 }

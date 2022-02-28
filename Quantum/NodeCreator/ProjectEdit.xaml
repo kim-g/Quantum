@@ -132,6 +132,12 @@
             </Button>
         </StackPanel>
         <local:NodePanel Grid.Row="2" x:Name="Panel" Margin="10" KeyDown="Panel_KeyDown" Grid.ColumnSpan="2">
+            <local:NodePanel.Background>
+                <LinearGradientBrush EndPoint="6.12303176911189E-17,1">
+                    <GradientStop Color="#FFEEEEEE" Offset="0"/>
+                    <GradientStop Color="#FFC7C7C7" Offset="1"/>
+                </LinearGradientBrush>
+            </local:NodePanel.Background>
 
         </local:NodePanel>
     </Grid>

@@ -84,7 +84,7 @@ namespace Quantum
         #endregion
 
         #region Методы
-        public void MakeRun(string Dir, string Task, SQLiteConfig Config, long ProjectSolvent = 1 )
+        public void MakeRun(string Dir, string Task, SQLiteConfig Config, Server Storage, long ProjectSolvent = 1 )
         {
             string CurDir = Dir;
             string CurTask = Task;
@@ -100,11 +100,11 @@ namespace Quantum
             }
             
             Directory.CreateDirectory(CurDir);
-            MakeRunFile(CurDir, CurTask, Config);
+            MakeRunFile(CurDir, CurTask, Config, Storage);
 
             for (int i = 0; i < Jobs.Count; i++)
             {
-                string xyz = Config.GetConfigValue("task_dir") + "/" + CurTask + "/";
+                string xyz = Storage.Path + "/" + CurTask + "/";
                 if (i == 0)
                 {
                     string ParentTask = Task;
@@ -116,7 +116,7 @@ namespace Quantum
                     }
 
                     if (ParentParallel) xyz += "p_";
-                    xyz = Config.GetConfigValue("task_dir") + "/" + ParentTask + "/";
+                    xyz = Storage.Path + "/" + ParentTask + "/";
                     xyz += Parent.Title;
                 }
                 else
@@ -136,7 +136,7 @@ namespace Quantum
         /// <param name="Task">Директория проекта</param>
         /// <param name="Config">Конфигурация</param>
         /// <returns></returns>
-        private bool MakeRunFile(string Dir, string Task, SQLiteConfig Config)
+        private bool MakeRunFile(string Dir, string Task, SQLiteConfig Config, Server Storage)
         {
             if (RunFileName == "") return false;
             string[] SplitName = RunFileName.Split('/');
@@ -146,14 +146,14 @@ namespace Quantum
                 sw.WriteLine("#!/bin/bash");
                 sw.WriteLine("# Настройка каталогов для расчёта");
                 sw.WriteLine("task=${1:-'" + Task + "'} #Рабочий каталог");
-                sw.WriteLine("run_orca=\"" + Config.GetConfigValue("user_dir") + Config.GetConfigValue("orca_bin") + "\" # Каталог файлов Orca");
-                sw.WriteLine("taskdir=\"" + Config.GetConfigValue("task_dir") + "/$task\" # Каталог проекта");
+                sw.WriteLine($"run_orca=\"{Storage.LCTN}" + Config.GetConfigValue("orca_bin") + "\" # Каталог файлов Orca");
+                sw.WriteLine($"taskdir=\"{Storage.Path}/$task\" # Каталог проекта");
                 sw.WriteLine("");
                 sw.WriteLine("# Настройка замены команд для работы SLURM");
                 sw.WriteLine("cd=\"cd\"");
                 sw.WriteLine("rm=\"/bin/rm\"");
                 sw.WriteLine("cat=\"/bin/cat\"");
-                sw.WriteLine("export PATH=\"" + Config.GetConfigValue("user_dir") + "/bin:$PATH\"");
+                sw.WriteLine($"export PATH=\"{Storage.LCTN}/bin:$PATH\"");
                 sw.WriteLine("");
                 sw.WriteLine("# Запуск расчёта");
                 sw.WriteLine("echo \"task: $task\"");
@@ -173,7 +173,7 @@ namespace Quantum
                     "      echo \"   end\"                 >>$pq.inp\n" +
                     "      $cat $q.inp                   >>$pq.inp\n" +
                     "  fi\n" +
-                    "  " + Config.GetConfigValue("user_dir") + "/bin/donodes.pl >$pq.nodes\n" +
+                    $"  {Storage.LCTN}/bin/donodes.pl >$pq.nodes\n" +
                     "  $run_orca $pq.inp >$do$pq.out 2>$do$pq.err\n" +
                     "done\n");
 

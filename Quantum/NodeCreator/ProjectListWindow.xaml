@@ -46,7 +46,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Заказчик"/>
-                    <ComboBox x:Name="OrdererCB" Grid.Column="1"/>
+                    <ComboBox x:Name="OrdererCB" Grid.Column="1" SelectionChanged="OrdererCB_SelectionChanged"/>
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
@@ -107,6 +107,14 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Общий растворитель"/>
                     <ComboBox x:Name="SolventCB" Grid.Column="1"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Файловое хранилище"/>
+                    <ComboBox x:Name="StorageCB" Grid.Column="1" SelectionChanged="StorageCB_SelectionChanged"/>
                 </Grid>
             </StackPanel>
             <Button Grid.Row="2" Content="СОЗДАТЬ РАСЧЁТНЫЕ ФАЙЛЫ" Padding="1,5,1,4" FontSize="16" Click="Button_Click"/>

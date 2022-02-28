@@ -14,6 +14,7 @@ namespace Quantum
     public partial class ProjectListWindow : Window
     {
         private SQLiteDataBase DB;
+        private bool Loading = true;
         
         public ProjectListWindow(SQLiteDataBase db)
         {
@@ -24,6 +25,8 @@ namespace Quantum
             foreach (Project P in Projects)
                 ProjectsList.Items.Add(P);
             ParamGrid.Visibility = ProjectsList.SelectedItem == null ? Visibility.Hidden : Visibility.Visible;
+
+
         }
 
         private void ProjectsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -57,16 +60,40 @@ namespace Quantum
             SQLiteConfig Config = (SQLiteConfig)DB;
 
             List<string> Orderers = Directory.EnumerateDirectories(((SQLiteConfig)DB).GetConfigValue("work_dir")).ToList();
+            string CurOrderer = (DB as SQLiteConfig).GetConfigValue("plw_orderer");
             foreach (string Orderer in Orderers)
-                OrdererCB.Items.Add(System.IO.Path.GetFileName(Orderer));
+            {
+                string NewOrderer = System.IO.Path.GetFileName(Orderer);
+
+
+                OrdererCB.Items.Add(NewOrderer);
+                if (NewOrderer == CurOrderer) OrdererCB.SelectedItem = CurOrderer;
+            }
             CollectionTB.Text = Config.GetConfigValue("collection_dir");
 
-            using (DataTable dt = DB.ReadTable("SELECT * FROM `solvents` WHERE `id`>0"))
+            SetComboBox(SolventCB, "SELECT * FROM `solvents` WHERE `id`>0");
+
+            long StorageID = (DB as SQLiteConfig).GetConfigValueLong("plw_storage");
+            using (DataTable dt = DB.ReadTable("SELECT * FROM `roots`"))
             {
                 foreach (DataRow dr in dt.Rows)
-                    SolventCB.Items.Add(new TitleCodePair(dr.Field<string>("name"), dr.Field<string>("code")) { ID = dr.Field<long>("id") });
+                {
+                    Server CurStorage = new Server(dr);
+                    StorageCB.Items.Add(CurStorage);
+                    if (CurStorage.ID == StorageID)
+                        StorageCB.SelectedItem = CurStorage;
+                }
             }
-            SolventCB.SelectedIndex = 0;
+        }
+
+        private void SetComboBox(ComboBox CB, string Query)
+        {
+            using (DataTable dt = DB.ReadTable(Query))
+            {
+                foreach (DataRow dr in dt.Rows)
+                    CB.Items.Add(new TitleCodePair(dr.Field<string>("name"), dr.Field<string>("code")) { ID = dr.Field<long>("id") });
+            }
+            CB.SelectedIndex = 0;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -112,16 +139,17 @@ namespace Quantum
         {
             string Dir = System.IO.Path.Combine(((SQLiteConfig)DB).GetConfigValue("work_dir"), OrdererCB.SelectedItem.ToString(), CollectionTB.Text, CountName);
             string Task = OrdererCB.SelectedItem.ToString() + "/" + CollectionTB.Text.Replace('\\', '/') + "/" + CountName.Replace('\\', '/');
-            MainSygnal.MakeRun(Dir, Task, (SQLiteConfig)DB, ((TitleCodePair)SolventCB.SelectedItem).ID);
+            MainSygnal.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, ((TitleCodePair)SolventCB.SelectedItem).ID);
             foreach (Sygnal S in MainSygnal.GetChildren())
-                S.MakeRun(Dir, Task, (SQLiteConfig)DB, ((TitleCodePair)SolventCB.SelectedItem).ID);
+                S.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, ((TitleCodePair)SolventCB.SelectedItem).ID);
         }
 
         private void EditProject_Click(object sender, RoutedEventArgs e)
         {
             if (ProjectsList.SelectedItem == null) return;
-
+            ShowInTaskbar = false;
             ProjectEdit.Edit(DB, ((Project)ProjectsList.SelectedItem).ID);
+            ShowInTaskbar = true;
             ((Project)ProjectsList.SelectedItem).Update();
             ProjectsList.Items.Refresh();
             ProjectNameTextBlock.Text = ((Project)ProjectsList.SelectedItem).Title;
@@ -133,7 +161,9 @@ namespace Quantum
             Project NewProject = Project.New(DB);
             NewProject.Title = "Новый проект";
             NewProject.Input = DB.Insert("INSERT INTO `nodes` (`type`, `name`, `parent`, `comment`, `job`, `pos_x`, `pos_y`) VALUES (0, 'INPUT', 0, '', 0, 100.0, 100.0)");
+            ShowInTaskbar = false;
             ProjectEdit.Edit(DB, NewProject.ID);
+            ShowInTaskbar = true;
             NewProject.Update();
             ProjectsList.Items.Add(NewProject);
         }
@@ -162,6 +192,16 @@ namespace Quantum
         private void DeleteCountBtn_Click(object sender, RoutedEventArgs e)
         {
             CountList.Items.Remove(CountList.SelectedItem);
+        }
+
+        private void OrdererCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ((SQLiteConfig)DB).SetConfigValue("plw_orderer", OrdererCB.SelectedItem as string);
+        }
+
+        private void StorageCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _ = ((SQLiteConfig)DB).SetConfigValue("plw_storage", (StorageCB.SelectedItem as Server).ID);
         }
     }
 }
