@@ -139,9 +139,9 @@ namespace Quantum
         {
             string Dir = System.IO.Path.Combine(((SQLiteConfig)DB).GetConfigValue("work_dir"), OrdererCB.SelectedItem.ToString(), CollectionTB.Text, CountName);
             string Task = OrdererCB.SelectedItem.ToString() + "/" + CollectionTB.Text.Replace('\\', '/') + "/" + CountName.Replace('\\', '/');
-            MainSygnal.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, ((TitleCodePair)SolventCB.SelectedItem).ID);
+            MainSygnal.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, Convert.ToInt32(ChargeTB.Text), Convert.ToInt32(MultipletTB.Text),  ((TitleCodePair)SolventCB.SelectedItem).ID);
             foreach (Sygnal S in MainSygnal.GetChildren())
-                S.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, ((TitleCodePair)SolventCB.SelectedItem).ID);
+                S.MakeRun(Dir, Task, (SQLiteConfig)DB, StorageCB.SelectedItem as Server, Convert.ToInt32(ChargeTB.Text), Convert.ToInt32(MultipletTB.Text), ((TitleCodePair)SolventCB.SelectedItem).ID);
         }
 
         private void EditProject_Click(object sender, RoutedEventArgs e)

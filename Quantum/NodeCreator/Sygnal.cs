@@ -84,7 +84,7 @@ namespace Quantum
         #endregion
 
         #region Методы
-        public void MakeRun(string Dir, string Task, SQLiteConfig Config, Server Storage, long ProjectSolvent = 1 )
+        public void MakeRun(string Dir, string Task, SQLiteConfig Config, Server Storage, int Charge, int Multiplet, long ProjectSolvent = 1 )
         {
             string CurDir = Dir;
             string CurTask = Task;
@@ -125,7 +125,7 @@ namespace Quantum
                     xyz += Jobs[i - 1].Name;
                 }
                 xyz += ".xyz";
-                Jobs[i]?.MakeInputFile(CurDir, xyz, 0, 1, ProjectSolvent); 
+                Jobs[i]?.MakeInputFile(CurDir, xyz, Charge, Multiplet, ProjectSolvent); 
             }
         }
 
