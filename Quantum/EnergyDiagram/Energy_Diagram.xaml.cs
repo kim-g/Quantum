@@ -90,16 +90,6 @@ namespace Quantum
             }
         }
 
-        private void SaveBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Save();
-        }
-
-        private void Energies_Updated(object sender)
-        {
-            Save();
-        }
-
         private void FontSize_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
             Console.WriteLine("FontSize changing stop");

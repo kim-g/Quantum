@@ -94,7 +94,7 @@ namespace Quantum
                 string[] Folders = RunFileName.Split('/');
                 for (int i = 0; i < Folders.Count() - 1; i++)
                 {
-                    CurDir = Path.Combine(Dir, Folders[i]);
+                    CurDir = Path.Combine(CurDir, Folders[i]);
                     CurTask += $"/{Folders[i]}";
                 }
             }
