@@ -278,5 +278,34 @@ namespace Quantum
                 sw.WriteLine($"* xyzfile {Charge} {Multiplet} {XYZ} *");
             }
         }
+
+        /// <summary>
+        /// Дублирование задачи в БД. 
+        /// </summary>
+        /// <returns></returns>
+        public Job Dublicate()
+        {
+            Job NewJob = new Job(DB)
+            {
+                Name = Name,
+                Comment = Comment,
+                Method = Method,
+                DFT = DFT,
+                Basis = Basis,
+                Other=Other,
+                Task = Task,
+                RAM = RAM,
+                Hessian = Hessian,
+                Charges = Charges,
+                TDDFT = TDDFT,
+                Solvent = Solvent,
+                Output = Output
+
+            };
+
+            NewJob.Update();
+
+            return NewJob;
+        }
     }
 }

@@ -7,12 +7,16 @@
         mc:Ignorable="d"
         Title="Редактирование проекта" Height="653.542" Width="860.082" ContentRendered="Window_ContentRendered" KeyDown="Window_KeyDown">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Margin="10" Grid.ColumnSpan="2">
+        <Grid Margin="10,10,10,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -26,7 +30,7 @@
             <Label Content="Описание" Grid.Row="1" Grid.Column="0" Padding="5,0,5,5"/>
             <TextBox Grid.Column="1" Grid.Row="1" Text="Описание" x:Name="DescriptionTB" Height="75" AcceptsReturn="True" TextWrapping="Wrap"/>
         </Grid>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,10,10,10">
             <Button x:Name="RunInputBtn" Margin="0,0,10,0" Padding="5,1" Click="RunInputBtn_Click" >
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -131,7 +135,7 @@
                 </Grid>
             </Button>
         </StackPanel>
-        <local:NodePanel Grid.Row="2" x:Name="Panel" Margin="10" KeyDown="Panel_KeyDown" Grid.ColumnSpan="2">
+        <local:NodePanel Grid.Row="2" x:Name="Panel" Margin="10,10,10,10">
             <local:NodePanel.Background>
                 <LinearGradientBrush EndPoint="6.12303176911189E-17,1">
                     <GradientStop Color="#FFEEEEEE" Offset="0"/>

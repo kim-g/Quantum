@@ -702,6 +702,28 @@ namespace Quantum
                 NP.ConnectionChild = null;
             }
         }
+
+        /// <summary>
+        /// Дублирование узла. Задача, связанная с узлом также дублируется.
+        /// </summary>
+        /// <returns></returns>
+        public Node Dublicate()
+        {
+            Node NewNode = new Node();
+            NewNode.Save(DB);
+
+            NewNode.NodeJob = NodeJob.Dublicate();
+            NewNode.Title = Title;
+            NewNode.DB = DB;
+            NewNode.Info = Info;
+            NewNode.Type = Type;
+            NewNode.Margin = new Thickness(Margin.Left, Margin.Top + Height + 10, Margin.Right, Margin.Bottom);
+            NewNode.HorizontalAlignment = HorizontalAlignment;
+            NewNode.VerticalAlignment = VerticalAlignment;
+            NewNode.Save();
+
+            return NewNode;
+        }
         #endregion
 
         #region События

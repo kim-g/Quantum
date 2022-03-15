@@ -55,7 +55,7 @@ namespace Quantum
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            foreach (Node N in Panel.Children.OfType<Node>())
+            foreach (Node N in Panel.Nodes)
                 N.RePaint();
         }
 
@@ -100,11 +100,6 @@ namespace Quantum
             return NewNode;
         }
 
-        private void Panel_KeyDown(object sender, KeyEventArgs e)
-        {
-            
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             Console.WriteLine($"Key {e.Key} is Down");
@@ -114,6 +109,19 @@ namespace Quantum
                 case Key.Delete:
                     if (MessageBox.Show("Вы уверены, что хотите удалить выделенные узлы?", "Удаление узлов", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         Panel.DeleteSelectedNotes();
+                    break;
+                case Key.D:
+                    if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                    {
+                        List<Node> ToDublicate = Panel.Selected;
+                        foreach (Node N in ToDublicate)
+                        {
+                            Node NewNode = N.Dublicate();
+                            Panel.Children.Add(NewNode);
+                            N.Selected = false;
+                            NewNode.Selected = true;
+                        }
+                    }
                     break;
             }
         }

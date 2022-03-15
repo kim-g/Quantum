@@ -84,6 +84,18 @@ namespace Quantum
         /// Список сигналов. 
         /// </summary>
         public List<Sygnal> Sygnals { get; set; } = new List<Sygnal>();
+
+        /// <summary>
+        /// Список узлов-потомков
+        /// </summary>
+        public List<Node> Nodes { get => Children.OfType<Node>().ToList(); }
+
+
+        /// <summary>
+        /// Список выделенных узлов-потомков
+        /// </summary>
+        public List<Node> Selected { get => Nodes.Where(x => x.Selected).ToList(); }
+
         #endregion
 
         #region Конструктор
@@ -106,7 +118,7 @@ namespace Quantum
 
             Point Position = e.GetPosition(this);
 
-            foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
+            foreach (Node N in Nodes.Where(x => x.Drag))
                 Move(N.MoveDelta(Position));
 
             if (ConnectionParent!= null || ConnectionChild != null)
@@ -142,10 +154,10 @@ namespace Quantum
         {
             if (e.Handled) return;
             
-            foreach (Node N in Children.OfType<Node>().Where(x => x.Drag))
+            foreach (Node N in Nodes.Where(x => x.Drag))
                 N.StopDrag();
 
-            foreach (Node N in Children.OfType<Node>().Where(x => x.Selected))
+            foreach (Node N in Selected)
                     N.Selected = false;
 
             ConnectionParent = null;
