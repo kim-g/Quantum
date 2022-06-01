@@ -13,7 +13,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TextViewerFind;
 using System.IO;
-using BCDev.XamlToys; // This comes from http://xamltoys.codeplex.com/ (including source)
 using System.Windows.Xps.Packaging;
 using System.IO.Packaging;
 using System.Windows.Xps;
@@ -158,12 +157,13 @@ namespace Quantum
 
         public static System.Drawing.Graphics CreateEmf(Stream wmfStream, Rect bounds)
         {
-            if (bounds.Width == 0 || bounds.Height == 0) bounds = new Rect(0, 0, 1, 1);
+            /*if (bounds.Width == 0 || bounds.Height == 0) bounds = new Rect(0, 0, 1, 1);
             using (System.Drawing.Graphics refDC = System.Drawing.Graphics.FromImage(new System.Drawing.Bitmap(1, 1)))
             {
                 System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(new System.Drawing.Imaging.Metafile(wmfStream, refDC.GetHdc(), bounds.ToGdiPlus(), System.Drawing.Imaging.MetafileFrameUnit.Pixel, System.Drawing.Imaging.EmfType.EmfPlusDual));
                 return graphics;
-            }
+            }*/
+            return null;
         }
 
         public static T GetDependencyObjectFromVisualTree<T>(DependencyObject startObject)
@@ -188,7 +188,7 @@ namespace Quantum
 
         private static void CopyXAMLStreamToWmfClipBoard(Stream drawingStream, Window clipboardOwnerWindow)
         {
-            // http://xamltoys.codeplex.com/
+            /*// http://xamltoys.codeplex.com/
             try
             {
                 var drawing = Utility.GetDrawingFromXaml(LoadXamlFromStream(drawingStream));
@@ -216,7 +216,7 @@ namespace Quantum
                         {
                             if (NativeMethods.EmptyClipboard())
                             {
-                                NativeMethods.SetClipboardData(14 /*CF_ENHMETAFILE*/, hEMF2);
+                                NativeMethods.SetClipboardData(14 /*CF_ENHMETAFILE, hEMF2);
                                 NativeMethods.CloseClipboard();
                             }
                         }
@@ -228,7 +228,7 @@ namespace Quantum
             catch
             {
 
-            }
+            }*/
         }
 
     }
