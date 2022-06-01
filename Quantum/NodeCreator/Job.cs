@@ -17,6 +17,7 @@ namespace Quantum
         private long hessian = 0;
         private bool charges = false;
         private bool tddft = false;
+        private int tddft_level = 0;
         private long solvent = 0;
         private long output = 0;
         private SQLiteDataBase DB;
@@ -112,6 +113,17 @@ namespace Quantum
         /// </summary>
         public bool TDDFT { get => tddft; set { tddft = value; DB.Execute($"UPDATE `jobs` SET `tddft`={(TDDFT ? 1 : 0)} WHERE `id`={ID};");
             } }
+
+        /// <summary>
+        /// Номер возбуждённого состояния
+        /// </summary>
+        public int TDDFT_Level
+        {
+            get => tddft_level; set
+            {
+                tddft_level = value; DB.Execute($"UPDATE `jobs` SET `tddft_level`={tddft_level} WHERE `id`={ID};");
+            }
+        }
 
         /// <summary>
         /// ID растворителя
@@ -292,7 +304,7 @@ namespace Quantum
                 Method = Method,
                 DFT = DFT,
                 Basis = Basis,
-                Other=Other,
+                Other = Other,
                 Task = Task,
                 RAM = RAM,
                 Hessian = Hessian,
