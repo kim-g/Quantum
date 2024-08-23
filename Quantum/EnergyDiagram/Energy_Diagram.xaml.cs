@@ -103,5 +103,10 @@ namespace Quantum
             Energies.Update();
             Dispatcher.BeginInvoke(new SimpleDelegate(Save), null) ;
         }
+
+        private void Energies_Updated(object sender)
+        {
+
+        }
     }
 }

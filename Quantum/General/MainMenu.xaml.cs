@@ -68,5 +68,11 @@ namespace Quantum
 
             ShowInTaskbar = true;
         }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadMolecule LM = new LoadMolecule();
+            LM.ShowDialog();
+        }
     }
 }

@@ -71,6 +71,9 @@
             <!-- Выход -->
             <Button x:Name="ExitButton" Content="Выход" 
                     Style="{DynamicResource Button}" Click="ExitButton_Click"/>
+            <!-- Тест -->
+            <Button x:Name="TestButton" Content="Тестовая кнопка" 
+                    Style="{DynamicResource Button}" Click="TestButton_Click" Visibility="Collapsed"/>
         </StackPanel>
     </Grid>
 </Window>
