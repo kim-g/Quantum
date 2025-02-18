@@ -65,6 +65,9 @@
             <!-- Конструктор -->
             <Button x:Name="ConstructorButton" Content="Конструктор расчётов" 
                     Style="{DynamicResource Button}" Click="ConstructorButton_Click"/>
+            <!-- AutoDock Vina -->
+            <Button x:Name="AutoDockVinaButton" Content="AutoDockVina" 
+        Style="{DynamicResource Button}" Click="AutoDockVinaButton_Click"/>
             <!-- О программе -->
             <Button x:Name="AboutButton" Content="О программе" 
                     Style="{DynamicResource Button}" Click="AboutButton_Click"/>

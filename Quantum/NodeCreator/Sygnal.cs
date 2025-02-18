@@ -146,7 +146,8 @@ namespace Quantum
                 sw.WriteLine("#!/bin/bash");
                 sw.WriteLine("# Настройка каталогов для расчёта");
                 sw.WriteLine("task=${1:-'" + Task + "'} #Рабочий каталог");
-                sw.WriteLine($"run_orca=\"{Storage.LCTN}" + Config.GetConfigValue("orca_bin") + "\" # Каталог файлов Orca");
+                sw.WriteLine($"orca_dir=\"{Storage.OrcaBin}\" # Каталог файлов Orca");
+                sw.WriteLine($"run_orca=\"$orca_dir/orca\" # Исполняемый файл Orca");
                 sw.WriteLine($"taskdir=\"{Storage.Path}/$task\" # Каталог проекта");
                 sw.WriteLine("");
                 sw.WriteLine("# Настройка замены команд для работы SLURM");
@@ -175,6 +176,7 @@ namespace Quantum
                     "  fi\n" +
                     $"  {Storage.LCTN}/bin/donodes.pl >$pq.nodes\n" +
                     "  $run_orca $pq.inp >$do$pq.out 2>$do$pq.err\n" +
+                    "  $orca_dir/OrcaPatcher $do$pq.out\n" +
                     "done\n");
 
                 sw.Close();

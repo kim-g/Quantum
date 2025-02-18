@@ -59,6 +59,16 @@ namespace Quantum
         {
             SQLiteConfig Config = (SQLiteConfig)DB;
 
+            if (!Directory.Exists(((SQLiteConfig)DB).GetConfigValue("work_dir")))
+            {
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    if (result == System.Windows.Forms.DialogResult.Cancel)
+                        return;
+                    ((SQLiteConfig)DB).SetConfigValue("work_dir", dialog.SelectedPath);
+                }
+            }
             List<string> Orderers = Directory.EnumerateDirectories(((SQLiteConfig)DB).GetConfigValue("work_dir")).ToList();
             string CurOrderer = (DB as SQLiteConfig).GetConfigValue("plw_orderer");
             foreach (string Orderer in Orderers)

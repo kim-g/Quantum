@@ -156,8 +156,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoDockVina\PeptideSetup.xaml.cs">
+      <DependentUpon>PeptideSetup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="General\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AutoDockVina\AutoDockCreator.xaml.cs">
+      <DependentUpon>AutoDockCreator.xaml</DependentUpon>
     </Compile>
     <Compile Include="NodeCreator\AddParam.xaml.cs">
       <DependentUpon>AddParam.xaml</DependentUpon>
@@ -218,7 +224,15 @@
     <Compile Include="General\TitleCodePair.cs" />
     <Compile Include="General\WpfWin32Window.cs" />
     <Compile Include="General\WPF_to_WMF_Converter.cs" />
+    <Page Include="AutoDockVina\PeptideSetup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="General\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutoDockVina\AutoDockCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

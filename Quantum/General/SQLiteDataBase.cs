@@ -253,6 +253,16 @@ namespace Quantum
                 }
             }
         }
+
+        /// <summary>
+        /// Определяет, имеется ли данная таблица в БД
+        /// </summary>
+        /// <param name="Table">Имя таблицы</param>
+        /// <returns></returns>
+        public bool TableExists(string Table)
+        {
+            return GetCount("sqlite_master", $"type='table' AND name='{Table}'") > 0;
+        }
     }
 
     public class SQLiteConfig : SQLiteDataBase
@@ -262,6 +272,15 @@ namespace Quantum
             if (File.Exists(FileName))
             {
                 OpenDB();
+                if (!TableExists("proteins"))
+                {
+                    Execute(@"CREATE TABLE ""config"" (
+	                    ""id""	INTEGER,
+	                    ""name""	TEXT,
+	                    ""value""	TEXT,
+	                    PRIMARY KEY(""id"" AUTOINCREMENT)
+                    );");
+                }
             }
             else
             {
