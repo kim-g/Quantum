@@ -10,11 +10,11 @@ namespace Quantum
         /// <summary>
         /// Версия программы
         /// </summary>
-        public static string ProgramVersion = "1.6.2";
+        public static string ProgramVersion = "1.6.3";
         /// <summary>
         /// База данных конфига
         /// </summary>
-        SQLiteConfig Config;
+        static public SQLiteConfig Config;
 
         /// <summary>
         /// Инициализация окна
@@ -68,12 +68,6 @@ namespace Quantum
             PLW.ShowDialog();
 
             ShowInTaskbar = true;
-        }
-
-        private void TestButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoadMolecule LM = new LoadMolecule();
-            LM.ShowDialog();
         }
 
         private void AutoDockVinaButton_Click(object sender, RoutedEventArgs e)
@@ -208,6 +202,7 @@ namespace Quantum
                 Config.Execute(@"CREATE TABLE ""proteins"" (
 	                ""id""	INTEGER NOT NULL,
 	                ""name""	TEXT NOT NULL,
+                    ""description""	TEXT NOT NULL,
 	                ""file_name""	TEXT NOT NULL,
 	                ""center_x""	TEXT NOT NULL,
 	                ""center_y""	TEXT NOT NULL,

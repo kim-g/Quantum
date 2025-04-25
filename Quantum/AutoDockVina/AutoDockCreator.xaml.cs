@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace Quantum.AutoDockVina
 {
@@ -19,11 +7,25 @@ namespace Quantum.AutoDockVina
     /// </summary>
     public partial class AutoDockCreator : Window
     {
+        /// <summary>
+        /// Модель представления для управления списком белков и выбранным белком.
+        /// </summary>
+        CreatorModel model = new CreatorModel();
+
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="AutoDockCreator"/>.
+        /// </summary>
         public AutoDockCreator()
         {
             InitializeComponent();
+            DataContext = model;
         }
 
+        /// <summary>
+        /// Обработчик события для отображения диапазона генерации.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void RadioButton_Checked_1(object sender, RoutedEventArgs e)
         {
             if (GenRangeSP == null) return;
@@ -31,6 +33,11 @@ namespace Quantum.AutoDockVina
             GenListGrid.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Обработчик события для отображения списка генерации.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (GenRangeSP == null) return;
@@ -38,11 +45,21 @@ namespace Quantum.AutoDockVina
             GenListGrid.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Обработчик события для проверки ввода только чисел.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void NumbersTB_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             e.Handled = !char.IsDigit(e.Text, 0);
         }
 
+        /// <summary>
+        /// Обработчик события для добавления нового лиганда в список.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void AddCountBtn_Click(object sender, RoutedEventArgs e)
         {
             string Task = AddParam.AddString("Добавить расчётное задание");
@@ -50,15 +67,35 @@ namespace Quantum.AutoDockVina
             CountList.Items.Add(Task);
         }
 
+        /// <summary>
+        /// Обработчик события для удаления выбранного лиганда из списка.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void DeleteCountBtn_Click(object sender, RoutedEventArgs e)
         {
             CountList.Items.Remove(CountList.SelectedItem);
         }
 
+        /// <summary>
+        /// Обработчик события для добавления белков в список.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            PeptideSetup PS = PeptideSetup.Add();
-            PS.ShowDialog();
+            foreach (Protein P in ProteinBase.SelectProteins())
+                model.proteinList.Add(P);
+        }
+
+        /// <summary>
+        /// Обработчик события для удаления выбранного белка из списка.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
+        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            model.proteinList.Remove(ProteinList.SelectedItem as Protein);
         }
     }
 }

@@ -51,7 +51,7 @@
         <Label Grid.Column="0" Grid.Row="3" Content="Нет файла" x:Name="FileName" Margin="0,0,0,10"/>
         <Button Grid.Column="3" Grid.Row="3" Content="Обзор..." Width="90" HorizontalAlignment="Right" Margin="0,0,0,10" Click="Button_Click"/>
         <StackPanel Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center" >
-            <Button x:Name="OK_BTN" Content="Добавить" Margin="0,0,5,0"/> 
+            <Button x:Name="OK_BTN" Content="Добавить" Margin="0,0,5,0" Click="OK_BTN_Click"/> 
             <Button x:Name="Cancel_BTN" Content="Отменить" Margin="5,0,0,0"/> 
         </StackPanel>
 
