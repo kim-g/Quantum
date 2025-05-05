@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Xps.Packaging;
 using System.IO;
+using System.Windows.Xps.Packaging;
 
 // This code is from http://khason.net/blog/converting-fixeddocument-xpsdocument-too-to-flowdocument/
 

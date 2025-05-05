@@ -129,6 +129,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AutoDockVina\CreatorModel.cs" />
+    <Compile Include="AutoDockVina\Ligand.cs" />
     <Compile Include="AutoDockVina\PeptideSetup.xaml.cs">
       <DependentUpon>PeptideSetup.xaml</DependentUpon>
     </Compile>
@@ -142,6 +143,7 @@
     <Compile Include="AutoDockVina\AutoDockCreator.xaml.cs">
       <DependentUpon>AutoDockCreator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="General\OpenBabel.cs" />
     <Compile Include="NodeCreator\AddParam.xaml.cs">
       <DependentUpon>AddParam.xaml</DependentUpon>
     </Compile>

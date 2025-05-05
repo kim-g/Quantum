@@ -93,8 +93,8 @@ namespace Quantum.AutoDockVina
         {
             try
             {
-                Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
-                s = s.Trim().Replace('.', separator).Replace(',', separator) ;
+                Char separator = '.';
+                s = s.Trim().Replace(',', separator) ;
                 double f = Convert.ToDouble(s);
                 return f.ToString($"F{Digits}");
             }

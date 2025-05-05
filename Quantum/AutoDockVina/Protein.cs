@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quantum.AutoDockVina
 {
@@ -22,21 +18,21 @@ namespace Quantum.AutoDockVina
         /// <summary>
         /// Получает или задает имя белка.
         /// </summary>
-        public string Name 
-        { 
-            get => name; 
-            set 
-            { 
-                name = value; 
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
                 OnPropertyChanged("Name");
-            } 
+            }
         }
 
         /// <summary>
         /// Получает или задает описание белка.
         /// </summary>
-        public string Description 
-        { 
+        public string Description
+        {
             get => description;
             set
             {
@@ -132,6 +128,47 @@ namespace Quantum.AutoDockVina
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        /// <summary>
+        /// Переопределяет метод ToString для отображения информации о белке.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Name} ({Description})";
+        }
+
+        /// <summary>
+        /// Записывает файл белка в указанный путь.
+        /// </summary>
+        /// <param name="fileName">Путь к файлу белка</param>
+        /// <returns></returns>
+        public bool WriteToFile(string fileName)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                {
+                    File.WriteTo(fs);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Записывает файл белка в указанную директорию. Имя файла сохраняется стандартное
+        /// </summary>
+        /// <param name="directory">Директория, куда записывается файл белка</param>
+        /// <returns></returns>
+        public bool WriteToDirectory(string directory)
+        {
+            string fileName = Path.Combine(directory, FileName);
+            return WriteToFile(fileName);
         }
     }
 }

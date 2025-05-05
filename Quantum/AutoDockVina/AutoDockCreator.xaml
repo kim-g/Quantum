@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Quantum.AutoDockVina"
+        xmlns:local="clr-namespace:Quantum.AutoDockVina" d:DataContext="{d:DesignInstance Type=local:CreatorModel}"
         mc:Ignorable="d"
         Title="AutoDockVina. Создание проектов" Height="365" Width="626">
     <Grid Margin="10,10,10,10">
@@ -28,7 +28,7 @@
                 Grid.Row="1" 
                 Grid.ColumnSpan="2" 
                 x:Name="ProteinList" 
-                ItemsSource="{Binding proteinList}" 
+                ItemsSource="{Binding ProteinList}" 
                 SelectedItem="{Binding SelectedProtein}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -43,12 +43,32 @@
         </Grid>
 
         <StackPanel Grid.Column="2">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <Label Content="Генерация списка расчётов" Margin="0,0,10,0"/>
-                <RadioButton x:Name="RB_Range" IsChecked="True" Content="диапазоном" Margin="0,0,20,0" VerticalAlignment="Center" Checked="RadioButton_Checked_1"/>
-                <RadioButton x:Name="RB_List" IsChecked="False" Content="списком" VerticalAlignment="Center" Checked="RadioButton_Checked"/>
-            </StackPanel>
-            <Grid x:Name="GenListGrid" Visibility="Collapsed">
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Заказчик"/>
+                <ComboBox 
+                    x:Name="OrdererCB" 
+                    Grid.Column="1" 
+                    SelectionChanged="OrdererCB_SelectionChanged"
+                    ItemsSource="{Binding UserList}"
+                    SelectedItem="{Binding UserSelected}"/>
+            </Grid>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Набор расчётных файлов"/>
+                <TextBox 
+                    x:Name="CollectionTB" 
+                    Grid.Column="1" 
+                    HorizontalContentAlignment="Stretch"
+                    Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid x:Name="GenListGrid" Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
@@ -58,19 +78,34 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Content="Список расчётов"/>
-                <ListBox x:Name="CountList" Grid.Row="1" Height="100"/>
+                <ListBox 
+                    x:Name="CountList" 
+                    Grid.Row="1" 
+                    Height="100" 
+                    ItemsSource="{Binding LigandFileList}"
+                    SelectedItem="{Binding LigandFileSelected}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Name}" >
+                                    <TextBlock.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock Text="{Binding Path=FileName}"/>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5,0,0,0">
                     <Button x:Name="AddCountBtn" Content="+" Width="20" Margin="0,0,0,5" Click="AddCountBtn_Click"/>
                     <Button x:Name="AddMultiCountBtn" Content="..." Width="20" Margin="0,0,0,5"/>
                     <Button x:Name="DeleteCountBtn" Content="-" Width="20" Margin="0,0,0,5" HorizontalAlignment="Left" Click="DeleteCountBtn_Click"/>
                 </StackPanel>
             </Grid>
-            <StackPanel Orientation="Horizontal" x:Name="GenRangeSP">
-                <Label Content="С"/>
-                <TextBox x:Name="GenRangeFromTB" Text="1" Width="50" VerticalContentAlignment="Center" PreviewTextInput="NumbersTB_PreviewTextInput"/>
-                <Label Content="до"/>
-                <TextBox x:Name="GenRangeToTB" Text="1" Width="50" VerticalContentAlignment="Center" PreviewTextInput="NumbersTB_PreviewTextInput"/>
-            </StackPanel>
+            
+            <Button x:Name="GenListBtn" Content="Генерировать" Margin="0,10,0,0" Click="GenListBtn_Click"/>
         </StackPanel>
     </Grid>
 </Window>

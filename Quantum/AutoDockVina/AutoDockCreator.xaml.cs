@@ -1,14 +1,20 @@
-﻿using System.Windows;
+﻿using System;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Quantum.AutoDockVina
 {
     /// <summary>
-    /// Логика взаимодействия для AutoDockCreator.xaml
+    /// Логика взаимодействия для AutoDockCreator.xaml.
+    /// Окно для создания задач AutoDock с выбором белков и лигандов.
     /// </summary>
     public partial class AutoDockCreator : Window
     {
         /// <summary>
-        /// Модель представления для управления списком белков и выбранным белком.
+        /// Модель представления для управления списком белков, лигандов и связанных данных.
         /// </summary>
         CreatorModel model = new CreatorModel();
 
@@ -19,30 +25,6 @@ namespace Quantum.AutoDockVina
         {
             InitializeComponent();
             DataContext = model;
-        }
-
-        /// <summary>
-        /// Обработчик события для отображения диапазона генерации.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
-        private void RadioButton_Checked_1(object sender, RoutedEventArgs e)
-        {
-            if (GenRangeSP == null) return;
-            GenRangeSP.Visibility = Visibility.Visible;
-            GenListGrid.Visibility = Visibility.Collapsed;
-        }
-
-        /// <summary>
-        /// Обработчик события для отображения списка генерации.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (GenRangeSP == null) return;
-            GenRangeSP.Visibility = Visibility.Collapsed;
-            GenListGrid.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -62,9 +44,34 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void AddCountBtn_Click(object sender, RoutedEventArgs e)
         {
-            string Task = AddParam.AddString("Добавить расчётное задание");
-            if (Task == null) return;
-            CountList.Items.Add(Task);
+            // Создаем диалог выбора файлов
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "Chemical Files|*.mol;*.sdf;*.cdx;*.pdb;*.xyz;*.cif;*.mol2;*.smiles;*.bv|" +
+                         "2D Formats (*.mol, *.sdf, *.cdx, *.smiles)|*.mol;*.sdf;*.cdx;*.smiles|" +
+                         "3D Formats (*.pdb, *.xyz, *.cif, *.mol2)|*.pdb;*.xyz;*.cif;*.mol2|" +
+                         "BV Files (*.bv)|*.bv",
+                Title = "Выберите лиганд"
+            };
+
+            // Показываем диалог и проверяем результат
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Получаем существующие пути для проверки дубликатов
+                var existingPaths = model.LigandFileList.Cast<Ligand>()
+                                        .Select(f => f.FileName)
+                                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                // Добавляем новые файлы
+                foreach (var filePath in openFileDialog.FileNames)
+                {
+                    if (!existingPaths.Contains(filePath))
+                    {
+                        model.LigandFileList.Add(new Ligand(filePath));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -74,7 +81,7 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void DeleteCountBtn_Click(object sender, RoutedEventArgs e)
         {
-            CountList.Items.Remove(CountList.SelectedItem);
+            model.LigandFileList.Remove(model.LigandFileSelected);
         }
 
         /// <summary>
@@ -85,7 +92,7 @@ namespace Quantum.AutoDockVina
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
             foreach (Protein P in ProteinBase.SelectProteins())
-                model.proteinList.Add(P);
+                model.ProteinList.Add(P);
         }
 
         /// <summary>
@@ -95,7 +102,27 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            model.proteinList.Remove(ProteinList.SelectedItem as Protein);
+            model.ProteinList.Remove(model.SelectedProtein);
+        }
+
+        /// <summary>
+        /// Обработчик события для генерации списка задач.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
+        private void GenListBtn_Click(object sender, RoutedEventArgs e)
+        {
+            model.CreateProject();
+        }
+
+        /// <summary>
+        /// Обработчик события для изменения выбранного пользователя.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Данные события.</param>
+        private void OrdererCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MainMenu.Config.SetConfigValue("autodock_orderer", model.UserSelected);
         }
     }
 }

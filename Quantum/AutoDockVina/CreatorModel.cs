@@ -1,20 +1,41 @@
-﻿using System.Collections.ObjectModel;
+﻿using Quantum.General;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 
 namespace Quantum.AutoDockVina
 {
     /// <summary>
-    /// Модель представления для управления списком белков и выбранным белком.
+    /// Модель представления для управления списком белков, лигандов и связанных данных.
     /// </summary>
     internal class CreatorModel : INotifyPropertyChanged
     {
         private Protein selectedProtein;
+        private Ligand ligandFileSelected;
+        private string userSelected;
+        private string projectName;
 
         /// <summary>
         /// Коллекция белков, доступных для выбора.
         /// </summary>
-        public ObservableCollection<Protein> proteinList { get; set; }
+        public ObservableCollection<Protein> ProteinList { get; } = new ObservableCollection<Protein>();
+
+        /// <summary>
+        /// Коллекция лигандов, доступных для выбора.
+        /// </summary>
+        public ObservableCollection<Ligand> LigandFileList { get; } = new ObservableCollection<Ligand>();
+
+        /// <summary>
+        /// Коллекция пользовательских директорий, доступных для выбора.
+        /// </summary>
+        public ObservableCollection<string> UserList { get; } = new ObservableCollection<string>();
 
         /// <summary>
         /// Выбранный белок.
@@ -22,19 +43,48 @@ namespace Quantum.AutoDockVina
         public Protein SelectedProtein
         {
             get => selectedProtein;
-            set
-            {
-                selectedProtein = value;
-                OnPropertyChanged(nameof(SelectedProtein));
-            }
+            set => SetProperty(ref selectedProtein, value);
         }
 
         /// <summary>
-        /// Конструктор по умолчанию. Инициализирует коллекцию белков.
+        /// Выбранный лиганд.
+        /// </summary>
+        public Ligand LigandFileSelected
+        {
+            get => ligandFileSelected;
+            set => SetProperty(ref ligandFileSelected, value);
+        }
+
+        /// <summary>
+        /// Выбранная пользовательская директория.
+        /// </summary>
+        public string UserSelected
+        {
+            get => userSelected;
+            set => SetProperty(ref userSelected, value);
+        }
+
+        /// <summary>
+        /// Название директории проекта.
+        /// </summary>
+        public string ProjectName
+        {
+            get => projectName;
+            set => SetProperty(ref projectName, value);
+        }
+
+        /// <summary>
+        /// Полный путь к директории проекта.
+        /// </summary>
+        public string ProjectPath => Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), ProjectName);
+
+        /// <summary>
+        /// Конструктор по умолчанию. Инициализирует коллекции и заполняет список пользователей.
         /// </summary>
         public CreatorModel()
         {
-            proteinList = new ObservableCollection<Protein>();
+            ProjectName = DateTime.Now.ToString("yyyy-MM-dd");
+            FillUserList();
         }
 
         /// <summary>
@@ -45,11 +95,250 @@ namespace Quantum.AutoDockVina
         /// <summary>
         /// Вызывает событие <see cref="PropertyChanged"/> для указанного свойства.
         /// </summary>
-        /// <param name="prop">Имя измененного свойства. Указывается автоматически.</param>
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        /// <typeparam name="T">Тип свойства.</typeparam>
+        /// <param name="field">Ссылка на поле свойства.</param>
+        /// <param name="value">Новое значение свойства.</param>
+        /// <param name="propertyName">Имя свойства. Указывается автоматически.</param>
+        /// <returns>Возвращает true, если значение изменилось.</returns>
+        private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
+        }
+
+        /// <summary>
+        /// Заполняет список директорий пользователей.
+        /// </summary>
+        private void FillUserList()
+        {
+            UserList.Clear();
+
+            string autoDockDir = MainMenu.Config.GetConfigValue("autodock_dir");
+            if (!Directory.Exists(autoDockDir))
+            {
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        autoDockDir = dialog.SelectedPath;
+                        MainMenu.Config.SetConfigValue("autodock_dir", autoDockDir);
+                    }
+                    else return;
+                }
+            }
+
+            foreach (string directory in Directory.EnumerateDirectories(autoDockDir))
+            {
+                string userName = Path.GetFileName(directory);
+                UserList.Add(userName);
+                if (userName == MainMenu.Config.GetConfigValue("autodock_orderer"))
+                {
+                    UserSelected = userName;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Создаёт файлы для проекта докинга
+        /// </summary>
+        /// <returns></returns>
+        public bool CreateProject()
+        {
+            if (string.IsNullOrEmpty(ProjectName))
+            {
+                System.Windows.MessageBox.Show("Введите название проекта.");
+                return false;
+            }
+            if (string.IsNullOrEmpty(UserSelected))
+            {
+                System.Windows.MessageBox.Show("Выберите пользователя.");
+                return false;
+            }
+            string projectPath = Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), UserSelected, ProjectName);
+            if (Directory.Exists(projectPath))
+            {
+                System.Windows.MessageBox.Show("Проект с таким именем уже существует.");
+                return false;
+            }
+
+            // Создание директорий для проекта
+            Directory.CreateDirectory(projectPath);
+            string LigandDirectory = Path.Combine(projectPath, "Ligands");
+            string ProteinDirectory = Path.Combine(projectPath, "Proteins");
+            string ResultDirectory = Path.Combine(projectPath, "Results");
+            string TaskDirectory = Path.Combine(projectPath, "Tasks");
+            Directory.CreateDirectory(LigandDirectory);
+            Directory.CreateDirectory(ProteinDirectory);
+            Directory.CreateDirectory(ResultDirectory);
+            Directory.CreateDirectory(TaskDirectory);
+
+            // Создание файлов белков
+            foreach (Protein peptide in ProteinList)
+                peptide.WriteToDirectory(ProteinDirectory);
+
+            // Создание файлов лигандов
+            foreach (Ligand ligand in LigandFileList)
+                OpenBabel.ConvertToPDBQT(ligand.FileName, Path.Combine(LigandDirectory, ligand.NamePDBQT));
+
+
+            // Создание файлов задания
+            using (StreamWriter sw = new StreamWriter(Path.Combine(projectPath, "Run.bat"), false, Encoding.GetEncoding(1251)))
+            {
+                sw.WriteLine($"@ECHO OFF");
+                sw.WriteLine($"@chcp 1251 2> nul");
+
+                // Найдём все пути
+                string Vina = MainMenu.Config.GetConfigValue("vina_path");
+                string WorkingDir = MainMenu.Config.GetConfigValue("vina_working_dir");
+                if (!Directory.Exists(WorkingDir))
+                {
+                    using (var dialog = new System.Windows.Forms.FolderBrowserDialog() { Description = "Рабочаая директория для расчётов" })
+                    {
+                        if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            WorkingDir = dialog.SelectedPath;
+                            MainMenu.Config.SetConfigValue("vina_working_dir", WorkingDir);
+                        }
+                        else return false;
+                    }
+                }
+
+                // Найдём путь до исполняемого файла AutoDock Vina
+                if (!File.Exists(Vina))
+                {
+                    Microsoft.Win32.OpenFileDialog OD = new Microsoft.Win32.OpenFileDialog
+                    {
+                        Multiselect = false,
+                        Filter = "AutoDock Vina EXE|*.exe",
+                        Title = "Выберите файл приложения Autodock Vina"
+                    };
+                    if (OD.ShowDialog() == true)
+                    {
+                        Vina = OD.FileName;
+                        MainMenu.Config.SetConfigValue("vina_path", Vina);
+                    }
+                    else return false;
+                }
+
+                // В Batch переходим в рабочую директорию
+                string Drive = Path.GetPathRoot(WorkingDir).Replace("\\", "");
+                sw.WriteLine("");
+                sw.WriteLine($":: Расчёт докинга для {UserSelected} от {DateTime.Now:yyyy-MM-dd}");
+                sw.WriteLine(":: Расчёт производится в программе AutoDock Vina");
+                sw.WriteLine(":: Задание подготовлено программой Quantum");
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine($":: Подготовка рабочей директории");
+                sw.WriteLine($"ECHO Копирование файлов в рабочую директорию {WorkingDir}");
+                sw.WriteLine(Drive);
+                sw.WriteLine($"cd {WorkingDir}");
+
+                // В Batch удалим все предыдущие расчёты
+                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.pdbqt")}");
+                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.txt")}");
+
+                // В Batch скопируем все файлы в рабочую директорию
+                sw.WriteLine("");
+                sw.WriteLine(":: Копирование белков");
+                foreach (Protein peptide in ProteinList)
+                {
+                    sw.WriteLine($"copy {Path.Combine(ProteinDirectory, peptide.FileName)} {Path.Combine(WorkingDir, peptide.FileName)}");
+                }
+
+                sw.WriteLine("");
+                sw.WriteLine(":: Копирование лигандов");
+                foreach (Ligand ligand in LigandFileList)
+                {
+                    sw.WriteLine($"copy {Path.Combine(LigandDirectory, ligand.NamePDBQT)} {Path.Combine(WorkingDir, ligand.NamePDBQT)}");
+                }
+
+                sw.WriteLine("");
+                sw.WriteLine(":: Копирование заданий");
+                foreach (Ligand ligand in LigandFileList)
+                    foreach (Protein peptide in ProteinList)
+                    {
+                        string Task = $"Task-{ligand.NameWithoutExtension}-{peptide.Name}.txt".Replace(" ", "_");
+                        if (!CreateTaskFile(Path.Combine(TaskDirectory, Task), ligand, peptide))
+                            return false;
+                        sw.WriteLine($"copy {Path.Combine(TaskDirectory, Task)} {Path.Combine(WorkingDir, Task)}");
+                    }
+
+                // В Batch создадим последовательность запусков
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine(":: Запуск расчёта");
+                sw.WriteLine($"ECHO Запуска расчётов:");
+                foreach (Ligand ligand in LigandFileList)
+                {
+                    string OutFile = $"{ligand.NameWithoutExtension}_Clear_Energies.txt";
+
+                    sw.WriteLine($":: Расчёт лиганда {ligand.NameWithoutExtension}");
+                    sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension}");
+                    sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} > {OutFile}");
+                    foreach (Protein peptide in ProteinList)
+                    {
+                        string Task = $"Task-{ligand.NameWithoutExtension}-{peptide.Name}.txt".Replace(" ", "_");
+
+                        sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} в {peptide.Name} >> {OutFile}");
+                        sw.WriteLine($"{Vina} --config {Task} >> {OutFile}");
+                    }
+                }
+
+                // В Batch скопируем обратно результаты
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine(":: Копирование результатов");
+                foreach (Ligand ligand in LigandFileList)
+                {
+                    sw.WriteLine($"copy {Path.Combine(WorkingDir, ligand.NameWithoutExtension + "_Clear_Energies.txt")} {Path.Combine(ResultDirectory, ligand.NameWithoutExtension + "_Clear_Energies.txt")}");
+                    foreach (Protein peptide in ProteinList)
+                    {
+                        string ResultFile = $"{ligand.NameWithoutExtension}_{peptide.Name.Replace(" ", "_")}_out.pdbqt";
+                        sw.WriteLine($"copy {Path.Combine(WorkingDir, ResultFile)} {Path.Combine(ResultDirectory, ResultFile)}");
+                    }
+                }
+                sw.WriteLine("");
+                sw.WriteLine("");
+                sw.WriteLine("ECHO Расчёты закончены");
+                sw.WriteLine("pause");
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Создаёт файл задания для AutoDock Vina.
+        /// </summary>
+        /// <param name="fileName">Имя файла задания</param>
+        /// <param name="ligand">Лиганд для расчёта</param>
+        /// <param name="peptide">Белок для расчёта</param>
+        /// <returns>Возвращает true, если сождание удалось.</returns>
+        protected bool CreateTaskFile(string fileName, Ligand ligand, Protein peptide)
+        {
+            string ResultFile = $"{ligand.NameWithoutExtension}_{peptide.Name}_out.pdbqt";
+
+            try
+            {
+                using (StreamWriter TaskFile = new StreamWriter(fileName, false, Encoding.GetEncoding(1251)))
+                {
+                    TaskFile.WriteLine($"receptor = {peptide.FileName}");
+                    TaskFile.WriteLine($"ligand = {ligand.NamePDBQT}");
+                    TaskFile.WriteLine($"center_x = {peptide.Center[0]}");
+                    TaskFile.WriteLine($"center_y = {peptide.Center[1]}");
+                    TaskFile.WriteLine($"center_z = {peptide.Center[2]}");
+                    TaskFile.WriteLine($"size_x = {peptide.Size[0]}");
+                    TaskFile.WriteLine($"size_y = {peptide.Size[1]}");
+                    TaskFile.WriteLine($"size_z = {peptide.Size[2]}");
+                    TaskFile.WriteLine($"out = {ResultFile.Replace(" ", "_")}");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Ошибка при создании файла задания: {ex.Message}");
+                return false;
+            }
         }
     }
 }
