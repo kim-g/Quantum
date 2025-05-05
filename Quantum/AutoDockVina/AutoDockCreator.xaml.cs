@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -91,7 +92,9 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Protein P in ProteinBase.SelectProteins())
+            List<Protein> LP = ProteinBase.SelectProteins();
+            if (LP == null) return;
+            foreach (Protein P in LP)
                 model.ProteinList.Add(P);
         }
 

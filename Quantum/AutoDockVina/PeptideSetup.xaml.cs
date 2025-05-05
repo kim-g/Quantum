@@ -1,18 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Quantum.AutoDockVina
 {
@@ -78,8 +69,8 @@ namespace Quantum.AutoDockVina
                 string SizeZ = ToFloatString(SizeZTB.Text, 1, "Z размера");
                 using (FileStream file = new FileStream(FilePath, FileMode.Open))
                 {
-                    MainMenu.Config.ExecuteBLOB("INSERT INTO `proteins` (`name`, `file_name`, `center_x`, `center_y`, `center_z`, " +
-                        "`size_x`, `size_y`, `size_z`, `file`) VALUES ('" + PeptidNameTB.Text + "', '" + FileName.Content + "', '" +
+                    MainMenu.Config.ExecuteBLOB("INSERT INTO `proteins` (`name`, `description`, `file_name`, `center_x`, `center_y`, `center_z`, " +
+                        "`size_x`, `size_y`, `size_z`, `file`) VALUES ('" + PeptidNameTB.Text + "', '" + PeptidDescriptionTB.Text + "', '" + FileName.Content + "', '" +
                         CenterX + "', '" + CenterY + "', '" + CenterZ + "', '" + SizeX + "', '" + SizeY + "', '" + SizeZ + "', @BLOB)", file);
                     file.Close();
                 }
@@ -93,10 +84,10 @@ namespace Quantum.AutoDockVina
         {
             try
             {
-                Char separator = '.';
-                s = s.Trim().Replace(',', separator) ;
+                Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+                s = s.Trim().Replace('.', separator).Replace(',', separator);
                 double f = Convert.ToDouble(s);
-                return f.ToString($"F{Digits}");
+                return f.ToString($"F{Digits}").Replace(separator, '.');
             }
             catch
             {

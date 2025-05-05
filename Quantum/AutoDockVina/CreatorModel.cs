@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 
 namespace Quantum.AutoDockVina
 {
@@ -187,14 +184,14 @@ namespace Quantum.AutoDockVina
             using (StreamWriter sw = new StreamWriter(Path.Combine(projectPath, "Run.bat"), false, Encoding.GetEncoding(1251)))
             {
                 sw.WriteLine($"@ECHO OFF");
-                sw.WriteLine($"@chcp 1251 2> nul");
+                sw.WriteLine($"chcp 1251 > nul");
 
                 // Найдём все пути
                 string Vina = MainMenu.Config.GetConfigValue("vina_path");
                 string WorkingDir = MainMenu.Config.GetConfigValue("vina_working_dir");
                 if (!Directory.Exists(WorkingDir))
                 {
-                    using (var dialog = new System.Windows.Forms.FolderBrowserDialog() { Description = "Рабочаая директория для расчётов" })
+                    using (var dialog = new System.Windows.Forms.FolderBrowserDialog() { Description = "Рабочая директория для расчётов" })
                     {
                         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
@@ -236,22 +233,22 @@ namespace Quantum.AutoDockVina
                 sw.WriteLine($"cd {WorkingDir}");
 
                 // В Batch удалим все предыдущие расчёты
-                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.pdbqt")}");
-                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.txt")}");
+                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.pdbqt")} > nul");
+                sw.WriteLine($"del {Path.Combine(WorkingDir, "*.txt")} > nul 2> nul");
 
                 // В Batch скопируем все файлы в рабочую директорию
                 sw.WriteLine("");
                 sw.WriteLine(":: Копирование белков");
                 foreach (Protein peptide in ProteinList)
                 {
-                    sw.WriteLine($"copy {Path.Combine(ProteinDirectory, peptide.FileName)} {Path.Combine(WorkingDir, peptide.FileName)}");
+                    sw.WriteLine($"copy {Path.Combine(ProteinDirectory, peptide.FileName)} {Path.Combine(WorkingDir, peptide.FileName)} > nul");
                 }
 
                 sw.WriteLine("");
                 sw.WriteLine(":: Копирование лигандов");
                 foreach (Ligand ligand in LigandFileList)
                 {
-                    sw.WriteLine($"copy {Path.Combine(LigandDirectory, ligand.NamePDBQT)} {Path.Combine(WorkingDir, ligand.NamePDBQT)}");
+                    sw.WriteLine($"copy {Path.Combine(LigandDirectory, ligand.NamePDBQT)} {Path.Combine(WorkingDir, ligand.NamePDBQT)} > nul");
                 }
 
                 sw.WriteLine("");
@@ -262,7 +259,7 @@ namespace Quantum.AutoDockVina
                         string Task = $"Task-{ligand.NameWithoutExtension}-{peptide.Name}.txt".Replace(" ", "_");
                         if (!CreateTaskFile(Path.Combine(TaskDirectory, Task), ligand, peptide))
                             return false;
-                        sw.WriteLine($"copy {Path.Combine(TaskDirectory, Task)} {Path.Combine(WorkingDir, Task)}");
+                        sw.WriteLine($"copy {Path.Combine(TaskDirectory, Task)} {Path.Combine(WorkingDir, Task)} > nul");
                     }
 
                 // В Batch создадим последовательность запусков
@@ -282,7 +279,7 @@ namespace Quantum.AutoDockVina
                         string Task = $"Task-{ligand.NameWithoutExtension}-{peptide.Name}.txt".Replace(" ", "_");
 
                         sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} в {peptide.Name} >> {OutFile}");
-                        sw.WriteLine($"{Vina} --config {Task} >> {OutFile}");
+                        sw.WriteLine($"{Vina} --config {Task} >> {OutFile} 2> nul");
                     }
                 }
 
@@ -292,11 +289,11 @@ namespace Quantum.AutoDockVina
                 sw.WriteLine(":: Копирование результатов");
                 foreach (Ligand ligand in LigandFileList)
                 {
-                    sw.WriteLine($"copy {Path.Combine(WorkingDir, ligand.NameWithoutExtension + "_Clear_Energies.txt")} {Path.Combine(ResultDirectory, ligand.NameWithoutExtension + "_Clear_Energies.txt")}");
+                    sw.WriteLine($"copy {Path.Combine(WorkingDir, ligand.NameWithoutExtension + "_Clear_Energies.txt")} {Path.Combine(ResultDirectory, ligand.NameWithoutExtension + "_Clear_Energies.txt")} > nul");
                     foreach (Protein peptide in ProteinList)
                     {
                         string ResultFile = $"{ligand.NameWithoutExtension}_{peptide.Name.Replace(" ", "_")}_out.pdbqt";
-                        sw.WriteLine($"copy {Path.Combine(WorkingDir, ResultFile)} {Path.Combine(ResultDirectory, ResultFile)}");
+                        sw.WriteLine($"copy {Path.Combine(WorkingDir, ResultFile)} {Path.Combine(ResultDirectory, ResultFile)} > nul");
                     }
                 }
                 sw.WriteLine("");
