@@ -127,5 +127,10 @@ namespace Quantum.AutoDockVina
         {
             MainMenu.Config.SetConfigValue("autodock_orderer", model.UserSelected);
         }
+
+        private void RunBtn_Click(object sender, RoutedEventArgs e)
+        {
+            model.RunTask();
+        }
     }
 }

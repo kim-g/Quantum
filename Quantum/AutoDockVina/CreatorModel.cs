@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -18,6 +19,11 @@ namespace Quantum.AutoDockVina
         private Ligand ligandFileSelected;
         private string userSelected;
         private string projectName;
+        private bool enableRun = false;
+        private bool enableGen = true;
+        private bool enableOther = true;
+        private string statusText = "Проект не существует. Добавьте белки и лиганды для генерации.";
+        private bool isRunning = false;
 
         /// <summary>
         /// Коллекция белков, доступных для выбора.
@@ -58,7 +64,20 @@ namespace Quantum.AutoDockVina
         public string UserSelected
         {
             get => userSelected;
-            set => SetProperty(ref userSelected, value);
+            set
+            {
+                SetProperty(ref userSelected, value);
+                ButtonsSetEnable();
+            }
+        }
+
+        /// <summary>
+        /// Строка статуса
+        /// </summary>
+        public string StatusText
+        {
+            get => statusText;
+            set => SetProperty(ref statusText, value);
         }
 
         /// <summary>
@@ -67,13 +86,57 @@ namespace Quantum.AutoDockVina
         public string ProjectName
         {
             get => projectName;
-            set => SetProperty(ref projectName, value);
+            set
+            {
+                SetProperty(ref projectName, value);
+                ButtonsSetEnable();
+            }
+        }
+
+        /// <summary>
+        /// Возможность запуска задачи.
+        /// </summary>
+        public bool EnableRun
+        {
+            get => enableRun;
+            set => SetProperty(ref enableRun, value);
+        }
+
+        /// <summary>
+        /// Возможность генерации задачи.
+        /// </summary>
+        public bool EnableGen
+        {
+            get => enableGen;
+            set => SetProperty(ref enableGen, value);
+        }
+
+        /// <summary>
+        /// Возможность генерации задачи.
+        /// </summary>
+        public bool EnableOther
+        {
+            get => enableOther;
+            set => SetProperty(ref enableOther, value);
+        }
+
+        /// <summary>
+        /// Статус выполнения задачи.
+        /// </summary>
+        public bool IsRunning
+        {
+            get => isRunning;
+            set
+            {
+                SetProperty(ref isRunning, value);
+                ButtonsSetEnable();
+            }
         }
 
         /// <summary>
         /// Полный путь к директории проекта.
         /// </summary>
-        public string ProjectPath => Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), ProjectName);
+        public string ProjectPath => Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), UserSelected, ProjectName);
 
         /// <summary>
         /// Конструктор по умолчанию. Инициализирует коллекции и заполняет список пользователей.
@@ -82,6 +145,8 @@ namespace Quantum.AutoDockVina
         {
             ProjectName = DateTime.Now.ToString("yyyy-MM-dd");
             FillUserList();
+            ProteinList.CollectionChanged += (s, e) => ButtonsSetEnable();
+            LigandFileList.CollectionChanged += (s, e) => ButtonsSetEnable();
         }
 
         /// <summary>
@@ -299,8 +364,9 @@ namespace Quantum.AutoDockVina
                 sw.WriteLine("");
                 sw.WriteLine("");
                 sw.WriteLine("ECHO Расчёты закончены");
-                sw.WriteLine("pause");
             }
+
+            ButtonsSetEnable();
             return true;
         }
 
@@ -336,6 +402,158 @@ namespace Quantum.AutoDockVina
                 System.Windows.MessageBox.Show($"Ошибка при создании файла задания: {ex.Message}");
                 return false;
             }
+        }
+
+        /// <summary>   
+        /// Проверяет возможность запуска задачи.
+        /// </summary>
+        protected bool CheckRunEnable()
+        {
+            if (string.IsNullOrEmpty(ProjectName))
+                return false;
+
+            if (string.IsNullOrEmpty(UserSelected))
+                return false;
+
+            if (!Directory.Exists(ProjectPath))
+                return false;
+
+            if (!File.Exists(Path.Combine(ProjectPath, "Run.bat")))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Запускает задачу AutoDock Vina.
+        /// </summary>
+        /// <returns></returns>
+        public bool RunTask()
+        {
+            if (!CheckRunEnable())
+            {
+                System.Windows.MessageBox.Show("Не удалось запустить задачу. Проверьте настройки.");
+                return false;
+            }
+
+            IsRunning = true;
+
+            string batFilePath = Path.Combine(ProjectPath, "Run.bat");
+            StringBuilder outputBuilder = new StringBuilder();
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe", // Запускаем через командную строку
+                Arguments = $"/C \"{batFilePath}\"", // /C - выполнить команду и закрыть
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WorkingDirectory = Path.GetDirectoryName(batFilePath),
+                StandardOutputEncoding = Encoding.GetEncoding(1251), // Кодировка консоли Windows
+                StandardErrorEncoding = Encoding.GetEncoding(1251)
+            };
+
+            using (var process = new Process())
+            {
+                process.StartInfo = processStartInfo;
+
+                // Вывод выдаваемой информации
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        outputBuilder.AppendLine(e.Data);
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            // Если процесс выдал финальную фразу, то завершаем
+                            if (e.Data.StartsWith("Расчёты закончены"))
+                            {
+                                IsRunning = false;
+                                Functions.OpenExplorerWindow(ProjectPath);
+                                Log("Расчёты закончены. ");
+
+                            }
+                            Log(e.Data);
+                        });
+                    }
+                };
+
+                // Вывод выдаваемых ошибок
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        outputBuilder.AppendLine($"[ERROR] {e.Data}");
+                        System.Windows.Application.Current.Dispatcher.Invoke(() => Log($"[ERROR] {e.Data}"));
+                    }
+                };
+
+                // Обработка завершения процесса
+                process.Exited += (sender, e) =>
+                {
+                    IsRunning = false;
+                    Functions.OpenExplorerWindow(ProjectPath);
+                    Log("Процесс завершился. ");
+                };
+
+                process.Start();
+
+                // Начинаем асинхронное чтение вывода
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Управляет активностью кнопок и статусом
+        /// </summary>
+        private void ButtonsSetEnable()
+        {
+            // Если идёт расчёт, отключим всё
+            if (isRunning)
+            {
+                EnableRun = false;
+                EnableGen = false;
+                EnableOther = false;
+                return;
+            }
+
+            // Включим все настроечные компоненты и настроим кнопки
+            EnableOther = true;
+            EnableRun = CheckRunEnable();
+            EnableGen = !EnableRun && ProteinList.Count > 0 && LigandFileList.Count > 0;
+
+            // Настроим строку статуса
+            if (EnableGen)
+            {
+                StatusText = "Проект готов к генерации.";
+                return;
+            }
+            if (EnableRun)
+            {
+                StatusText = "Проект готов к запуску.";
+                return;
+            }
+
+            StatusText = "Проект не может быть сгенерирован. ";
+            if (ProteinList.Count == 0)
+                StatusText += "Добавьте хотя бы один белок. ";
+            if (LigandFileList.Count == 0)
+                StatusText += "Добавьте хотя бы один лиганд. ";
+
+        }
+
+        /// <summary>
+        /// Выдаёт статус и записывает его в консоль для отладки
+        /// </summary>
+        /// <param name="message"></param>
+        private void Log(string message)
+        {
+            // Логирование в консоль или файл
+            StatusText = message;
+            Console.WriteLine(message);
         }
     }
 }
