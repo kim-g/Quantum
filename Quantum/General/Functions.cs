@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -29,6 +30,18 @@ namespace Quantum
             return List;
         }
 
+        /// <summary>
+        /// Парсинг действительного числа из строки
+        /// </summary>
+        /// <param name="Num">Строка</param>
+        /// <returns></returns>
+        public static float Parse(string Num)
+        {
+            Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            Num = Num.Trim().Replace('.', separator).Replace(',', separator);
+            return float.Parse(Num);
+        }
+
         public static string OpenFile(string FileType = "Все файлы (*.*)|*.*")
         {
             OpenFileDialog myDialog = new OpenFileDialog();
@@ -50,7 +63,7 @@ namespace Quantum
             try
             {
                 // Нормализация пути
-                var path = Path.GetFullPath(directoryPath);
+                var path = System.IO.Path.GetFullPath(directoryPath);
 
                 // Проверка существования директории
                 if (!Directory.Exists(path))

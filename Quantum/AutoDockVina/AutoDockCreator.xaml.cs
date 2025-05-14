@@ -132,5 +132,10 @@ namespace Quantum.AutoDockVina
         {
             model.RunTask();
         }
+
+        private void AnalyseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            model.Analyse();
+        }
     }
 }

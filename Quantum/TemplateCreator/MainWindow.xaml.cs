@@ -39,6 +39,8 @@ namespace Quantum
             Charges.IsChecked = Config.GetConfigValueBool("Charges");
             Hessian.IsChecked = Config.GetConfigValueBool("numfreq");
 
+            if (!Directory.Exists("Templates"))
+                Directory.CreateDirectory("Templates");
             List<string> Templates = Directory.EnumerateDirectories("Templates").ToList();
             foreach (string Template in Templates)
             {

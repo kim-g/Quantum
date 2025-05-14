@@ -24,6 +24,10 @@ namespace Quantum.AutoDockVina
         private bool enableOther = true;
         private string statusText = "Проект не существует. Добавьте белки и лиганды для генерации.";
         private bool isRunning = false;
+        private StreamWriter Analysing;
+        private float[,,] energies;
+        private Dictionary<string, int> LigandsForAnalysis;
+        private Dictionary<string, int> ProteinsForAnalysis;
 
         /// <summary>
         /// Коллекция белков, доступных для выбора.
@@ -469,9 +473,9 @@ namespace Quantum.AutoDockVina
                             if (e.Data.StartsWith("Расчёты закончены"))
                             {
                                 IsRunning = false;
-                                Functions.OpenExplorerWindow(ProjectPath);
                                 Log("Расчёты закончены. ");
-
+                                Analyse();
+                                Functions.OpenExplorerWindow(ProjectPath);
                             }
                             Log(e.Data);
                         });
@@ -554,6 +558,120 @@ namespace Quantum.AutoDockVina
             // Логирование в консоль или файл
             StatusText = message;
             Console.WriteLine(message);
+        }
+
+        /// <summary>
+        /// Анализ результатов докинга.
+        /// </summary>
+        public void Analyse()
+        {
+            Log("Анализ результатов...");
+            
+            string ResultPath = Path.Combine(ProjectPath, "Results");
+            using (Analysing = new StreamWriter(Path.Combine(ResultPath, "Results.csv"), false, Encoding.GetEncoding(1251)))
+            {
+                Analysing.WriteLine($"Проект; {ProjectName}");
+                Analysing.WriteLine($"Заказчик; {UserSelected}");
+                Analysing.WriteLine($"Дата расчёта; {DateTime.Now.ToString("yyyy-MM-dd")}");
+                Analysing.WriteLine("");
+
+                energies = new float[ProteinList.Count, LigandFileList.Count, 9];
+                ProteinsForAnalysis = new Dictionary<string, int>();
+                LigandsForAnalysis = new Dictionary<string, int>();
+                int i = 0;
+                foreach (Protein protein in ProteinList) ProteinsForAnalysis.Add(protein.Name, i++);
+                i = 0;
+                foreach (Ligand ligand in LigandFileList) LigandsForAnalysis.Add(ligand.NameWithoutExtension, i++);
+
+                foreach (Ligand ligand in LigandFileList)
+                {
+                    string FileName = ligand.NameWithoutExtension.Replace(' ', '_') + "_Clear_Energies.txt";
+                    AnalyseFile(Path.Combine(ResultPath, FileName));
+                }
+
+                Analysing.WriteLine($"Максимальные значения");
+                string LineOut = "Лиганд;";
+                foreach (Protein protein in ProteinList)
+                    LineOut += $"{protein.Name};";
+
+                Analysing.WriteLine(LineOut);
+                for (i = 0; i < LigandFileList.Count; i++)
+                {
+                    LineOut = LigandFileList[i].NameWithoutExtension + ";";
+                    for (int j = 0; j < ProteinList.Count; j++)
+                        LineOut += $"{energies[j, i, 0]:F3};";
+                    Analysing.WriteLine(LineOut);
+                }
+
+                for (i = 0; i < LigandFileList.Count; i++)
+                {
+                    Analysing.WriteLine("");
+                    Analysing.WriteLine($"Энергии лиганда {LigandFileList[i].NameWithoutExtension}");
+                    LineOut = "Белок;1;2;3;4;5;6;7;8;9";
+                    Analysing.WriteLine(LineOut);
+                    for (int j = 0; j < ProteinList.Count; j++)
+                    {
+                        LineOut = ProteinList[j].Name + ";";
+                        for (int k = 0; k < 9; k++)
+                            LineOut += $"{energies[j, i, k]:F3};";
+                        Analysing.WriteLine(LineOut);
+                    }
+                }
+            }
+
+            Log("Анализ результатов выполнен");
+        }
+
+        /// <summary>
+        /// Анализирует один файл
+        /// </summary>
+        /// <param name="FileName">Имя файла</param>
+        protected void AnalyseFile(string FileName)
+        {
+            if (Analysing == null) return;
+            
+            using (StreamReader Reader = new StreamReader(FileName, Encoding.GetEncoding(1251)))
+            {
+                string line = Reader.ReadLine();
+                string Ligand = line.Replace("Расчёт ", "").Trim();
+                while (AnalyseTask(Reader, Ligand));
+            }
+
+        }
+
+        protected bool AnalyseTask(StreamReader Reader, string ligand)
+        {
+            if (Analysing == null) return false;
+
+            if (Reader.EndOfStream) return false;
+            string line = Reader.ReadLine();
+            if (line == "") return false;
+            if (!line.Contains($"Расчёт {ligand}")) return false;
+
+            string protein = line.Replace($"Расчёт {ligand} в ", "").Trim();
+            int LigandNum = LigandsForAnalysis[ligand];
+            int ProteinNum = ProteinsForAnalysis[protein];
+            
+            while (!line.Contains("-----+------------+----------+----------"))
+                line = Reader.ReadLine();
+
+            for (int i = 0; i < 9; i++)
+            {
+                line = Reader.ReadLine();
+                float Energy = 0;
+                try
+                {
+                    string TextToParce = line.Substring(6, 12);
+                    Energy = Functions.Parse(line.Substring(6, 12));
+                }
+                catch
+                {
+                    Log($"Ошибка парсинга. Не могу распарсить строку \"{line}\"");
+                }
+                energies[ProteinNum, LigandNum, i] = Energy;
+            }
+
+            return true;
         }
     }
 }
