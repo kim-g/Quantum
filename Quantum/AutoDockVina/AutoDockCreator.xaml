@@ -120,6 +120,7 @@
 
                 <Button x:Name="GenListBtn" Content="Генерировать" Margin="0,10,0,0" Click="GenListBtn_Click" IsEnabled="{Binding EnableGen}"/>
                 <Button x:Name="RunBtn" Content="Запустить" Margin="0,10,0,0" Click="RunBtn_Click" IsEnabled="{Binding EnableRun}"/>
+                <Button x:Name="AnalyseBtn" Visibility="Collapsed" Content="Анализировать" Margin="0,10,0,0" Click="AnalyseBtn_Click" IsEnabled="{Binding EnableRun}"/>
             </StackPanel>
         </Grid>
         <Label Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,0" BorderBrush="#FF505050" BorderThickness="1,1,1,1">

@@ -55,12 +55,13 @@ namespace Quantum.General
         /// <param name="outputFile">Путь к выходному файлу.</param>
         /// <param name="Format">Формат выходного файла.</param>
         /// <returns>Код завершения процесса. Возвращает -1 в случае ошибки.</returns>
-        public static int Convert(string inputFile, string outputFile, string Format)
+        public static int Convert(string inputFile, string outputFile, string Format, bool Gen3D=false)
         {
             // Путь к исполняемому файлу Open Babel
             string openBabelPath = @"obabel.exe";
             // Формируем аргументы для Open Babel
             string arguments = $"{inputFile} -o {Format} -O {outputFile}";
+            if (Gen3D) arguments += " --gen3d best -h";
             // Запускаем Open Babel с указанными аргументами
             return RunExternalApp(openBabelPath, arguments);
         }
@@ -73,7 +74,7 @@ namespace Quantum.General
         /// <returns>Код завершения процесса. Возвращает -1 в случае ошибки.</returns>
         public static int ConvertToPDBQT(string inputFile, string outputFile)
         {
-            return Convert(inputFile, outputFile, "pdbqt");
+            return Convert(inputFile, outputFile, "pdbqt", true);
         }
     }
 }
