@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -115,7 +116,11 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void GenListBtn_Click(object sender, RoutedEventArgs e)
         {
-            _ = model.CreateProject();
+            Progress<string> progress = new Progress<string>(status =>
+            {
+                model.Log(status); // Безопасное обновление Label
+            });
+            Task.Run(() => model.CreateProject(progress));
         }
 
         /// <summary>

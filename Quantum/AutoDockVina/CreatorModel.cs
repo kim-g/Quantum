@@ -211,7 +211,7 @@ namespace Quantum.AutoDockVina
         /// Создаёт файлы для проекта докинга
         /// </summary>
         /// <returns></returns>
-        public bool CreateProject()
+        public bool CreateProject(IProgress<string> progress)
         {
             string projectPath = Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), UserSelected, ProjectName);
             if (!CheckUserData(projectPath)) return false;
@@ -233,18 +233,17 @@ namespace Quantum.AutoDockVina
 
             // Создание файлов лигандов
             EnableGen = false;
-            Log("Генерация файлов лигандов");
+            progress?.Report("Генерация файлов лигандов. ");
 
             // Создаем прогресс-отчет для обновления UI
-            var progress = new Progress<string>(status =>
-            {
-                Log(status);
-            });
 
             foreach (Ligand ligand in LigandFileList)
+            {
+                progress?.Report($"Генерация файлов лигандов. Генерация лиганда {ligand.NameWithoutExtension}");
                 OpenBabel.ConvertToPDBQT(ligand.FileName, Path.Combine(LigandDirectory, ligand.NamePDBQT));
+            }
             EnableGen = true;
-            Log("Генерация остальных файлов");
+            progress?.Report("Генерация остальных файлов");
 
 
 
