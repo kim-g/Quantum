@@ -115,7 +115,7 @@ namespace Quantum.AutoDockVina
         /// <param name="e">Данные события.</param>
         private void GenListBtn_Click(object sender, RoutedEventArgs e)
         {
-            model.CreateProject();
+            _ = model.CreateProject();
         }
 
         /// <summary>
@@ -130,12 +130,16 @@ namespace Quantum.AutoDockVina
 
         private void RunBtn_Click(object sender, RoutedEventArgs e)
         {
-            model.RunTask();
+            _ = model.RunTask();
         }
 
         private void AnalyseBtn_Click(object sender, RoutedEventArgs e)
         {
-            model.Analyse();
+            var progress = new Progress<string>(status =>
+            {
+                model.Log(status);
+            });
+            _ = model.Analyse(progress);
         }
     }
 }

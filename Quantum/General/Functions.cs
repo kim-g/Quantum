@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 
 namespace Quantum
 {
@@ -37,7 +36,7 @@ namespace Quantum
         /// <returns></returns>
         public static float Parse(string Num)
         {
-            Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
             Num = Num.Trim().Replace('.', separator).Replace(',', separator);
             return float.Parse(Num);
         }

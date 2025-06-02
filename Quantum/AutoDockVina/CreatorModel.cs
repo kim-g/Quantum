@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Quantum.AutoDockVina
 {
@@ -212,22 +213,8 @@ namespace Quantum.AutoDockVina
         /// <returns></returns>
         public bool CreateProject()
         {
-            if (string.IsNullOrEmpty(ProjectName))
-            {
-                System.Windows.MessageBox.Show("Введите название проекта.");
-                return false;
-            }
-            if (string.IsNullOrEmpty(UserSelected))
-            {
-                System.Windows.MessageBox.Show("Выберите пользователя.");
-                return false;
-            }
             string projectPath = Path.Combine(MainMenu.Config.GetConfigValue("autodock_dir"), UserSelected, ProjectName);
-            if (Directory.Exists(projectPath))
-            {
-                System.Windows.MessageBox.Show("Проект с таким именем уже существует.");
-                return false;
-            }
+            if (!CheckUserData(projectPath)) return false;
 
             // Создание директорий для проекта
             Directory.CreateDirectory(projectPath);
@@ -245,8 +232,20 @@ namespace Quantum.AutoDockVina
                 peptide.WriteToDirectory(ProteinDirectory);
 
             // Создание файлов лигандов
+            EnableGen = false;
+            Log("Генерация файлов лигандов");
+
+            // Создаем прогресс-отчет для обновления UI
+            var progress = new Progress<string>(status =>
+            {
+                Log(status);
+            });
+
             foreach (Ligand ligand in LigandFileList)
                 OpenBabel.ConvertToPDBQT(ligand.FileName, Path.Combine(LigandDirectory, ligand.NamePDBQT));
+            EnableGen = true;
+            Log("Генерация остальных файлов");
+
 
 
             // Создание файлов задания
@@ -375,6 +374,31 @@ namespace Quantum.AutoDockVina
         }
 
         /// <summary>
+        /// Проверка правильности ввода данных пользователем
+        /// </summary>
+        /// <param name="projectPath"></param>
+        /// <returns></returns>
+        private bool CheckUserData(string projectPath)
+        {
+            if (string.IsNullOrEmpty(ProjectName))
+            {
+                System.Windows.MessageBox.Show("Введите название проекта.");
+                return false;
+            }
+            if (string.IsNullOrEmpty(UserSelected))
+            {
+                System.Windows.MessageBox.Show("Выберите пользователя.");
+                return false;
+            }
+            if (Directory.Exists(projectPath))
+            {
+                System.Windows.MessageBox.Show("Проект с таким именем уже существует.");
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Создаёт файл задания для AutoDock Vina.
         /// </summary>
         /// <param name="fileName">Имя файла задания</param>
@@ -432,12 +456,12 @@ namespace Quantum.AutoDockVina
         /// Запускает задачу AutoDock Vina.
         /// </summary>
         /// <returns></returns>
-        public bool RunTask()
+        public async Task RunTask()
         {
             if (!CheckRunEnable())
             {
                 System.Windows.MessageBox.Show("Не удалось запустить задачу. Проверьте настройки.");
-                return false;
+                return;
             }
 
             IsRunning = true;
@@ -462,23 +486,26 @@ namespace Quantum.AutoDockVina
                 process.StartInfo = processStartInfo;
 
                 // Вывод выдаваемой информации
-                process.OutputDataReceived += (sender, e) =>
+                process.OutputDataReceived += async (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
                         outputBuilder.AppendLine(e.Data);
-                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                        // Если процесс выдал финальную фразу, то завершаем
+                        if (e.Data.StartsWith("Расчёты закончены"))
                         {
-                            // Если процесс выдал финальную фразу, то завершаем
-                            if (e.Data.StartsWith("Расчёты закончены"))
+                            IsRunning = false;
+                            Log("Расчёты закончены. ");
+                            // Создаем прогресс-отчет для обновления UI
+                            var progress = new Progress<string>(status =>
                             {
-                                IsRunning = false;
-                                Log("Расчёты закончены. ");
-                                Analyse();
-                                Functions.OpenExplorerWindow(ProjectPath);
-                            }
-                            Log(e.Data);
-                        });
+                                Log(status);
+                            });
+                            await Analyse(progress);
+                            Functions.OpenExplorerWindow(ProjectPath);
+                        }
+                        Log(e.Data);
+                        
                     }
                 };
 
@@ -506,7 +533,7 @@ namespace Quantum.AutoDockVina
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                return true;
+                return;
             }
         }
 
@@ -553,7 +580,7 @@ namespace Quantum.AutoDockVina
         /// Выдаёт статус и записывает его в консоль для отладки
         /// </summary>
         /// <param name="message"></param>
-        private void Log(string message)
+        public void Log(string message)
         {
             // Логирование в консоль или файл
             StatusText = message;
@@ -563,9 +590,9 @@ namespace Quantum.AutoDockVina
         /// <summary>
         /// Анализ результатов докинга.
         /// </summary>
-        public void Analyse()
+        public async Task Analyse(IProgress<string> progress)
         {
-            Log("Анализ результатов...");
+            progress?.Report("Анализ результатов... Обработка файлов.");
             
             string ResultPath = Path.Combine(ProjectPath, "Results");
             using (Analysing = new StreamWriter(Path.Combine(ResultPath, "Results.csv"), false, Encoding.GetEncoding(1251)))
@@ -589,6 +616,7 @@ namespace Quantum.AutoDockVina
                     AnalyseFile(Path.Combine(ResultPath, FileName));
                 }
 
+                progress?.Report("Анализ результатов... Формирование таблицы максимальных значений.");
                 Analysing.WriteLine($"Максимальные значения");
                 string LineOut = "Лиганд;";
                 foreach (Protein protein in ProteinList)
@@ -603,6 +631,7 @@ namespace Quantum.AutoDockVina
                     Analysing.WriteLine(LineOut);
                 }
 
+                progress?.Report("Анализ результатов... Вывод всех энергий лигандов.");
                 for (i = 0; i < LigandFileList.Count; i++)
                 {
                     Analysing.WriteLine("");
@@ -617,9 +646,11 @@ namespace Quantum.AutoDockVina
                         Analysing.WriteLine(LineOut);
                     }
                 }
+                
             }
 
-            Log("Анализ результатов выполнен");
+            progress?.Report("Анализ результатов выполнен");
+            return;
         }
 
         /// <summary>

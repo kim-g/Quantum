@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Text;
 
 namespace Quantum.General
 {
@@ -27,7 +29,8 @@ namespace Quantum.General
                     WorkingDirectory = workingDirectory, // Рабочая директория
                     UseShellExecute = false,      // Не использовать системную оболочку
                     CreateNoWindow = true,        // Не создавать окно для консольного приложения
-                    RedirectStandardOutput = false // Не перенаправлять вывод (можно включить при необходимости)
+                    RedirectStandardOutput = true, // Не перенаправлять вывод (можно включить при необходимости)
+                    RedirectStandardError = true
                 };
 
                 // Создаем и запускаем процесс
@@ -35,7 +38,8 @@ namespace Quantum.General
                 {
                     // Ожидаем завершения процесса
                     process.WaitForExit();
-
+                    Console.WriteLine(process.StandardError.ReadToEnd());
+                    Console.WriteLine(process.StandardOutput.ReadToEnd());
                     // Возвращаем код завершения
                     return process.ExitCode;
                 }
@@ -60,9 +64,14 @@ namespace Quantum.General
             // Путь к исполняемому файлу Open Babel
             string openBabelPath = @"obabel.exe";
             // Формируем аргументы для Open Babel
-            string arguments = $"{inputFile} -o {Format} -O {outputFile}";
+            string arguments = $"\"{inputFile}\" -o {Format} -O \"{outputFile}\"";
             if (Gen3D) arguments += " --gen3d best -h";
             // Запускаем Open Babel с указанными аргументами
+
+            /*Encoding wrongEncoding = Encoding.GetEncoding(1251);
+            Encoding realEncoding = Encoding.GetEncoding(866);
+            byte[] originalBytes = wrongEncoding.GetBytes(arguments);
+            arguments = realEncoding.GetString(originalBytes);*/
             return RunExternalApp(openBabelPath, arguments);
         }
 
