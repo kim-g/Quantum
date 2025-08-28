@@ -6,21 +6,28 @@ using System.Windows.Media;
 
 namespace Quantum
 {
+    /// <summary>
+    /// Вспомогательный класс для печати и предпросмотра WPF-элементов.
+    /// </summary>
     public static class PrintHelper
     {
-
+        /// <summary>
+        /// Создаёт объект <see cref="FixedDocument"/> для печати указанного визуального элемента.
+        /// </summary>
+        /// <param name="toPrint">Элемент, который требуется напечатать.</param>
+        /// <param name="printDialog">Диалог печати, содержащий параметры принтера.</param>
+        /// <returns>Готовый к печати документ <see cref="FixedDocument"/>.</returns>
         public static FixedDocument GetFixedDocument(FrameworkElement toPrint, PrintDialog printDialog)
         {
             var capabilities = printDialog.PrintQueue.GetPrintCapabilities(printDialog.PrintTicket);
             var pageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
             var visibleSize = new Size(capabilities.PageImageableArea.ExtentWidth, capabilities.PageImageableArea.ExtentHeight);
             var fixedDoc = new FixedDocument();
-            //If the toPrint visual is not displayed on screen we neeed to measure and arrange it  
+            // Если визуальный элемент не отображён на экране, необходимо измерить и расположить его
             toPrint.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             toPrint.Arrange(new Rect(new Point(0, 0), toPrint.DesiredSize));
-            //  
             var size = toPrint.DesiredSize;
-            //Will assume for simplicity the control fits horizontally on the page  
+            // Предполагается, что элемент помещается по ширине страницы
             double yOffset = 0;
             while (yOffset < size.Height)
             {
@@ -51,6 +58,10 @@ namespace Quantum
             return fixedDoc;
         }
 
+        /// <summary>
+        /// Показывает окно предпросмотра печати для указанного документа.
+        /// </summary>
+        /// <param name="fixedDoc">Документ для предпросмотра.</param>
         public static void ShowPrintPreview(FixedDocument fixedDoc)
         {
             var wnd = new Window();
@@ -60,11 +71,14 @@ namespace Quantum
             wnd.ShowDialog();
         }
 
+        /// <summary>
+        /// Печатает документ без предварительного просмотра.
+        /// </summary>
+        /// <param name="printDialog">Диалог печати с выбранным принтером.</param>
+        /// <param name="fixedDoc">Документ для печати.</param>
         public static void PrintNoPreview(PrintDialog printDialog, FixedDocument fixedDoc)
         {
             printDialog.PrintDocument(fixedDoc.DocumentPaginator, "Test Print No Preview");
-
         }
-
     }
 }

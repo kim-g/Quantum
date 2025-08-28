@@ -13,8 +13,7 @@ namespace Quantum
     /// </summary>
     public partial class ProjectListWindow : Window
     {
-        private SQLiteDataBase DB;
-        private bool Loading = true;
+        private readonly SQLiteDataBase DB;
         
         public ProjectListWindow(SQLiteDataBase db)
         {
@@ -25,8 +24,6 @@ namespace Quantum
             foreach (Project P in Projects)
                 ProjectsList.Items.Add(P);
             ParamGrid.Visibility = ProjectsList.SelectedItem == null ? Visibility.Hidden : Visibility.Visible;
-
-
         }
 
         private void ProjectsList_SelectionChanged(object sender, SelectionChangedEventArgs e)

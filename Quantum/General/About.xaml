@@ -53,6 +53,9 @@
                         для квантово-химических расчётов в программе Orca.
                         <LineBreak />
                         <LineBreak />
+                        Также программа позволяет создавать комбинированные задания для молекулярного докинга программой AutoDock Vina.
+                        <LineBreak />
+                        <LineBreak />
                         Программа распространяется по принципу «как есть» и «не стреляйте в пианиста, 
                         он играет, как умеет» по лицензии 
                         <Run x:Name="License" Style="{StaticResource LinkText}" MouseLeftButtonUp="License_MouseLeftButtonUp">
@@ -85,7 +88,7 @@
             </Label>
         </Grid>
         <Grid Grid.Column="0" Grid.Row="2">
-            <Button x:Name="Close" Content="Закрыть" Click="Close_Click" Margin="1"/>
+            <Button x:Name="CloseBtn" Content="Закрыть" Click="Close_Click" Margin="1"/>
         </Grid>
     </Grid>
 </Window>

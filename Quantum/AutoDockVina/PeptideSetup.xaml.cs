@@ -2,7 +2,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace Quantum.AutoDockVina
@@ -84,7 +83,7 @@ namespace Quantum.AutoDockVina
         {
             try
             {
-                Char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+                char separator = CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
                 s = s.Trim().Replace('.', separator).Replace(',', separator);
                 double f = Convert.ToDouble(s);
                 return f.ToString($"F{Digits}").Replace(separator, '.');

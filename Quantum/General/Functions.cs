@@ -8,9 +8,17 @@ using System.Windows.Controls;
 
 namespace Quantum
 {
+    /// <summary>
+    /// Содержит вспомогательные функции для работы с элементами WPF, файлами и системой.
+    /// </summary>
     public class Functions
     {
-       public static List<TextBox> Find_All_TextBoxes(Grid RootGrid)
+        /// <summary>
+        /// Рекурсивно находит все элементы <see cref="TextBox"/> в указанном <see cref="Grid"/> и его дочерних гридах.
+        /// </summary>
+        /// <param name="RootGrid">Корневой <see cref="Grid"/>, в котором производится поиск.</param>
+        /// <returns>Список всех найденных <see cref="TextBox"/>.</returns>
+        public static List<TextBox> Find_All_TextBoxes(Grid RootGrid)
         {
             List<TextBox> List = new List<TextBox>();
 
@@ -30,10 +38,10 @@ namespace Quantum
         }
 
         /// <summary>
-        /// Парсинг действительного числа из строки
+        /// Парсит строку в число с плавающей точкой с учетом локального разделителя.
         /// </summary>
-        /// <param name="Num">Строка</param>
-        /// <returns></returns>
+        /// <param name="Num">Строка для преобразования.</param>
+        /// <returns>Число типа <see cref="float"/>.</returns>
         public static float Parse(string Num)
         {
             char separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
@@ -41,6 +49,11 @@ namespace Quantum
             return float.Parse(Num);
         }
 
+        /// <summary>
+        /// Открывает диалоговое окно выбора файла.
+        /// </summary>
+        /// <param name="FileType">Фильтр расширений файлов (по умолчанию "Все файлы (*.*)|*.*").</param>
+        /// <returns>Путь к выбранному файлу или <c>null</c>, если выбор отменён.</returns>
         public static string OpenFile(string FileType = "Все файлы (*.*)|*.*")
         {
             OpenFileDialog myDialog = new OpenFileDialog();
@@ -52,11 +65,11 @@ namespace Quantum
         }
 
         /// <summary>
-        /// Открывает проводник Windows в указанной директории
+        /// Открывает проводник Windows в указанной директории.
         /// </summary>
-        /// <param name="directoryPath">Путь к целевой директории</param>
-        /// <param name="throwExceptions">Бросать исключения при ошибках (по умолчанию false)</param>
-        /// <returns>True если операция выполнена успешно</returns>
+        /// <param name="directoryPath">Путь к целевой директории.</param>
+        /// <param name="throwExceptions">Бросать исключения при ошибках (по умолчанию <c>false</c>).</param>
+        /// <returns><c>true</c>, если операция выполнена успешно; иначе <c>false</c>.</returns>
         public static bool OpenExplorerWindow(string directoryPath, bool throwExceptions = false)
         {
             try

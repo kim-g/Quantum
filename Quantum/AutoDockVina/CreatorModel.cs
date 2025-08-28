@@ -455,12 +455,12 @@ namespace Quantum.AutoDockVina
         /// Запускает задачу AutoDock Vina.
         /// </summary>
         /// <returns></returns>
-        public async Task RunTask()
+        public bool RunTask()
         {
             if (!CheckRunEnable())
             {
                 System.Windows.MessageBox.Show("Не удалось запустить задачу. Проверьте настройки.");
-                return;
+                return false;
             }
 
             IsRunning = true;
@@ -485,7 +485,7 @@ namespace Quantum.AutoDockVina
                 process.StartInfo = processStartInfo;
 
                 // Вывод выдаваемой информации
-                process.OutputDataReceived += async (sender, e) =>
+                process.OutputDataReceived +=  (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
@@ -500,7 +500,7 @@ namespace Quantum.AutoDockVina
                             {
                                 Log(status);
                             });
-                            await Analyse(progress);
+                            Analyse(progress);
                             Functions.OpenExplorerWindow(ProjectPath);
                         }
                         Log(e.Data);
@@ -532,7 +532,7 @@ namespace Quantum.AutoDockVina
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                return;
+                return true;
             }
         }
 
@@ -589,16 +589,16 @@ namespace Quantum.AutoDockVina
         /// <summary>
         /// Анализ результатов докинга.
         /// </summary>
-        public async Task Analyse(IProgress<string> progress)
+        public bool Analyse(IProgress<string> progress)
         {
             progress?.Report("Анализ результатов... Обработка файлов.");
             
             string ResultPath = Path.Combine(ProjectPath, "Results");
-            using (Analysing = new StreamWriter(Path.Combine(ResultPath, "Results.csv"), false, Encoding.GetEncoding(1251)))
+            using (Analysing = new StreamWriter(Path.Combine(ResultPath, $"Results {projectName}.csv"), false, Encoding.GetEncoding(1251)))
             {
                 Analysing.WriteLine($"Проект; {ProjectName}");
                 Analysing.WriteLine($"Заказчик; {UserSelected}");
-                Analysing.WriteLine($"Дата расчёта; {DateTime.Now.ToString("yyyy-MM-dd")}");
+                Analysing.WriteLine($"Дата расчёта; {DateTime.Now:yyyy-MM-dd}");
                 Analysing.WriteLine("");
 
                 energies = new float[ProteinList.Count, LigandFileList.Count, 9];
@@ -649,7 +649,7 @@ namespace Quantum.AutoDockVina
             }
 
             progress?.Report("Анализ результатов выполнен");
-            return;
+            return true;
         }
 
         /// <summary>
@@ -669,6 +669,12 @@ namespace Quantum.AutoDockVina
 
         }
 
+        /// <summary>
+        /// Анализирует Одно задание из файла с результатами докинга.
+        /// </summary>
+        /// <param name="Reader">Файл в виде потока</param>
+        /// <param name="ligand">Имя лиганда</param>
+        /// <returns></returns>
         protected bool AnalyseTask(StreamReader Reader, string ligand)
         {
             if (Analysing == null) return false;

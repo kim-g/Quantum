@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Text;
 
 namespace Quantum.General
 {
@@ -38,8 +36,6 @@ namespace Quantum.General
                 {
                     // Ожидаем завершения процесса
                     process.WaitForExit();
-                    Console.WriteLine(process.StandardError.ReadToEnd());
-                    Console.WriteLine(process.StandardOutput.ReadToEnd());
                     // Возвращаем код завершения
                     return process.ExitCode;
                 }
@@ -61,17 +57,12 @@ namespace Quantum.General
         /// <returns>Код завершения процесса. Возвращает -1 в случае ошибки.</returns>
         public static int Convert(string inputFile, string outputFile, string Format, bool Gen3D=false)
         {
-            // Путь к исполняемому файлу Open Babel
+            // Путь к исполняемому файлу Open Babel. Должен быть в Path
             string openBabelPath = @"obabel.exe";
             // Формируем аргументы для Open Babel
             string arguments = $"\"{inputFile}\" -o {Format} -O \"{outputFile}\"";
             if (Gen3D) arguments += " --gen3d best -h";
             // Запускаем Open Babel с указанными аргументами
-
-            /*Encoding wrongEncoding = Encoding.GetEncoding(1251);
-            Encoding realEncoding = Encoding.GetEncoding(866);
-            byte[] originalBytes = wrongEncoding.GetBytes(arguments);
-            arguments = realEncoding.GetString(originalBytes);*/
             return RunExternalApp(openBabelPath, arguments);
         }
 

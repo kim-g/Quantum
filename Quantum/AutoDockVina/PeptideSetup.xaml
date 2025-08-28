@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:local="clr-namespace:Quantum.AutoDockVina"
         mc:Ignorable="d"
-        Title="Добавить белок" Height="263" Width="523" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight">
+        Title="Добавить белок" Height="263" Width="523" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
     <Grid Margin="10,10,10,10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

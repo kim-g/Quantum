@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quantum.AutoDockVina"
         mc:Ignorable="d"
-        Title="Список белков" Height="462" Width="400" MinWidth="400">
+        Title="Список белков" Height="462" Width="400" MinWidth="400" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

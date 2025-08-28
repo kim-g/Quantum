@@ -10,8 +10,7 @@ namespace Quantum
         private string _name = "";
         private string _description = "";
         private long _input_node = 0;
-        private NodePanel _project_panel;
-        private SQLiteDataBase DB;
+        private readonly SQLiteDataBase DB;
         #endregion
 
         #region Свойства
@@ -117,11 +116,13 @@ namespace Quantum
         /// <returns></returns>
         private static Project Load(SQLiteDataBase db, DataRow dr)
         {
-            Project NP = new Project(db);
-            NP._id = dr.Field<long>("id");
-            NP._name = dr.Field<string>("name");
-            NP._description = dr.Field<string>("comment");
-            NP._input_node = dr.Field<long>("input");
+            Project NP = new Project(db)
+            {
+                _id = dr.Field<long>("id"),
+                _name = dr.Field<string>("name"),
+                _description = dr.Field<string>("comment"),
+                _input_node = dr.Field<long>("input")
+            };
             return NP;
         }
         #endregion

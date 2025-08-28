@@ -34,8 +34,11 @@ namespace Quantum
 
                 if (SD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                    Energy_Diagram Energy_Diagram_Form = new Energy_Diagram() { Owner = owner };
-                    Energy_Diagram_Form.FileName = SD.FileName;
+                    Energy_Diagram Energy_Diagram_Form = new Energy_Diagram
+                    {
+                        Owner = owner,
+                        FileName = SD.FileName
+                    };
                     Energy_Diagram_Form.Load();
                     Energy_Diagram_Form.ShowDialog();
                 }
@@ -80,7 +83,7 @@ namespace Quantum
             else
                 Energies.FontSize = double.Parse(FS);
 
-            FontSize.Value = Energies.FontSize;
+            FontSizeSlider.Value = Energies.FontSize;
 
             Energies.Source.Clear();
             using (DataTable dt = DB.ReadTable("SELECT `id` FROM `elements`"))
@@ -97,8 +100,8 @@ namespace Quantum
 
         private void FontSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Energies.FontSize = FontSize.Value;
-            FS_Label.Content = $"Размер шрифта: {FontSize.Value:F1}";
+            Energies.FontSize = FontSizeSlider.Value;
+            FS_Label.Content = $"Размер шрифта: {FontSizeSlider.Value:F1}";
 
             Energies.Update();
             Dispatcher.BeginInvoke(new SimpleDelegate(Save), null) ;

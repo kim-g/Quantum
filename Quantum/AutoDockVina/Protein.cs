@@ -69,7 +69,7 @@ namespace Quantum.AutoDockVina
         /// </summary>
         public MemoryStream File { get; set; }
 
-        public string Info => $"Координаты:{Center[0]}, {Center[1]}, {Center[2]}; Область: {Size[0]}, {Size[1]}, {Size[2]}";
+        public string Info => $"Координаты: {Center[0]}, {Center[1]}, {Center[2]}; Область: {Size[0]}, {Size[1]}, {Size[2]}";
 
         /// <summary>
         /// Загружает белок из базы данных по его идентификатору.

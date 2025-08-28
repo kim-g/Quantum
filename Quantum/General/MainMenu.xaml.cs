@@ -10,7 +10,7 @@ namespace Quantum
         /// <summary>
         /// Версия программы
         /// </summary>
-        public static string ProgramVersion = "1.7.4";
+        public static string ProgramVersion = "1.7.5";
         /// <summary>
         /// База данных конфига
         /// </summary>
@@ -72,7 +72,8 @@ namespace Quantum
 
         private void AutoDockVinaButton_Click(object sender, RoutedEventArgs e)
         {
-            AutoDockVina.AutoDockCreator autoDockCreator = new AutoDockVina.AutoDockCreator();    
+            AutoDockVina.AutoDockCreator autoDockCreator = new AutoDockVina.AutoDockCreator();
+            autoDockCreator.Owner = this;
             autoDockCreator.ShowDialog();   
         }
 

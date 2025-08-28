@@ -241,15 +241,15 @@ namespace Quantum
         {
             using (DataTable dt = ReadTable($"SELECT `{Field}` FROM `{Table}` WHERE {Where}"))
             {
-                if (dt.Rows.Count == 0) return default(T);
+                if (dt.Rows.Count == 0) return default;
 
                 try
                 {
                     return dt.Rows[0].Field<T>(Field);
                 }
-                catch (Exception e)
+                catch 
                 {
-                    return default(T);
+                    return default;
                 }
             }
         }
@@ -364,7 +364,7 @@ namespace Quantum
             { return (T)GetConfigObject(name); }
             catch (Exception)
 
-            { return default(T); }
+            { return default; }
             
         }
 
