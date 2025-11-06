@@ -338,11 +338,14 @@ namespace Quantum.AutoDockVina
                 {
                     string OutFile = $"{ligand.NameWithoutExtension}_Clear_Energies.txt";
 
-                    sw.WriteLine($":: Расчёт лиганда {ligand.NameWithoutExtension}");
-                    sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension}");
+                    int PeptideCount = ProteinList.Count;
+                    sw.WriteLine($":: Расчёт лиганда {ligand.NameWithoutExtension}");                   
                     sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} > {OutFile}");
+                    int i = 0;
                     foreach (Protein peptide in ProteinList)
                     {
+                        int ProgressPercent = (i++ * 100) / PeptideCount;
+                        sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} в {peptide.Name} ({ProgressPercent}%%)");
                         string Task = $"Task-{ligand.NameWithoutExtension}-{peptide.Name}.txt".Replace(" ", "_");
 
                         sw.WriteLine($"ECHO Расчёт {ligand.NameWithoutExtension} в {peptide.Name} >> {OutFile}");
