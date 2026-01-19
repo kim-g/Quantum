@@ -240,6 +240,11 @@ namespace Quantum.AutoDockVina
             foreach (Ligand ligand in LigandFileList)
             {
                 progress?.Report($"Генерация файлов лигандов. Генерация лиганда {ligand.NameWithoutExtension}");
+                if (ligand.Name.EndsWith("pdbqt", StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Copy(ligand.FileName, Path.Combine(LigandDirectory, ligand.NamePDBQT), true);
+                    continue;
+                }
                 OpenBabel.ConvertToPDBQT(ligand.FileName, Path.Combine(LigandDirectory, ligand.NamePDBQT));
             }
             EnableGen = true;

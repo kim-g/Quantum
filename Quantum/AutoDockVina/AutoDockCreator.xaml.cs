@@ -50,9 +50,9 @@ namespace Quantum.AutoDockVina
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
                 Multiselect = true,
-                Filter = "Chemical Files|*.mol;*.sdf;*.cdx;*.cdxml;*.pdb;*.xyz;*.cif;*.mol2;*.smiles;*.bv|" +
+                Filter = "Chemical Files|*.mol;*.sdf;*.cdx;*.cdxml;*.pdb;*.pdbqt;*.xyz;*.cif;*.mol2;*.smiles;*.bv|" +
                          "2D Formats (*.mol, *.sdf, *.cdx, *.cdxml, *.smiles)|*.mol;*.sdf;*.cdx;*.cdxml;*.smiles|" +
-                         "3D Formats (*.pdb, *.xyz, *.cif, *.mol2)|*.pdb;*.xyz;*.cif;*.mol2|" +
+                         "3D Formats (*.pdb, *.pdbqt, *.xyz, *.cif, *.mol2)|*.pdb;*.pdbqt;*.xyz;*.cif;*.mol2|" +
                          "BV Files (*.bv)|*.bv",
                 Title = "Выберите лиганд"
             };
