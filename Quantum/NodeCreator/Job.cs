@@ -16,6 +16,7 @@ namespace Quantum
         private long ram = 0;
         private long hessian = 0;
         private bool charges = false;
+        private bool spins = false;
         private bool tddft = false;
         private int tddft_level = 0;
         private long solvent = 0;
@@ -107,6 +108,17 @@ namespace Quantum
         /// </summary>
         public bool Charges { get => charges; set { charges = value; DB.Execute($"UPDATE `jobs` SET `charges`={(Charges ? 1 : 0)} WHERE `id`={ID};");
             } }
+
+        /// <summary>
+        /// Считать ли спиновые плотности
+        /// </summary>
+        public bool Spins
+        {
+            get => spins; set
+            {
+                spins = value; DB.Execute($"UPDATE `jobs` SET `spins`={(Spins ? 1 : 0)} WHERE `id`={ID};");
+            }
+        }
 
         /// <summary>
         /// Считать ли TD-DFT
@@ -212,8 +224,8 @@ namespace Quantum
             
             if (ID == 0)
             {
-                if (DB.Execute($"INSERT INTO `jobs` (`name`, `comment`, `method`, `dft`, `basis`, `other`, `task`, `ram`, `hessian`, `charges`, `tddft`, `solvent`, `output`) " +
-                    $"VALUES ('{SafeName}', '{SafeComment}', {Method}, {DFT}, {Basis}, {Other}, {Task}, {RAM}, {Hessian}, {(Charges ? 1: 0)}, {(TDDFT ? 1 : 0)}, {Solvent}, {Output});"))
+                if (DB.Execute($"INSERT INTO `jobs` (`name`, `comment`, `method`, `dft`, `basis`, `other`, `task`, `ram`, `hessian`, `charges`, `spins`, `tddft`, `solvent`, `output`) " +
+                    $"VALUES ('{SafeName}', '{SafeComment}', {Method}, {DFT}, {Basis}, {Other}, {Task}, {RAM}, {Hessian}, {(Charges ? 1: 0)}, {(Spins ? 1 : 0)}, {(TDDFT ? 1 : 0)}, {Solvent}, {Output});"))
                 {
                     id = DB.LastID;
                     return true;
@@ -222,7 +234,7 @@ namespace Quantum
 
             }
             return DB.Execute($"UPDATE `jobs` SET `name`='{SafeName}', `comment`='{SafeComment}', `method`={Method}, `dft`={DFT}, `basis`={Basis}, `other`={Other}, " +
-                $"`task`={Task}, `ram`={RAM}, `hessian`={Hessian}, `charges`={(Charges ? 1 : 0)}, `tddft`={(TDDFT ? 1 : 0)}, `solvent`={Solvent}, `output`={Output} " +
+                $"`task`={Task}, `ram`={RAM}, `hessian`={Hessian}, `charges`={(Charges ? 1 : 0)}, `spins`={(Spins ? 1 : 0)}, `tddft`={(TDDFT ? 1 : 0)}, `solvent`={Solvent}, `output`={Output} " +
                 $"WHERE `id`={ID};");
         }
 
@@ -252,6 +264,7 @@ namespace Quantum
                     ram = (int)dr.Field<long>("ram"),
                     hessian = (int)dr.Field<long>("hessian"),
                     charges = (int)dr.Field<long>("charges") == 1,
+                    spins = (int)dr.Field<long>("spins") == 1,
                     tddft = (int)dr.Field<long>("tddft") == 1,
                     solvent = (int)dr.Field<long>("solvent"),
                     output = (int)dr.Field<long>("output")
@@ -273,6 +286,13 @@ namespace Quantum
                     sw.WriteLine($"%maxcore {RAM} # Выделено {RAM} МБ памяти на ядро");
                 if (Charges)
                     sw.WriteLine("#Вывести зарядовые плотности\n% output\n    Print[P_AtPopMO_M] 1\nend");
+                if (Spins)
+                {
+                    string MethodStr = DB.GetOne<string>("code", "methods", $"id={Method}") == "DFT" 
+                        ? "UKS"
+                        : "UHF";
+                    sw.WriteLine($"#Вывести спиновые плотности\n! {MethodStr} Hirshfeld\n%plots\n  dim1 121\n  dim2 121\n  dim3 121\n  format Gaussian_Cube\n  SpinDens(\"SpinDens_{Name}.cube\");  # Файл со спин-плотностью\nend");
+                }
                 long CurSolvent = Solvent == 0 ? ProjectSolvent : Solvent;
                 if (CurSolvent > 1)
                 {

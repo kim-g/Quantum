@@ -247,7 +247,7 @@ namespace Quantum
                 {
                     return dt.Rows[0].Field<T>(Field);
                 }
-                catch 
+                catch
                 {
                     return default;
                 }
@@ -262,6 +262,25 @@ namespace Quantum
         public bool TableExists(string Table)
         {
             return GetCount("sqlite_master", $"type='table' AND name='{Table}'") > 0;
+        }
+
+        /// <summary>
+        /// Проверяет наличие столбца в таблице
+        /// </summary>
+        /// <param name="Table">Таблица</param>
+        /// <param name="Column">Столбец</param>
+        /// <returns></returns>
+        public bool ColumnExists(string Table, string Column)
+        {
+            using (DataTable dt = ReadTable($"PRAGMA table_info(`{Table}`)"))
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (row["name"].ToString() == Column)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 

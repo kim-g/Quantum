@@ -10,7 +10,7 @@ namespace Quantum
         /// <summary>
         /// Версия программы
         /// </summary>
-        public static string ProgramVersion = "1.7.8";
+        public static string ProgramVersion = "1.7.9";
         /// <summary>
         /// База данных конфига
         /// </summary>
@@ -130,11 +130,18 @@ namespace Quantum
 	                ""ram""	INTEGER,
 	                ""hessian""	INTEGER,
 	                ""charges""	INTEGER,
+	                ""spins""	INTEGER,
 	                ""tddft""	INTEGER,
 	                ""solvent""	INTEGER,
 	                ""output""	INTEGER,
 	                PRIMARY KEY(""id"" AUTOINCREMENT)
                 );");
+            }
+            // Обновляем поля для старых таблиц, если их нет
+            if (!Config.ColumnExists("jobs", "spins"))
+            {
+                Config.Execute(@"ALTER TABLE ""jobs"" ADD COLUMN ""spins"" INTEGER;");
+                Config.Execute(@"UPDATE `jobs` SET `spins`=0;");
             }
 
             // Таблица методов расчёта
